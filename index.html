@@ -3,29 +3,43 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BLACK SERPENT FPS</title>
+<title>BLACK SERPENT FPS</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
 
-<!-- =========================
-        NAVBAR
-========================= -->
+<!-- ================= LOADING ================= -->
 
-<header class="navbar">
+<div id="loading-screen">
+
+    <div class="loader">
+
+        <div class="spinner"></div>
+
+        <h1>BLACK SERPENT</h1>
+
+        <p>Loading...</p>
+
+    </div>
+
+</div>
+
+<!-- ================= HEADER ================= -->
+
+<header class="topbar">
 
     <div class="logo">
 
@@ -33,511 +47,243 @@
 
     </div>
 
-    <nav>
+    <div class="online">
 
-        <a href="#home">HOME</a>
+        ONLINE
 
-        <a href="#about">ABOUT</a>
+        <span id="onlinePlayers">
 
-        <a href="#mode">MODE</a>
+            256
 
-        <a href="#news">NEWS</a>
+        </span>
 
-        <a href="#game">PLAY</a>
-
-        <a href="#contact">CONTACT</a>
-
-    </nav>
-
-    <button class="menu-button">
-
-        ☰
-
-    </button>
+    </div>
 
 </header>
 
-<!-- =========================
-        HERO
-========================= -->
+<!-- ================= MAIN ================= -->
 
-<section class="hero" id="home">
+<main class="launcher">
 
-    <div class="hero-content">
+    <!-- ===== MENU ===== -->
 
-        <p class="subtitle">
+    <aside class="menu">
 
-            NEXT GENERATION FPS EXPERIENCE
+        <button id="playBtn">
 
-        </p>
+            ► PLAY GAME
+
+        </button>
+
+        <button>
+
+            INVENTORY
+
+        </button>
+
+        <button>
+
+            WEAPONS
+
+        </button>
+
+        <button>
+
+            SHOP
+
+        </button>
+
+        <button>
+
+            MISSIONS
+
+        </button>
+
+        <button>
+
+            SETTINGS
+
+        </button>
+
+        <button>
+
+            EXIT
+
+        </button>
+
+    </aside>
+
+    <!-- ===== CENTER ===== -->
+
+    <section class="center">
 
         <h1>
 
-            BLACK <span>SERPENT</span>
+            BLACK
+
+            <span>
+
+                SERPENT
+
+            </span>
 
         </h1>
 
-        <p class="description">
-
-            Selamat datang di dunia BLACK SERPENT FPS.
-            Bertempurlah di arena futuristik dengan berbagai mode permainan,
-            senjata modern, dan pengalaman bermain yang seru.
-
-        </p>
-
-        <div class="hero-buttons">
-
-            <a href="#game" class="button primary">
-
-                ► PLAY GAME
-
-            </a>
-
-            <a href="#about" class="button secondary">
-
-                LEARN MORE
-
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- =========================
-        PLAYER STATUS
-========================= -->
-
-<section class="section">
-
-    <div class="section-title">
-
-        <p>PLAYER INFORMATION</p>
-
-        <h2>STATUS</h2>
-
-    </div>
-
-    <div class="status-bar">
-
-        <div class="status-box">
-
-            <h3>HP</h3>
-
-            <p>100</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>ARMOR</h3>
-
-            <p>100</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>AMMO</h3>
-
-            <p>30 / 120</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>LEVEL</h3>
-
-            <p>01</p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- =========================
-        ABOUT
-========================= -->
-
-<section class="section" id="about">
-
-    <div class="section-title">
-
-        <p>ABOUT GAME</p>
-
-        <h2>BLACK SERPENT FPS</h2>
-
-    </div>
-
-    <div class="about-box">
-
-        <div class="about-text">
-
-            <h3>
-
-                Become The Best Soldier
-
-            </h3>
-
-            <p>
-
-                Jelajahi berbagai map,
-                tingkatkan kemampuan,
-                kumpulkan senjata,
-                dan kalahkan semua musuh.
-
-            </p>
-
-            <p>
-
-                Website ini akan berkembang menjadi game FPS berbasis web
-                menggunakan HTML, CSS, dan JavaScript.
-
-            </p>
-
-        </div>
-
-        <div class="about-card">
-
-            <div class="icon">
-
-                🎮
-
-            </div>
-
-            <h3>
-
-                FPS MODERN
-
-            </h3>
-
-            <p>
-
-                Grafik modern, efek neon,
-                gameplay cepat,
-                dan tampilan profesional.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-    <!-- =========================
-        GAME MODE
-========================= -->
-
-<section class="section" id="mode">
-
-    <div class="section-title">
-
-        <p>GAME MODE</p>
-
-        <h2>SELECT YOUR MODE</h2>
-
-    </div>
-
-    <div class="cards">
-
-        <div class="card">
-
-            <div class="card-icon">🎯</div>
-
-            <h3>SOLO MISSION</h3>
-
-            <p>
-
-                Bertempur sendirian melawan AI musuh.
-
-            </p>
-
-        </div>
-
-        <div class="card">
-
-            <div class="card-icon">👥</div>
-
-            <h3>TEAM DEATHMATCH</h3>
-
-            <p>
-
-                Bermain bersama tim dan kalahkan lawan.
-
-            </p>
-
-        </div>
-
-        <div class="card">
-
-            <div class="card-icon">🧟</div>
-
-            <h3>ZOMBIE SURVIVAL</h3>
-
-            <p>
-
-                Bertahan hidup dari gelombang zombie.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- =========================
-        NEWS
-========================= -->
-
-<section class="section" id="news">
-
-    <div class="section-title">
-
-        <p>LATEST UPDATE</p>
-
-        <h2>GAME NEWS</h2>
-
-    </div>
-
-    <div class="cards">
-
-        <div class="card">
-
-            <div class="card-icon">🔥</div>
-
-            <h3>NEW MAP</h3>
-
-            <p>
-
-                Desert Base telah ditambahkan.
-
-            </p>
-
-        </div>
-
-        <div class="card">
-
-            <div class="card-icon">🔫</div>
-
-            <h3>NEW WEAPON</h3>
-
-            <p>
-
-                M416 dan Desert Eagle tersedia.
-
-            </p>
-
-        </div>
-
-        <div class="card">
-
-            <div class="card-icon">⭐</div>
-
-            <h3>SEASON PASS</h3>
-
-            <p>
-
-                Dapatkan hadiah eksklusif setiap level.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- =========================
-        GAME SCREEN
-========================= -->
-
-<section class="game-area" id="game">
-
-    <h2>
-
-        GAME SCREEN
-
-    </h2>
-
-    <canvas id="gameCanvas" width="1200" height="650"></canvas>
-
-    <div class="status-bar">
-
-        <div class="status-box">
-
-            <h3>HP</h3>
-
-            <p id="hp">100</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>ARMOR</h3>
-
-            <p id="armor">100</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>AMMO</h3>
-
-            <p id="ammo">30</p>
-
-        </div>
-
-        <div class="status-box">
-
-            <h3>SCORE</h3>
-
-            <p id="score">0</p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- =========================
-        CONTACT
-========================= -->
-
-<section class="section" id="contact">
-
-    <div class="section-title">
-
-        <p>CONTACT</p>
-
-        <h2>GET IN TOUCH</h2>
-
-    </div>
-
-    <div class="contact-box">
-
-        <form>
-
-            <input
-            type="text"
-            placeholder="Your Name">
-
-            <input
-            type="email"
-            placeholder="Your Email">
-
-            <textarea
-            rows="6"
-            placeholder="Write your message"></textarea>
-
-            <button
-            class="button primary">
-
-            SEND MESSAGE
-
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-    <!-- =========================
-        FOOTER
-========================= -->
-
-<footer>
-
-    <div class="footer-logo">
-
-        BLACK <span>SERPENT</span>
-
-    </div>
-
-    <p>
-
-        BLACK SERPENT FPS adalah proyek game FPS berbasis HTML, CSS, dan JavaScript.
-        Website ini akan terus dikembangkan dengan fitur-fitur baru seperti multiplayer,
-        sistem inventory, leaderboard, dan mode permainan yang lebih menantang.
-
-    </p>
-
-    <div class="social">
-
-        <a href="#">DISCORD</a>
-
-        <a href="#">YOUTUBE</a>
-
-        <a href="#">INSTAGRAM</a>
-
-        <a href="#">GITHUB</a>
-
-    </div>
-
-    <p class="copyright">
-
-        © 2026 BLACK SERPENT FPS
-        All Rights Reserved.
-
-    </p>
-
-</footer>
-
-<!-- =========================
-        LOADING SCREEN
-========================= -->
-
-<div id="loading-screen">
-
-    <div class="loader">
-
-        <div class="loader-circle"></div>
-
         <h2>
 
-            BLACK SERPENT FPS
+            NEXT GENERATION FPS
 
         </h2>
 
         <p>
 
-            Loading...
+            Selamat datang di BLACK SERPENT FPS.
+
+            Bersiaplah memasuki arena peperangan modern
+
+            dengan pengalaman FPS yang cepat,
+
+            kompetitif, dan penuh aksi.
 
         </p>
 
-    </div>
+        <div class="play-box">
 
-</div>
+            <button id="mainPlay">
 
-<!-- =========================
-        AUDIO
-========================= -->
+                PLAY NOW
 
-<audio id="bgMusic" loop>
+            </button>
 
-    <source src="audio/menu.mp3" type="audio/mpeg">
+        </div>
 
-</audio>
+        <div class="news">
 
-<audio id="shootSound">
+            <h3>
 
-    <source src="audio/shoot.mp3" type="audio/mpeg">
+                PATCH NOTES
 
-</audio>
+            </h3>
 
-<audio id="reloadSound">
+            <ul>
 
-    <source src="audio/reload.mp3" type="audio/mpeg">
+                <li>✔ New Desert Map</li>
 
-</audio>
+                <li>✔ M416 Added</li>
 
-<!-- =========================
-        JAVASCRIPT
-========================= -->
+                <li>✔ Better AI</li>
+
+                <li>✔ Zombie Mode Soon</li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+    <!-- ===== PLAYER ===== -->
+
+    <aside class="profile">
+
+        <img
+
+        src="images/avatar.png"
+
+        alt="Avatar"
+
+        class="avatar">
+
+        <h2>
+
+            PLAYER
+
+        </h2>
+
+        <p>
+
+            Level
+
+            <span id="level">
+
+                1
+
+            </span>
+
+        </p>
+
+        <p>
+
+            XP
+
+            <span id="xp">
+
+                0 / 100
+
+            </span>
+
+        </p>
+
+        <p>
+
+            Gold
+
+            <span id="gold">
+
+                1000
+
+            </span>
+
+        </p>
+
+        <p>
+
+            Rank
+
+            <span id="rank">
+
+                Rookie
+
+            </span>
+
+        </p>
+
+    </aside>
+
+</main>
+
+<!-- ================= GAME ================= -->
+
+<section id="gameContainer">
+
+    <canvas
+
+    id="gameCanvas"
+
+    width="1280"
+
+    height="720">
+
+    </canvas>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>
+
+        BLACK SERPENT FPS
+
+    </p>
+
+    <small>
+
+        Version 1.0
+
+    </small>
+
+</footer>
 
 <script src="script.js"></script>
 
