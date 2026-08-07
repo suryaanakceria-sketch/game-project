@@ -991,3 +991,839 @@ footer{
 
 
 }
+
+/* =========================================================
+   BLACK SERPENT FPS
+   AAA ANIMATION SYSTEM
+   animation.css
+   VERSION 1.0
+========================================================= */
+
+
+
+/* =========================================================
+   GLOBAL FADE SYSTEM
+========================================================= */
+
+
+.launcher {
+
+
+    animation:
+
+    pageEnter 1.5s ease forwards;
+
+
+}
+
+
+
+@keyframes pageEnter {
+
+
+    from {
+
+
+        opacity:0;
+
+
+    }
+
+
+    to {
+
+
+        opacity:1;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   BACKGROUND CINEMATIC MOVEMENT
+========================================================= */
+
+
+.background video{
+
+
+    animation:
+
+
+    backgroundMove 25s infinite alternate;
+
+
+}
+
+
+
+
+@keyframes backgroundMove {
+
+
+    from {
+
+
+        transform:
+
+        scale(1);
+
+
+    }
+
+
+
+    to {
+
+
+        transform:
+
+        scale(1.08);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   LOGO CINEMATIC INTRO
+========================================================= */
+
+
+.logo{
+
+
+    animation:
+
+
+    logoReveal 1.8s ease forwards;
+
+
+}
+
+
+
+
+
+.logo h1{
+
+
+    animation:
+
+
+    glitchReveal 2s;
+
+
+}
+
+
+
+
+
+@keyframes logoReveal {
+
+
+    from {
+
+
+        opacity:0;
+
+
+        transform:
+
+        translateY(-50px)
+
+        scale(.8);
+
+
+        filter:
+
+        blur(10px);
+
+
+    }
+
+
+
+    to {
+
+
+        opacity:1;
+
+
+        transform:
+
+        translateY(0)
+
+        scale(1);
+
+
+
+        filter:
+
+        blur(0);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+@keyframes glitchReveal {
+
+
+    0%{
+
+
+        clip-path:
+
+        inset(50% 0);
+
+
+    }
+
+
+
+    25%{
+
+
+        clip-path:
+
+        inset(20% 0);
+
+
+    }
+
+
+
+    50%{
+
+
+        clip-path:
+
+        inset(70% 0);
+
+
+    }
+
+
+
+    100%{
+
+
+        clip-path:
+
+        inset(0);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   RED NEON PULSE
+========================================================= */
+
+
+.logo span{
+
+
+    animation:
+
+
+    redPulse 2s infinite;
+
+
+}
+
+
+
+
+@keyframes redPulse {
+
+
+    0%,100%{
+
+
+        text-shadow:
+
+
+        0 0 20px red,
+
+        0 0 50px red;
+
+
+    }
+
+
+
+    50%{
+
+
+        text-shadow:
+
+
+        0 0 40px red,
+
+        0 0 90px red;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   MENU BUTTON ANIMATION
+========================================================= */
+
+
+.center-menu button{
+
+
+    transition:.35s;
+
+
+    animation:
+
+
+    buttonAppear .8s ease forwards;
+
+
+}
+
+
+
+
+
+.center-menu button:hover{
+
+
+    transform:
+
+
+    translateX(15px);
+
+
+    box-shadow:
+
+
+    0 0 30px red;
+
+
+}
+
+
+
+
+@keyframes buttonAppear {
+
+
+    from{
+
+
+        opacity:0;
+
+
+        transform:
+
+        translateX(-50px);
+
+
+    }
+
+
+
+    to{
+
+
+        opacity:1;
+
+
+        transform:
+
+        translateX(0);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   PLAY BUTTON ENERGY EFFECT
+========================================================= */
+
+
+.play{
+
+
+    animation:
+
+
+    playGlow 2s infinite;
+
+
+}
+
+
+
+
+
+@keyframes playGlow {
+
+
+    0%{
+
+
+        box-shadow:
+
+        0 0 0 red;
+
+
+    }
+
+
+
+    50%{
+
+
+        box-shadow:
+
+        0 0 35px red;
+
+
+    }
+
+
+
+    100%{
+
+
+        box-shadow:
+
+        0 0 0 red;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   GLASS PANEL ENTRY
+========================================================= */
+
+
+.profile-card,
+.panel{
+
+
+    animation:
+
+
+    panelEnter 1s ease forwards;
+
+
+}
+
+
+
+
+
+@keyframes panelEnter {
+
+
+    from{
+
+
+        opacity:0;
+
+
+        transform:
+
+        translateY(40px);
+
+
+    }
+
+
+
+    to{
+
+
+        opacity:1;
+
+
+        transform:
+
+        translateY(0);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   SERVER STATUS BLINK
+========================================================= */
+
+
+.server-status span{
+
+
+    animation:
+
+
+    onlineBlink 1.5s infinite;
+
+
+}
+
+
+
+
+
+@keyframes onlineBlink {
+
+
+    0%,100%{
+
+
+        opacity:1;
+
+
+    }
+
+
+
+    50%{
+
+
+        opacity:.3;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+
+.loading-wrapper{
+
+
+    animation:
+
+
+    loadingFade 2s infinite;
+
+
+}
+
+
+
+
+
+.loading-progress span{
+
+
+    animation:
+
+
+    loadingBar 3s infinite;
+
+
+}
+
+
+
+
+
+@keyframes loadingBar {
+
+
+    from{
+
+
+        width:0;
+
+
+    }
+
+
+
+    to{
+
+
+        width:100%;
+
+
+    }
+
+
+}
+
+
+
+
+@keyframes loadingFade {
+
+
+    50%{
+
+
+        opacity:.5;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   SCANLINE EFFECT
+========================================================= */
+
+
+.launcher::after{
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    inset:0;
+
+
+
+    background:
+
+
+    repeating-linear-gradient(
+
+    0deg,
+
+    rgba(255,255,255,.03),
+
+    rgba(255,255,255,.03) 1px,
+
+    transparent 2px,
+
+    transparent 4px
+
+    );
+
+
+
+    pointer-events:none;
+
+
+
+    animation:
+
+
+    scanMove 8s linear infinite;
+
+
+
+}
+
+
+
+
+
+@keyframes scanMove {
+
+
+    from{
+
+
+        background-position:
+
+        0 0;
+
+
+    }
+
+
+
+    to{
+
+
+        background-position:
+
+        0 100px;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   WEAPON SHOWCASE FLOAT
+========================================================= */
+
+
+.weapon-preview img{
+
+
+    animation:
+
+
+    weaponFloat 3s infinite ease-in-out;
+
+
+}
+
+
+
+
+
+@keyframes weaponFloat {
+
+
+    0%,100%{
+
+
+        transform:
+
+        translateY(0);
+
+
+    }
+
+
+
+    50%{
+
+
+        transform:
+
+        translateY(-15px);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   FOOTER FADE
+========================================================= */
+
+
+footer{
+
+
+    animation:
+
+
+    footerFade 3s infinite;
+
+
+}
+
+
+
+
+
+@keyframes footerFade {
+
+
+    50%{
+
+
+        opacity:.5;
+
+
+    }
+
+
+}
