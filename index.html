@@ -1,292 +1,816 @@
-<!DOCTYPE html>
-<html lang="id">
+/* =====================================================
+   BLACK SERPENT FPS
+   PROFESSIONAL LAUNCHER SYSTEM
+   LAUNCHER.CSS
+   VERSION 2.0
+===================================================== */
 
-<head>
 
-<meta charset="UTF-8">
+/* =====================================================
+   RESET
+===================================================== */
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BLACK SERPENT FPS</title>
+* {
 
-<link rel="stylesheet" href="style.css">
+    margin:0;
+    padding:0;
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+    box-sizing:border-box;
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+}
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-</head>
+html,
+body {
 
-<body>
 
-<!-- ================= LOADING ================= -->
+    width:100%;
+    height:100%;
 
-<div id="loading-screen">
 
-    <div class="loader">
+    overflow:hidden;
 
-        <div class="spinner"></div>
 
-        <h1>BLACK SERPENT</h1>
+    background:#050505;
 
-        <p>Loading...</p>
 
-    </div>
+    color:white;
 
-</div>
 
-<!-- ================= HEADER ================= -->
+    font-family:
 
-<header class="topbar">
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-    <div class="logo">
 
-        BLACK <span>SERPENT</span>
+}
 
-    </div>
 
-    <div class="online">
 
-        ONLINE
+/* =====================================================
+   MAIN LAUNCHER CONTAINER
+===================================================== */
 
-        <span id="onlinePlayers">
 
-            256
+.launcher {
 
-        </span>
 
-    </div>
+    position:relative;
 
-</header>
 
-<!-- ================= MAIN ================= -->
+    width:100vw;
 
-<main class="launcher">
 
-    <!-- ===== MENU ===== -->
+    height:100vh;
 
-    <aside class="menu">
 
-        <button id="playBtn">
 
-            ► PLAY GAME
+    display:flex;
 
-        </button>
 
-        <button>
+    flex-direction:column;
 
-            INVENTORY
 
-        </button>
+    justify-content:center;
 
-        <button>
 
-            WEAPONS
+    align-items:center;
 
-        </button>
 
-        <button>
 
-            SHOP
+    overflow:hidden;
 
-        </button>
 
-        <button>
 
-            MISSIONS
+    background:
 
-        </button>
 
-        <button>
+    url("../assets/images/launcher-bg.jpg");
 
-            SETTINGS
 
-        </button>
 
-        <button>
+    background-size:cover;
 
-            EXIT
 
-        </button>
+    background-position:center;
 
-    </aside>
 
-    <!-- ===== CENTER ===== -->
 
-    <section class="center">
+}
 
-        <h1>
 
-            BLACK
 
-            <span>
 
-                SERPENT
+/* =====================================================
+   CINEMATIC OVERLAY
+===================================================== */
 
-            </span>
 
-        </h1>
+.background-overlay {
 
-        <h2>
 
-            NEXT GENERATION FPS
+    position:absolute;
 
-        </h2>
 
-        <p>
+    inset:0;
 
-            Selamat datang di BLACK SERPENT FPS.
 
-            Bersiaplah memasuki arena peperangan modern
 
-            dengan pengalaman FPS yang cepat,
+    background:
 
-            kompetitif, dan penuh aksi.
 
-        </p>
+    linear-gradient(
 
-        <div class="play-box">
+    90deg,
 
-            <button id="mainPlay">
+    rgba(0,0,0,.95),
 
-                PLAY NOW
+    rgba(0,0,0,.55),
 
-            </button>
+    rgba(0,0,0,.95)
 
-        </div>
+    ),
 
-        <div class="news">
 
-            <h3>
+    linear-gradient(
 
-                PATCH NOTES
+    0deg,
 
-            </h3>
+    rgba(255,0,0,.15),
 
-            <ul>
+    transparent
 
-                <li>✔ New Desert Map</li>
+    );
 
-                <li>✔ M416 Added</li>
 
-                <li>✔ Better AI</li>
 
-                <li>✔ Zombie Mode Soon</li>
+    z-index:1;
 
-            </ul>
 
-        </div>
+}
 
-    </section>
 
-    <!-- ===== PLAYER ===== -->
 
-    <aside class="profile">
 
-        <img
+/* RED LIGHT EFFECT */
 
-        src="images/avatar.png"
 
-        alt="Avatar"
+.launcher::after {
 
-        class="avatar">
 
-        <h2>
+    content:"";
 
-            PLAYER
 
-        </h2>
+    position:absolute;
 
-        <p>
 
-            Level
+    width:600px;
 
-            <span id="level">
 
-                1
+    height:600px;
 
-            </span>
 
-        </p>
+    right:-200px;
 
-        <p>
 
-            XP
+    top:-200px;
 
-            <span id="xp">
 
-                0 / 100
 
-            </span>
+    background:red;
 
-        </p>
 
-        <p>
 
-            Gold
+    filter:blur(180px);
 
-            <span id="gold">
 
-                1000
+    opacity:.25;
 
-            </span>
 
-        </p>
 
-        <p>
+}
 
-            Rank
 
-            <span id="rank">
 
-                Rookie
+/* =====================================================
+   LOGO SECTION
+===================================================== */
 
-            </span>
 
-        </p>
+.logo-section {
 
-    </aside>
 
-</main>
+    position:relative;
 
-<!-- ================= GAME ================= -->
 
-<section id="gameContainer">
+    z-index:3;
 
-    <canvas
 
-    id="gameCanvas"
 
-    width="1280"
+    text-align:center;
 
-    height="720">
 
-    </canvas>
 
-</section>
+    margin-bottom:55px;
 
-<!-- ================= FOOTER ================= -->
 
-<footer>
+}
 
-    <p>
 
-        BLACK SERPENT FPS
 
-    </p>
 
-    <small>
 
-        Version 1.0
+.game-logo {
 
-    </small>
 
-</footer>
+    font-size:85px;
 
-<script src="script.js"></script>
 
-</body>
 
-</html>
+    font-weight:1000;
+
+
+
+    letter-spacing:18px;
+
+
+
+    text-transform:uppercase;
+
+
+
+    line-height:.9;
+
+
+
+    color:#ffffff;
+
+
+
+    text-shadow:
+
+
+    0 0 15px rgba(255,255,255,.5),
+
+
+    0 0 40px rgba(255,0,0,.8);
+
+
+
+}
+
+
+
+
+.game-logo span {
+
+
+
+    display:block;
+
+
+
+    margin-top:10px;
+
+
+
+    color:#ff0000;
+
+
+
+    font-size:120px;
+
+
+
+    letter-spacing:25px;
+
+
+
+    text-shadow:
+
+
+    0 0 20px red,
+
+
+    0 0 60px red;
+
+
+
+}
+
+
+
+
+
+
+.subtitle {
+
+
+    margin-top:25px;
+
+
+
+    font-size:16px;
+
+
+
+    letter-spacing:10px;
+
+
+
+    color:#bbb;
+
+
+
+    text-transform:uppercase;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   TACTICAL DECORATION
+===================================================== */
+
+
+.logo-section::before {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+
+    width:300px;
+
+
+    height:2px;
+
+
+
+    background:red;
+
+
+
+    left:50%;
+
+
+
+    bottom:-30px;
+
+
+
+    transform:translateX(-50%);
+
+
+
+    box-shadow:
+
+
+    0 0 20px red;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   MENU PANEL
+===================================================== */
+
+
+.menu-panel {
+
+
+    position:relative;
+
+
+    z-index:3;
+
+
+
+    width:380px;
+
+
+
+    padding:40px;
+
+
+
+    display:flex;
+
+
+
+    flex-direction:column;
+
+
+
+    gap:18px;
+
+
+
+
+    background:
+
+
+    rgba(10,10,10,.65);
+
+
+
+    backdrop-filter:
+
+
+    blur(20px);
+
+
+
+
+    border:
+
+
+    1px solid rgba(255,0,0,.25);
+
+
+
+
+    border-radius:18px;
+
+
+
+    box-shadow:
+
+
+    0 0 50px rgba(0,0,0,.8);
+
+
+
+}
+
+
+
+
+
+/* =====================================================
+   BUTTON STYLE
+===================================================== */
+
+
+.menu-button {
+
+
+    position:relative;
+
+
+    height:65px;
+
+
+
+    overflow:hidden;
+
+
+
+    border:
+
+
+    1px solid rgba(255,255,255,.2);
+
+
+
+    background:
+
+
+    rgba(255,255,255,.06);
+
+
+
+    color:white;
+
+
+
+    border-radius:12px;
+
+
+
+    font-size:18px;
+
+
+
+    font-weight:800;
+
+
+
+    letter-spacing:4px;
+
+
+
+    cursor:pointer;
+
+
+
+    transition:.35s;
+
+
+
+}
+
+
+
+
+
+.menu-button::before {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+
+    left:-100%;
+
+
+    top:0;
+
+
+
+    width:100%;
+
+
+    height:100%;
+
+
+
+    background:
+
+
+    linear-gradient(
+
+    90deg,
+
+    transparent,
+
+    rgba(255,0,0,.5),
+
+    transparent
+
+    );
+
+
+
+    transition:.5s;
+
+
+
+}
+
+
+
+
+
+.menu-button:hover::before {
+
+
+    left:100%;
+
+
+}
+
+
+
+
+
+.menu-button:hover {
+
+
+
+    border-color:red;
+
+
+
+    transform:
+
+
+    translateX(12px);
+
+
+
+    box-shadow:
+
+
+    0 0 25px rgba(255,0,0,.8);
+
+
+
+}
+
+
+
+
+
+
+/* =====================================================
+   PLAY BUTTON
+===================================================== */
+
+
+.play-button {
+
+
+
+    background:
+
+
+    linear-gradient(
+
+    135deg,
+
+    #ff0000,
+
+    #700000
+
+    );
+
+
+
+    border:none;
+
+
+
+}
+
+
+
+
+.play-button:hover {
+
+
+
+    transform:
+
+
+    scale(1.06);
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   BOTTOM INFORMATION
+===================================================== */
+
+
+.version {
+
+
+    position:absolute;
+
+
+    bottom:25px;
+
+
+
+    z-index:3;
+
+
+
+    display:flex;
+
+
+
+    flex-direction:column;
+
+
+
+    align-items:center;
+
+
+
+    gap:8px;
+
+
+
+    color:#777;
+
+
+
+    font-size:12px;
+
+
+
+    letter-spacing:4px;
+
+
+
+}
+
+
+
+
+
+.version::before {
+
+
+
+    content:"";
+
+
+    width:150px;
+
+
+    height:1px;
+
+
+
+    background:#444;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   TOP HUD DECORATION
+===================================================== */
+
+
+.launcher::before {
+
+
+    content:"BLACK SERPENT // ONLINE";
+
+
+
+    position:absolute;
+
+
+
+    top:30px;
+
+
+    left:40px;
+
+
+
+    z-index:3;
+
+
+
+    color:#777;
+
+
+
+    font-size:12px;
+
+
+
+    letter-spacing:4px;
+
+
+
+}
+
+
+
+
+
+
+/* =====================================================
+   SCANLINE EFFECT PREPARATION
+===================================================== */
+
+
+.launcher {
+
+
+    isolation:isolate;
+
+
+}
