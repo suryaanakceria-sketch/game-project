@@ -1,7 +1,3 @@
-/*==================================================
-            BLACK SERPENT FPS WEBSITE
-                PART 1 / 3
-==================================================*/
 
 /*==========================
 RESET
@@ -434,3 +430,452 @@ padding:20px;
 
 }
 
+
+/*==============================
+SECTION
+==============================*/
+
+.section{
+
+    padding:100px 8%;
+
+}
+
+
+/*==============================
+ABOUT
+==============================*/
+
+.about-box{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:50px;
+
+    flex-wrap:wrap;
+
+}
+
+.about-text{
+
+    flex:1;
+
+    min-width:350px;
+
+}
+
+.about-text h3{
+
+    font-size:40px;
+
+    margin-bottom:20px;
+
+}
+
+.about-text p{
+
+    color:#d7d7d7;
+
+    margin-bottom:15px;
+
+    line-height:30px;
+
+}
+
+
+/*==============================
+PLAYER INFO CARD
+==============================*/
+
+.about-card{
+
+    width:350px;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    box-shadow:
+
+    0 0 20px rgba(0,255,136,.15);
+
+    transition:.4s;
+
+}
+
+.about-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:
+
+    0 0 35px #00ff88;
+
+}
+
+.icon{
+
+    font-size:70px;
+
+    margin-bottom:20px;
+
+}
+
+
+/*==============================
+TITLE
+==============================*/
+
+.section-title{
+
+    text-align:center;
+
+    margin-bottom:70px;
+
+}
+
+.section-title p{
+
+    color:#00ff88;
+
+    letter-spacing:4px;
+
+    margin-bottom:10px;
+
+}
+
+.section-title h2{
+
+    font-size:48px;
+
+}
+
+
+/*==============================
+SERVICE CARD
+==============================*/
+
+.cards{
+
+    display:flex;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:35px;
+
+}
+
+.card{
+
+    width:320px;
+
+    padding:35px;
+
+    text-align:center;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    transition:.4s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-12px);
+
+    border-color:#00ff88;
+
+    box-shadow:
+
+    0 0 25px #00ff88;
+
+}
+
+.card-icon{
+
+    font-size:60px;
+
+    margin-bottom:25px;
+
+}
+
+.card h3{
+
+    margin-bottom:15px;
+
+}
+
+.card p{
+
+    color:#d7d7d7;
+
+}
+
+
+/*==============================
+CONTACT
+==============================*/
+
+.contact-box{
+
+    max-width:850px;
+
+    margin:auto;
+
+}
+
+form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+input,
+
+textarea{
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    color:white;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    outline:none;
+
+}
+
+input:focus,
+
+textarea:focus{
+
+    border-color:#00ff88;
+
+    box-shadow:
+
+    0 0 15px #00ff88;
+
+}
+
+textarea{
+
+    resize:none;
+
+}
+
+
+/*==============================
+FOOTER
+==============================*/
+
+footer{
+
+    padding:50px;
+
+    text-align:center;
+
+    background:rgba(0,0,0,.85);
+
+    border-top:1px solid rgba(255,255,255,.1);
+
+}
+
+.footer-logo{
+
+    font-size:32px;
+
+    margin-bottom:15px;
+
+    color:#00ff88;
+
+}
+
+.social{
+
+    margin-top:20px;
+
+}
+
+.social a{
+
+    color:white;
+
+    margin:0 15px;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+.social a:hover{
+
+    color:#00ff88;
+
+}
+
+
+/*==============================
+GAME SCREEN
+==============================*/
+
+.game-area{
+
+    padding:120px 20px;
+
+    text-align:center;
+
+}
+
+.game-area h2{
+
+    font-size:45px;
+
+    margin-bottom:30px;
+
+    color:#00ff88;
+
+}
+
+#gameCanvas{
+
+    width:100%;
+
+    max-width:1200px;
+
+    height:650px;
+
+    background:#111;
+
+    border:3px solid #00ff88;
+
+    border-radius:18px;
+
+    box-shadow:
+
+    0 0 30px rgba(0,255,136,.5);
+
+}
+
+
+/*==============================
+GAME STATUS
+==============================*/
+
+.status-bar{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:25px;
+
+    margin-top:30px;
+
+    flex-wrap:wrap;
+
+}
+
+.status-box{
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    padding:20px 35px;
+
+    border-radius:15px;
+
+    min-width:180px;
+
+    backdrop-filter:blur(10px);
+
+}
+
+.status-box h3{
+
+    color:#00ff88;
+
+    margin-bottom:10px;
+
+}
+
+.status-box p{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+
+/*==============================
+RESPONSIVE
+==============================*/
+
+@media(max-width:900px){
+
+.about-text{
+
+text-align:center;
+
+}
+
+.section-title h2{
+
+font-size:36px;
+
+}
+
+.card{
+
+width:100%;
+
+}
+
+.about-card{
+
+width:100%;
+
+}
+
+#gameCanvas{
+
+height:420px;
+
+}
+
+.status-box{
+
+width:100%;
+
+}
+
+}
