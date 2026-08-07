@@ -1,64 +1,82 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <title>
-        BLACK SERPENT FPS
-    </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-    <!-- =========================
-         CSS SYSTEM
-    ========================== -->
+<title>
+BLACK SERPENT FPS
+</title>
 
-    <link rel="stylesheet" href="css/launcher.css">
 
-    <link rel="stylesheet" href="css/animation.css">
 
-    <link rel="stylesheet" href="css/responsive.css">
+<!-- =========================
+     STYLE SYSTEM
+========================= -->
+
+
+<link rel="stylesheet" href="css/launcher.css">
+
+<link rel="stylesheet" href="css/animation.css">
+
+<link rel="stylesheet" href="css/responsive.css">
+
 
 
 </head>
 
 
-
 <body>
 
 
-<!-- =========================
-     LOADING SCREEN
-========================== -->
+
+<!-- =================================================
+     GAME LOADING SYSTEM
+================================================= -->
 
 
 <div id="loading-screen">
 
 
-    <div class="loading-container">
+    <div class="loading-wrapper">
 
 
-        <h2>
+        <div class="loading-logo">
+
+
             BLACK SERPENT
-        </h2>
 
-
-        <div class="loading-bar">
-
-            <span></span>
 
         </div>
 
 
+
+        <div class="loading-progress">
+
+
+            <span></span>
+
+
+        </div>
+
+
+
         <p>
-            INITIALIZING SYSTEM...
+
+        CONNECTING TO TACTICAL SERVER...
+
         </p>
 
 
+
     </div>
+
 
 
 </div>
@@ -67,143 +85,428 @@
 
 
 
-<!-- =========================
-     MAIN LAUNCHER
-========================== -->
+
+
+
+<!-- =================================================
+     BACKGROUND SYSTEM
+================================================= -->
+
+
+<div class="background">
+
+
+    <video autoplay muted loop>
+
+
+        <source 
+        src="assets/videos/background.mp4"
+        type="video/mp4">
+
+
+    </video>
+
+
+
+    <div class="background-filter"></div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- =================================================
+     TOP HUD
+================================================= -->
+
+
+<header class="top-hud">
+
+
+
+<div class="brand-mini">
+
+
+BLACK SERPENT FPS
+
+
+</div>
+
+
+
+
+<div class="server-status">
+
+
+<span></span>
+
+
+SERVER ONLINE
+
+
+</div>
+
+
+
+
+<div class="clock">
+
+
+00:00
+
+
+</div>
+
+
+
+</header>
+
+
+
+
+
+
+
+
+<!-- =================================================
+     MAIN CONTAINER
+================================================= -->
 
 
 <main class="launcher">
 
 
 
-    <!-- BACKGROUND EFFECT -->
 
-    <div class="background-overlay"></div>
 
 
 
+<!-- =====================
+     LEFT PROFILE
+====================== -->
 
-    <!-- =====================
-         LOGO AREA
-    ====================== -->
 
+<section class="profile-card">
 
-    <section class="logo-section">
 
 
-        <h1 class="game-logo">
+<div class="avatar">
 
-            BLACK
 
-            <span>
-                SERPENT
-            </span>
+<img src="assets/images/avatar.png">
 
 
-        </h1>
+</div>
 
 
 
-        <p class="subtitle">
 
-            TACTICAL FPS EXPERIENCE
+<div class="profile-data">
 
-        </p>
 
+<h2>
 
-    </section>
+PLAYER
 
+</h2>
 
 
+<p>
 
+LEVEL 01
 
+</p>
 
-    <!-- =====================
-         MENU PANEL
-    ====================== -->
 
 
-    <section class="menu-panel">
 
+<div class="rank">
 
-        <button 
-        class="menu-button play-button"
-        id="play-btn">
 
+RANK:
 
-            PLAY NOW
+RECRUIT
 
 
-        </button>
+</div>
 
 
 
+<div class="experience">
 
 
-        <button 
-        class="menu-button"
-        id="loadout-btn">
+<div></div>
 
 
-            LOADOUT
+</div>
 
 
-        </button>
 
+</div>
 
 
+</section>
 
 
-        <button 
-        class="menu-button"
-        id="setting-btn">
 
 
-            SETTINGS
 
 
-        </button>
 
 
 
+<!-- =====================
+     CENTER MENU
+====================== -->
 
 
-        <button 
-        class="menu-button"
-        id="exit-btn">
+<section class="center-menu">
 
 
-            EXIT
 
 
-        </button>
 
+<div class="logo">
 
 
-    </section>
+<h1>
 
+BLACK
 
 
+<span>
 
+SERPENT
 
+</span>
 
 
-    <!-- =====================
-         VERSION INFO
-    ====================== -->
+</h1>
 
 
-    <footer class="version">
 
+<p>
 
-        BLACK SERPENT FPS
+TACTICAL WARFARE SYSTEM
 
-        <br>
+</p>
 
-        VERSION 1.0.0
 
+</div>
 
-    </footer>
+
+
+
+
+
+
+<nav>
+
+
+
+<button 
+class="play">
+
+
+START MISSION
+
+
+</button>
+
+
+
+
+<button>
+
+LOADOUT
+
+
+</button>
+
+
+
+
+<button>
+
+OPERATORS
+
+
+</button>
+
+
+
+
+<button>
+
+ARMORY
+
+
+</button>
+
+
+
+
+<button>
+
+SETTINGS
+
+
+</button>
+
+
+
+</nav>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- =====================
+     RIGHT PANEL
+====================== -->
+
+
+<section class="right-panel">
+
+
+
+
+
+<div class="panel">
+
+
+<h3>
+
+DAILY MISSION
+
+</h3>
+
+
+
+<p>
+
+ELIMINATE 50 ENEMIES
+
+</p>
+
+
+
+<div class="mission-progress">
+
+
+<span></span>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="panel">
+
+
+<h3>
+
+LATEST NEWS
+
+</h3>
+
+
+
+<ul>
+
+
+<li>
+
+NEW MAP RELEASED
+
+</li>
+
+
+
+<li>
+
+WEAPON UPDATE
+
+</li>
+
+
+
+<li>
+
+SERVER MAINTENANCE
+
+</li>
+
+
+
+</ul>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="panel weapon-preview">
+
+
+<h3>
+
+CURRENT WEAPON
+
+</h3>
+
+
+
+<img src="assets/weapons/rifle.png">
+
+
+<p>
+
+SERPENT RIFLE X1
+
+</p>
+
+
+
+</div>
+
+
+
+
+</section>
+
+
+
+
 
 
 
@@ -216,9 +519,157 @@
 
 
 
-<!-- =========================
-     JAVASCRIPT SYSTEM
-========================== -->
+
+
+
+<!-- =================================================
+     FRIEND SYSTEM
+================================================= -->
+
+
+<section class="friends-panel">
+
+
+<h3>
+
+SQUAD
+
+</h3>
+
+
+
+<div class="friend">
+
+
+ONLINE PLAYER
+
+</div>
+
+
+
+<div class="friend">
+
+
+AVAILABLE
+
+</div>
+
+
+
+<div class="friend">
+
+
+OFFLINE
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- =================================================
+     POPUP WINDOWS
+================================================= -->
+
+
+
+<div class="popup" id="settings">
+
+
+<div class="popup-content">
+
+
+<h2>
+
+GAME SETTINGS
+
+</h2>
+
+
+<button>
+
+GRAPHIC
+
+</button>
+
+
+<button>
+
+AUDIO
+
+</button>
+
+
+<button>
+
+CONTROL
+
+</button>
+
+
+<button>
+
+CLOSE
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- =================================================
+     FOOTER
+================================================= -->
+
+
+<footer>
+
+
+<div>
+
+BLACK SERPENT FPS
+
+</div>
+
+
+<div>
+
+VERSION 1.0.0
+
+</div>
+
+
+</footer>
+
+
+
+
+
+
+
+
+
+<!-- =================================================
+     JAVASCRIPT CORE
+================================================= -->
 
 
 <script src="js/loading.js"></script>
