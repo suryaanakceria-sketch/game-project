@@ -1,19 +1,21 @@
-/* =====================================================
+/* =========================================================
    BLACK SERPENT FPS
-   PROFESSIONAL LAUNCHER SYSTEM
-   LAUNCHER.CSS
-   VERSION 2.0
-===================================================== */
+   AAA LAUNCHER SYSTEM
+   launcher.css
+   VERSION 3.0
+========================================================= */
 
 
-/* =====================================================
-   RESET
-===================================================== */
+
+/* =========================================================
+   CORE RESET
+========================================================= */
 
 
-* {
+*{
 
     margin:0;
+
     padding:0;
 
     box-sizing:border-box;
@@ -21,11 +23,13 @@
 }
 
 
+
 html,
-body {
+body{
 
 
     width:100%;
+
     height:100%;
 
 
@@ -50,52 +54,48 @@ body {
 
 
 
-/* =====================================================
-   MAIN LAUNCHER CONTAINER
-===================================================== */
+/* =========================================================
+   BACKGROUND SYSTEM
+========================================================= */
 
 
-.launcher {
+.background{
 
 
-    position:relative;
+    position:fixed;
 
 
-    width:100vw;
+    inset:0;
 
 
-    height:100vh;
-
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-    justify-content:center;
-
-
-    align-items:center;
-
+    z-index:-2;
 
 
     overflow:hidden;
 
 
-
-    background:
-
-
-    url("../assets/images/launcher-bg.jpg");
+}
 
 
 
-    background-size:cover;
+
+.background video{
 
 
-    background-position:center;
+    width:100%;
+
+
+    height:100%;
+
+
+    object-fit:cover;
+
+
+    filter:
+
+    brightness(.45)
+
+    contrast(1.2);
 
 
 
@@ -104,19 +104,13 @@ body {
 
 
 
-/* =====================================================
-   CINEMATIC OVERLAY
-===================================================== */
-
-
-.background-overlay {
+.background-filter{
 
 
     position:absolute;
 
 
     inset:0;
-
 
 
     background:
@@ -128,7 +122,7 @@ body {
 
     rgba(0,0,0,.95),
 
-    rgba(0,0,0,.55),
+    rgba(0,0,0,.4),
 
     rgba(0,0,0,.95)
 
@@ -147,188 +141,6 @@ body {
 
 
 
-    z-index:1;
-
-
-}
-
-
-
-
-/* RED LIGHT EFFECT */
-
-
-.launcher::after {
-
-
-    content:"";
-
-
-    position:absolute;
-
-
-    width:600px;
-
-
-    height:600px;
-
-
-    right:-200px;
-
-
-    top:-200px;
-
-
-
-    background:red;
-
-
-
-    filter:blur(180px);
-
-
-    opacity:.25;
-
-
-
-}
-
-
-
-/* =====================================================
-   LOGO SECTION
-===================================================== */
-
-
-.logo-section {
-
-
-    position:relative;
-
-
-    z-index:3;
-
-
-
-    text-align:center;
-
-
-
-    margin-bottom:55px;
-
-
-}
-
-
-
-
-
-.game-logo {
-
-
-    font-size:85px;
-
-
-
-    font-weight:1000;
-
-
-
-    letter-spacing:18px;
-
-
-
-    text-transform:uppercase;
-
-
-
-    line-height:.9;
-
-
-
-    color:#ffffff;
-
-
-
-    text-shadow:
-
-
-    0 0 15px rgba(255,255,255,.5),
-
-
-    0 0 40px rgba(255,0,0,.8);
-
-
-
-}
-
-
-
-
-.game-logo span {
-
-
-
-    display:block;
-
-
-
-    margin-top:10px;
-
-
-
-    color:#ff0000;
-
-
-
-    font-size:120px;
-
-
-
-    letter-spacing:25px;
-
-
-
-    text-shadow:
-
-
-    0 0 20px red,
-
-
-    0 0 60px red;
-
-
-
-}
-
-
-
-
-
-
-.subtitle {
-
-
-    margin-top:25px;
-
-
-
-    font-size:16px;
-
-
-
-    letter-spacing:10px;
-
-
-
-    color:#bbb;
-
-
-
-    text-transform:uppercase;
-
-
-
 }
 
 
@@ -337,93 +149,320 @@ body {
 
 
 
-/* =====================================================
-   TACTICAL DECORATION
-===================================================== */
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
 
 
-.logo-section::before {
+#loading-screen{
 
 
-    content:"";
+    position:fixed;
 
 
-    position:absolute;
+    inset:0;
 
 
-
-    width:300px;
-
-
-    height:2px;
-
-
-
-    background:red;
-
-
-
-    left:50%;
-
-
-
-    bottom:-30px;
-
-
-
-    transform:translateX(-50%);
-
-
-
-    box-shadow:
-
-
-    0 0 20px red;
-
-
-
-}
-
-
-
-
-
-
-
-/* =====================================================
-   MENU PANEL
-===================================================== */
-
-
-.menu-panel {
-
-
-    position:relative;
-
-
-    z-index:3;
-
-
-
-    width:380px;
-
-
-
-    padding:40px;
-
+    background:#000;
 
 
     display:flex;
 
 
-
-    flex-direction:column;
-
+    justify-content:center;
 
 
-    gap:18px;
+    align-items:center;
 
 
+    z-index:9999;
+
+
+}
+
+
+
+
+.loading-wrapper{
+
+
+    text-align:center;
+
+
+}
+
+
+
+.loading-logo{
+
+
+    font-size:55px;
+
+
+    font-weight:900;
+
+
+    letter-spacing:15px;
+
+
+    color:white;
+
+
+}
+
+
+
+.loading-progress{
+
+
+    width:450px;
+
+
+    height:5px;
+
+
+    margin:30px auto;
+
+
+    background:#222;
+
+
+}
+
+
+
+.loading-progress span{
+
+
+    display:block;
+
+
+    height:100%;
+
+
+    width:70%;
+
+
+    background:#ff0000;
+
+
+}
+
+
+
+
+
+.loading-wrapper p{
+
+
+    color:#aaa;
+
+
+    letter-spacing:5px;
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   TOP HUD
+========================================================= */
+
+
+.top-hud{
+
+
+    position:absolute;
+
+
+    top:0;
+
+
+    left:0;
+
+
+    width:100%;
+
+
+    height:80px;
+
+
+    padding:0 50px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:space-between;
+
+
+    background:
+
+
+    rgba(0,0,0,.45);
+
+
+
+    border-bottom:
+
+    1px solid rgba(255,0,0,.25);
+
+
+
+}
+
+
+
+
+
+.brand-mini{
+
+
+    font-size:18px;
+
+
+    font-weight:900;
+
+
+    letter-spacing:5px;
+
+
+}
+
+
+
+
+
+.server-status{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:12px;
+
+
+    color:#00ff55;
+
+
+    font-weight:bold;
+
+
+}
+
+
+
+
+.server-status span{
+
+
+    width:10px;
+
+
+    height:10px;
+
+
+    background:#00ff55;
+
+
+    border-radius:50%;
+
+
+    box-shadow:
+
+    0 0 15px #00ff55;
+
+
+}
+
+
+
+
+
+
+
+.clock{
+
+
+    font-size:20px;
+
+
+    color:#aaa;
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   MAIN LAUNCHER GRID
+========================================================= */
+
+
+.launcher{
+
+
+    width:100%;
+
+
+    height:100vh;
+
+
+    padding:
+
+    100px 60px 60px;
+
+
+
+    display:grid;
+
+
+    grid-template-columns:
+
+    300px
+
+    1fr
+
+    350px;
+
+
+
+    gap:40px;
+
+
+    align-items:center;
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   PROFILE CARD
+========================================================= */
+
+
+.profile-card{
 
 
     background:
@@ -432,122 +471,58 @@ body {
     rgba(10,10,10,.65);
 
 
-
     backdrop-filter:
 
+    blur(15px);
 
-    blur(20px);
 
+
+    padding:30px;
+
+
+    border-radius:15px;
 
 
 
     border:
-
 
     1px solid rgba(255,0,0,.25);
 
 
 
-
-    border-radius:18px;
-
-
-
-    box-shadow:
-
-
-    0 0 50px rgba(0,0,0,.8);
-
-
-
 }
 
 
 
 
-
-/* =====================================================
-   BUTTON STYLE
-===================================================== */
+.avatar{
 
 
-.menu-button {
+    width:120px;
 
 
-    position:relative;
+    height:120px;
 
 
-    height:65px;
+    margin:auto;
 
+
+    border-radius:50%;
 
 
     overflow:hidden;
 
 
-
     border:
 
-
-    1px solid rgba(255,255,255,.2);
-
-
-
-    background:
-
-
-    rgba(255,255,255,.06);
-
-
-
-    color:white;
-
-
-
-    border-radius:12px;
-
-
-
-    font-size:18px;
-
-
-
-    font-weight:800;
-
-
-
-    letter-spacing:4px;
-
-
-
-    cursor:pointer;
-
-
-
-    transition:.35s;
-
+    3px solid #ff0000;
 
 
 }
 
 
 
-
-
-.menu-button::before {
-
-
-    content:"";
-
-
-    position:absolute;
-
-
-
-    left:-100%;
-
-
-    top:0;
-
+.avatar img{
 
 
     width:100%;
@@ -556,66 +531,221 @@ body {
     height:100%;
 
 
+    object-fit:cover;
+
+
+}
+
+
+
+
+.profile-data{
+
+
+    text-align:center;
+
+
+    margin-top:25px;
+
+
+}
+
+
+
+
+.profile-data h2{
+
+
+    letter-spacing:5px;
+
+
+}
+
+
+
+.rank{
+
+
+    margin-top:20px;
+
+
+    color:#ff0000;
+
+
+    font-weight:bold;
+
+
+}
+
+
+
+
+
+
+.experience{
+
+
+    height:8px;
+
+
+    margin-top:20px;
+
+
+    background:#222;
+
+
+}
+
+
+
+.experience div{
+
+
+    width:45%;
+
+
+    height:100%;
+
+
+    background:red;
+
+
+}
+
+
+
+
+
+
+/* =========================================================
+   CENTER MENU
+========================================================= */
+
+
+.center-menu{
+
+
+    text-align:center;
+
+
+}
+
+
+
+.logo h1{
+
+
+    font-size:90px;
+
+
+    font-weight:1000;
+
+
+    letter-spacing:20px;
+
+
+
+}
+
+
+
+.logo span{
+
+
+    display:block;
+
+
+    color:#ff0000;
+
+
+    font-size:120px;
+
+
+    text-shadow:
+
+    0 0 40px red;
+
+
+
+}
+
+
+
+.logo p{
+
+
+    margin-top:20px;
+
+
+    letter-spacing:8px;
+
+
+    color:#aaa;
+
+
+}
+
+
+
+
+
+.center-menu nav{
+
+
+    margin-top:50px;
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    gap:15px;
+
+
+}
+
+
+
+.center-menu button{
+
+
+    width:350px;
+
+
+    height:65px;
+
+
+    margin:auto;
+
 
     background:
 
 
-    linear-gradient(
-
-    90deg,
-
-    transparent,
-
-    rgba(255,0,0,.5),
-
-    transparent
-
-    );
+    rgba(255,255,255,.08);
 
 
 
-    transition:.5s;
+    border:
+
+    1px solid rgba(255,255,255,.2);
 
 
 
-}
+    color:white;
 
 
+    font-size:18px;
 
 
-
-.menu-button:hover::before {
-
-
-    left:100%;
+    font-weight:bold;
 
 
-}
+    letter-spacing:5px;
 
 
-
-
-
-.menu-button:hover {
-
-
-
-    border-color:red;
-
-
-
-    transform:
-
-
-    translateX(12px);
-
-
-
-    box-shadow:
-
-
-    0 0 25px rgba(255,0,0,.8);
-
+    cursor:pointer;
 
 
 }
@@ -625,13 +755,7 @@ body {
 
 
 
-/* =====================================================
-   PLAY BUTTON
-===================================================== */
-
-
-.play-button {
-
+.center-menu .play{
 
 
     background:
@@ -643,32 +767,140 @@ body {
 
     #ff0000,
 
-    #700000
+    #650000
+
+    );
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   RIGHT PANEL
+========================================================= */
+
+
+.right-panel{
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    gap:20px;
+
+
+}
+
+
+
+
+
+.panel{
+
+
+    background:
+
+
+    rgba(0,0,0,.65);
+
+
+
+    padding:25px;
+
+
+    border-radius:15px;
+
+
+    border:
+
+    1px solid rgba(255,255,255,.15);
+
+
+
+}
+
+
+
+
+.panel h3{
+
+
+    color:#ff0000;
+
+
+    letter-spacing:4px;
+
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.panel li{
+
+
+    list-style:none;
+
+
+    padding:10px 0;
+
+
+    color:#ccc;
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   WEAPON DISPLAY
+========================================================= */
+
+
+.weapon-preview{
+
+
+    text-align:center;
+
+
+}
+
+
+
+
+.weapon-preview img{
+
+
+    width:250px;
+
+
+    margin:20px 0;
+
+
+    filter:
+
+    drop-shadow(
+
+    0 0 20px red
 
     );
 
 
 
-    border:none;
-
-
-
-}
-
-
-
-
-.play-button:hover {
-
-
-
-    transform:
-
-
-    scale(1.06);
-
-
-
 }
 
 
@@ -677,12 +909,64 @@ body {
 
 
 
-/* =====================================================
-   BOTTOM INFORMATION
-===================================================== */
+
+/* =========================================================
+   FRIEND PANEL
+========================================================= */
 
 
-.version {
+.friends-panel{
+
+
+    position:absolute;
+
+
+    bottom:30px;
+
+
+    left:50px;
+
+
+    width:250px;
+
+
+    background:
+
+    rgba(0,0,0,.6);
+
+
+    padding:20px;
+
+
+}
+
+
+
+.friend{
+
+
+    padding:10px;
+
+
+    border-bottom:
+
+    1px solid #333;
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+
+footer{
 
 
     position:absolute;
@@ -691,126 +975,19 @@ body {
     bottom:25px;
 
 
-
-    z-index:3;
-
-
-
-    display:flex;
-
-
-
-    flex-direction:column;
-
-
-
-    align-items:center;
-
-
-
-    gap:8px;
-
+    right:50px;
 
 
     color:#777;
 
 
-
-    font-size:12px;
-
+    text-align:right;
 
 
-    letter-spacing:4px;
-
-
-
-}
-
-
-
-
-
-.version::before {
-
-
-
-    content:"";
-
-
-    width:150px;
-
-
-    height:1px;
-
-
-
-    background:#444;
-
-
-
-}
-
-
-
-
-
-
-
-/* =====================================================
-   TOP HUD DECORATION
-===================================================== */
-
-
-.launcher::before {
-
-
-    content:"BLACK SERPENT // ONLINE";
-
-
-
-    position:absolute;
-
-
-
-    top:30px;
-
-
-    left:40px;
-
-
-
-    z-index:3;
-
-
-
-    color:#777;
-
+    letter-spacing:3px;
 
 
     font-size:12px;
-
-
-
-    letter-spacing:4px;
-
-
-
-}
-
-
-
-
-
-
-/* =====================================================
-   SCANLINE EFFECT PREPARATION
-===================================================== */
-
-
-.launcher {
-
-
-    isolation:isolate;
 
 
 }
