@@ -1,20 +1,19 @@
 /* =====================================================
    BLACK SERPENT FPS
-   LAUNCHER CSS FOUNDATION
-   VERSION 1.0
+   PROFESSIONAL LAUNCHER SYSTEM
+   LAUNCHER.CSS
+   VERSION 2.0
 ===================================================== */
 
 
-
 /* =====================================================
-   GLOBAL RESET
+   RESET
 ===================================================== */
 
 
 * {
 
     margin:0;
-
     padding:0;
 
     box-sizing:border-box;
@@ -22,23 +21,15 @@
 }
 
 
-
+html,
 body {
 
 
     width:100%;
-
-    height:100vh;
+    height:100%;
 
 
     overflow:hidden;
-
-
-    font-family:
-
-    "Segoe UI",
-    Arial,
-    sans-serif;
 
 
     background:#050505;
@@ -47,14 +38,20 @@ body {
     color:white;
 
 
+    font-family:
+
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+
 }
 
 
 
-
-
 /* =====================================================
-   MAIN LAUNCHER
+   MAIN LAUNCHER CONTAINER
 ===================================================== */
 
 
@@ -64,9 +61,11 @@ body {
     position:relative;
 
 
-    width:100%;
+    width:100vw;
+
 
     height:100vh;
+
 
 
     display:flex;
@@ -82,10 +81,15 @@ body {
 
 
 
+    overflow:hidden;
+
+
+
     background:
 
 
     url("../assets/images/launcher-bg.jpg");
+
 
 
     background-size:cover;
@@ -101,7 +105,7 @@ body {
 
 
 /* =====================================================
-   BACKGROUND OVERLAY
+   CINEMATIC OVERLAY
 ===================================================== */
 
 
@@ -122,11 +126,22 @@ body {
 
     90deg,
 
-    rgba(0,0,0,.9),
+    rgba(0,0,0,.95),
 
-    rgba(0,0,0,.4),
+    rgba(0,0,0,.55),
 
-    rgba(0,0,0,.9)
+    rgba(0,0,0,.95)
+
+    ),
+
+
+    linear-gradient(
+
+    0deg,
+
+    rgba(255,0,0,.15),
+
+    transparent
 
     );
 
@@ -138,6 +153,45 @@ body {
 }
 
 
+
+
+/* RED LIGHT EFFECT */
+
+
+.launcher::after {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    width:600px;
+
+
+    height:600px;
+
+
+    right:-200px;
+
+
+    top:-200px;
+
+
+
+    background:red;
+
+
+
+    filter:blur(180px);
+
+
+    opacity:.25;
+
+
+
+}
 
 
 
@@ -152,14 +206,15 @@ body {
     position:relative;
 
 
-    z-index:2;
+    z-index:3;
+
 
 
     text-align:center;
 
 
 
-    margin-bottom:60px;
+    margin-bottom:55px;
 
 
 }
@@ -171,21 +226,15 @@ body {
 .game-logo {
 
 
-    font-size:90px;
-
-
-    font-weight:900;
-
-
-    letter-spacing:15px;
+    font-size:85px;
 
 
 
-    line-height:1;
+    font-weight:1000;
 
 
 
-    color:white;
+    letter-spacing:18px;
 
 
 
@@ -193,13 +242,21 @@ body {
 
 
 
+    line-height:.9;
+
+
+
+    color:#ffffff;
+
+
+
     text-shadow:
 
 
-    0 0 10px rgba(255,0,0,.8),
+    0 0 15px rgba(255,255,255,.5),
 
 
-    0 0 40px rgba(255,0,0,.6);
+    0 0 40px rgba(255,0,0,.8);
 
 
 
@@ -211,7 +268,12 @@ body {
 .game-logo span {
 
 
+
     display:block;
+
+
+
+    margin-top:10px;
 
 
 
@@ -219,7 +281,22 @@ body {
 
 
 
-    font-size:110px;
+    font-size:120px;
+
+
+
+    letter-spacing:25px;
+
+
+
+    text-shadow:
+
+
+    0 0 20px red,
+
+
+    0 0 60px red;
+
 
 
 }
@@ -228,19 +305,81 @@ body {
 
 
 
+
 .subtitle {
 
 
-    margin-top:20px;
+    margin-top:25px;
 
 
-    font-size:18px;
+
+    font-size:16px;
 
 
-    letter-spacing:8px;
+
+    letter-spacing:10px;
 
 
-    color:#cccccc;
+
+    color:#bbb;
+
+
+
+    text-transform:uppercase;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   TACTICAL DECORATION
+===================================================== */
+
+
+.logo-section::before {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+
+    width:300px;
+
+
+    height:2px;
+
+
+
+    background:red;
+
+
+
+    left:50%;
+
+
+
+    bottom:-30px;
+
+
+
+    transform:translateX(-50%);
+
+
+
+    box-shadow:
+
+
+    0 0 20px red;
+
 
 
 }
@@ -262,49 +401,62 @@ body {
     position:relative;
 
 
-    z-index:2;
+    z-index:3;
 
 
 
-    width:350px;
+    width:380px;
 
 
 
-    padding:35px;
+    padding:40px;
 
 
 
     display:flex;
 
 
+
     flex-direction:column;
 
 
-    gap:20px;
+
+    gap:18px;
+
 
 
 
     background:
 
 
-    rgba(0,0,0,.55);
+    rgba(10,10,10,.65);
 
 
 
     backdrop-filter:
 
-    blur(15px);
 
+    blur(20px);
 
-
-    border-radius:20px;
 
 
 
     border:
 
 
-    1px solid rgba(255,255,255,.15);
+    1px solid rgba(255,0,0,.25);
+
+
+
+
+    border-radius:18px;
+
+
+
+    box-shadow:
+
+
+    0 0 50px rgba(0,0,0,.8);
 
 
 
@@ -315,31 +467,35 @@ body {
 
 
 /* =====================================================
-   BUTTON SYSTEM
+   BUTTON STYLE
 ===================================================== */
 
 
 .menu-button {
 
 
-    width:100%;
+    position:relative;
 
 
-    height:60px;
+    height:65px;
 
 
 
-    border:none;
+    overflow:hidden;
 
 
-    outline:none;
+
+    border:
+
+
+    1px solid rgba(255,255,255,.2);
 
 
 
     background:
 
 
-    rgba(255,255,255,.08);
+    rgba(255,255,255,.06);
 
 
 
@@ -347,26 +503,91 @@ body {
 
 
 
+    border-radius:12px;
+
+
+
     font-size:18px;
 
 
-    font-weight:700;
+
+    font-weight:800;
 
 
 
-    letter-spacing:3px;
-
-
-
-    border-radius:10px;
-
-
-
-    transition:.3s;
+    letter-spacing:4px;
 
 
 
     cursor:pointer;
+
+
+
+    transition:.35s;
+
+
+
+}
+
+
+
+
+
+.menu-button::before {
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+
+    left:-100%;
+
+
+    top:0;
+
+
+
+    width:100%;
+
+
+    height:100%;
+
+
+
+    background:
+
+
+    linear-gradient(
+
+    90deg,
+
+    transparent,
+
+    rgba(255,0,0,.5),
+
+    transparent
+
+    );
+
+
+
+    transition:.5s;
+
+
+
+}
+
+
+
+
+
+.menu-button:hover::before {
+
+
+    left:100%;
 
 
 }
@@ -379,32 +600,22 @@ body {
 
 
 
-    background:
-
-
-    linear-gradient(
-
-    135deg,
-
-    #ff0000,
-
-    #800000
-
-    );
+    border-color:red;
 
 
 
     transform:
 
 
-    translateX(10px);
+    translateX(12px);
 
 
 
     box-shadow:
 
 
-    0 0 25px red;
+    0 0 25px rgba(255,0,0,.8);
+
 
 
 }
@@ -412,10 +623,15 @@ body {
 
 
 
-/* PLAY BUTTON */
+
+
+/* =====================================================
+   PLAY BUTTON
+===================================================== */
 
 
 .play-button {
+
 
 
     background:
@@ -433,8 +649,11 @@ body {
 
 
 
-}
+    border:none;
 
+
+
+}
 
 
 
@@ -442,9 +661,12 @@ body {
 .play-button:hover {
 
 
+
     transform:
 
-    scale(1.05);
+
+    scale(1.06);
+
 
 
 }
@@ -456,7 +678,7 @@ body {
 
 
 /* =====================================================
-   VERSION INFO
+   BOTTOM INFORMATION
 ===================================================== */
 
 
@@ -466,16 +688,31 @@ body {
     position:absolute;
 
 
-
     bottom:25px;
 
 
 
-    z-index:2;
+    z-index:3;
 
 
 
-    text-align:center;
+    display:flex;
+
+
+
+    flex-direction:column;
+
+
+
+    align-items:center;
+
+
+
+    gap:8px;
+
+
+
+    color:#777;
 
 
 
@@ -483,12 +720,97 @@ body {
 
 
 
-    letter-spacing:3px;
+    letter-spacing:4px;
 
 
 
-    color:#888;
+}
 
+
+
+
+
+.version::before {
+
+
+
+    content:"";
+
+
+    width:150px;
+
+
+    height:1px;
+
+
+
+    background:#444;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   TOP HUD DECORATION
+===================================================== */
+
+
+.launcher::before {
+
+
+    content:"BLACK SERPENT // ONLINE";
+
+
+
+    position:absolute;
+
+
+
+    top:30px;
+
+
+    left:40px;
+
+
+
+    z-index:3;
+
+
+
+    color:#777;
+
+
+
+    font-size:12px;
+
+
+
+    letter-spacing:4px;
+
+
+
+}
+
+
+
+
+
+
+/* =====================================================
+   SCANLINE EFFECT PREPARATION
+===================================================== */
+
+
+.launcher {
+
+
+    isolation:isolate;
 
 
 }
