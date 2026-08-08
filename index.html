@@ -1,412 +1,212 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <meta name="theme-color" content="#050505">
+    <meta
+        name="theme-color"
+        content="#050608"
+    >
+
+    <meta
+        name="description"
+        content="Futuristic FPS Arena"
+    >
 
     <title>BLACK OPS // FPS ARENA</title>
 
-    <!-- ==============================
-         GOOGLE FONT
-    =============================== -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- =================================================
+         THREE.JS
+         ================================================= -->
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-    >
+    <script
+        src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js">
+    </script>
 
-    <!-- ==============================
-         MAIN CSS
-    =============================== -->
-    <link rel="stylesheet" href="style.css">
+    <script
+        src="https://cdn.jsdelivr.net/npm/three@0.180.0/examples/js/controls/PointerLockControls.js">
+    </script>
+
 </head>
+
 
 <body>
 
-    <!-- =========================================
+    <!-- =================================================
          GAME ROOT
-    ========================================== -->
-    <div id="game">
+         ================================================= -->
 
-        <!-- =====================================
-             BACKGROUND
-        ====================================== -->
-        <div id="background-layer"></div>
+    <main id="game">
 
-        <div id="fog-layer"></div>
+        <!-- =================================================
+             3D CANVAS
+             Three.js akan membuat canvas secara otomatis
+             ================================================= -->
 
-        <div id="vignette"></div>
-
-        <!-- =====================================
-             MAIN MENU
-        ====================================== -->
-        <section id="main-menu" class="screen active">
-
-            <div class="menu-background"></div>
-
-            <div class="menu-overlay"></div>
-
-            <div class="menu-content">
-
-                <div class="game-label">
-                    <span></span>
-                    ONLINE COMBAT SYSTEM
-                    <span></span>
-                </div>
-
-                <h1 class="game-title">
-                    BLACK
-                    <strong>OPS</strong>
-                </h1>
-
-                <p class="game-subtitle">
-                    FUTURISTIC COMBAT ARENA
-                </p>
-
-                <div class="menu-buttons">
-
-                    <button
-                        id="start-game"
-                        class="menu-button primary"
-                    >
-                        <span class="button-number">01</span>
-                        <span>START GAME</span>
-                    </button>
-
-                    <button
-                        id="how-to-play"
-                        class="menu-button"
-                    >
-                        <span class="button-number">02</span>
-                        <span>HOW TO PLAY</span>
-                    </button>
-
-                    <button
-                        id="settings-button"
-                        class="menu-button"
-                    >
-                        <span class="button-number">03</span>
-                        <span>SETTINGS</span>
-                    </button>
-
-                </div>
-
-                <div class="menu-footer">
-
-                    <div>
-                        BUILD 1.0.0
-                    </div>
-
-                    <div>
-                        FPS ARENA SYSTEM
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             HOW TO PLAY
-        ====================================== -->
-        <section
-            id="instructions-screen"
-            class="screen hidden"
-        >
-
-            <div class="panel">
-
-                <div class="panel-header">
-                    <span>COMBAT MANUAL</span>
-
-                    <button
-                        id="close-instructions"
-                        class="close-button"
-                    >
-                        ×
-                    </button>
-                </div>
-
-                <div class="instructions-grid">
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            W
-                        </div>
-
-                        <div>
-                            <h3>MOVE FORWARD</h3>
-                            <p>Bergerak maju.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            A
-                        </div>
-
-                        <div>
-                            <h3>MOVE LEFT</h3>
-                            <p>Bergerak ke kiri.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            S
-                        </div>
-
-                        <div>
-                            <h3>MOVE BACK</h3>
-                            <p>Bergerak mundur.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            D
-                        </div>
-
-                        <div>
-                            <h3>MOVE RIGHT</h3>
-                            <p>Bergerak ke kanan.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key wide">
-                            SPACE
-                        </div>
-
-                        <div>
-                            <h3>JUMP</h3>
-                            <p>Melompat.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            LMB
-                        </div>
-
-                        <div>
-                            <h3>FIRE</h3>
-                            <p>Menembakkan senjata.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            R
-                        </div>
-
-                        <div>
-                            <h3>RELOAD</h3>
-                            <p>Mengisi ulang amunisi.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="instruction-card">
-
-                        <div class="instruction-key">
-                            ESC
-                        </div>
-
-                        <div>
-                            <h3>PAUSE</h3>
-                            <p>Membuka menu pause.</p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             SETTINGS
-        ====================================== -->
-        <section
-            id="settings-screen"
-            class="screen hidden"
-        >
-
-            <div class="panel settings-panel">
-
-                <div class="panel-header">
-
-                    <span>SYSTEM SETTINGS</span>
-
-                    <button
-                        id="close-settings"
-                        class="close-button"
-                    >
-                        ×
-                    </button>
-
-                </div>
-
-                <div class="settings-content">
-
-                    <div class="setting-row">
-
-                        <div>
-                            <h3>GRAPHICS QUALITY</h3>
-                            <p>Menentukan kualitas visual.</p>
-                        </div>
-
-                        <select id="graphics-quality">
-
-                            <option value="low">
-                                LOW
-                            </option>
-
-                            <option
-                                value="medium"
-                                selected
-                            >
-                                MEDIUM
-                            </option>
-
-                            <option value="high">
-                                HIGH
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div>
-                            <h3>MOUSE SENSITIVITY</h3>
-                            <p>Kecepatan pergerakan kamera.</p>
-                        </div>
-
-                        <input
-                            id="mouse-sensitivity"
-                            type="range"
-                            min="0.1"
-                            max="2"
-                            step="0.1"
-                            value="0.8"
-                        >
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div>
-                            <h3>MASTER VOLUME</h3>
-                            <p>Volume seluruh suara game.</p>
-                        </div>
-
-                        <input
-                            id="master-volume"
-                            type="range"
-                            min="0"
-                            max="100"
-                            value="70"
-                        >
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             GAME WORLD
-        ====================================== -->
-        <main
+        <div
             id="game-world"
-            class="hidden"
-        >
-
-            <!--
-                Canvas akan digunakan oleh engine.js
-            -->
-
-            <canvas id="game-canvas"></canvas>
+            aria-label="FPS Game World">
+        </div>
 
 
-            <!-- =================================
-                 GAME HUD
-            ================================== -->
-            <div id="hud">
+        <!-- =================================================
+             HUD
+             ================================================= -->
 
-                <!-- TOP LEFT -->
-                <div id="hud-top-left">
+        <section
+            id="hud"
+            class="hud">
 
-                    <div class="player-status">
 
-                        <div class="status-label">
-                            PLAYER
+            <!-- TOP BAR -->
+
+            <div class="hud-top">
+
+                <div class="game-logo">
+
+                    <span class="logo-main">
+                        BLACK OPS
+                    </span>
+
+                    <span class="logo-sub">
+                        FPS // ARENA
+                    </span>
+
+                </div>
+
+
+                <div class="mission-status">
+
+                    <span class="status-dot"></span>
+
+                    <span>
+                        LIVE COMBAT
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CROSSHAIR
+                 ================================================= -->
+
+            <div
+                id="crosshair"
+                class="crosshair"
+                aria-hidden="true">
+
+                <span class="crosshair-top"></span>
+                <span class="crosshair-right"></span>
+                <span class="crosshair-bottom"></span>
+                <span class="crosshair-left"></span>
+
+                <span class="crosshair-center"></span>
+
+            </div>
+
+
+            <!-- =================================================
+                 HIT MARKER
+                 ================================================= -->
+
+            <div
+                id="hit-marker"
+                class="hit-marker">
+
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
+
+
+            <!-- =================================================
+                 TOP RIGHT
+                 ================================================= -->
+
+            <div
+                id="match-info"
+                class="match-info">
+
+                <div class="match-label">
+                    MATCH
+                </div>
+
+                <div
+                    id="match-timer"
+                    class="match-timer">
+                    10:00
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 OBJECTIVE
+                 ================================================= -->
+
+            <div
+                id="objective"
+                class="objective">
+
+                <div class="objective-title">
+                    OBJECTIVE
+                </div>
+
+                <div
+                    id="objective-text"
+                    class="objective-text">
+
+                    ELIMINATE ALL HOSTILES
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 BOTTOM LEFT
+                 ================================================= -->
+
+            <div
+                id="player-hud"
+                class="player-hud">
+
+
+                <div class="health-panel">
+
+                    <div class="health-icon">
+                        +
+                    </div>
+
+                    <div class="health-content">
+
+                        <div class="health-label">
+                            HEALTH
                         </div>
 
-                        <div class="player-name">
-                            OPERATIVE
+                        <div
+                            id="health-value"
+                            class="health-value">
+                            100
                         </div>
 
-                        <div class="health-container">
-
-                            <div class="health-icon">
-                                +
-                            </div>
-
-                            <div class="health-bar">
-
-                                <div
-                                    id="health-fill"
-                                    class="health-fill"
-                                ></div>
-
-                            </div>
+                        <div class="health-bar">
 
                             <div
-                                id="health-value"
-                                class="health-value"
-                            >
-                                100
+                                id="health-fill"
+                                class="health-fill">
                             </div>
 
                         </div>
@@ -416,244 +216,223 @@
                 </div>
 
 
-                <!-- TOP CENTER -->
-                <div id="hud-top-center">
+                <div class="armor-panel">
 
-                    <div class="match-status">
+                    <div class="armor-label">
+                        ARMOR
+                    </div>
 
-                        <div class="match-label">
-                            MATCH
-                        </div>
+                    <div
+                        id="armor-value"
+                        class="armor-value">
+                        100
+                    </div>
 
-                        <div
-                            id="match-timer"
-                            class="match-timer"
-                        >
-                            10:00
-                        </div>
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 BOTTOM RIGHT - WEAPON
+                 ================================================= -->
+
+            <div
+                id="weapon-hud"
+                class="weapon-hud">
+
+
+                <div class="weapon-info">
+
+                    <div
+                        id="weapon-name"
+                        class="weapon-name">
+
+                        M4A1
+
+                    </div>
+
+                    <div
+                        id="weapon-mode"
+                        class="weapon-mode">
+
+                        AUTO
 
                     </div>
 
                 </div>
 
 
-                <!-- TOP RIGHT -->
-                <div id="hud-top-right">
+                <div class="ammo-display">
 
-                    <div class="score-panel">
+                    <span
+                        id="ammo-current"
+                        class="ammo-current">
 
-                        <div class="score-team">
+                        30
 
-                            <span>
-                                YOU
-                            </span>
+                    </span>
 
-                            <strong id="player-score">
-                                0
-                            </strong>
+                    <span class="ammo-divider">
+                        /
+                    </span>
 
-                        </div>
+                    <span
+                        id="ammo-reserve"
+                        class="ammo-reserve">
 
-                        <div class="score-divider">
-                            :
-                        </div>
+                        120
 
-                        <div class="score-team">
-
-                            <span>
-                                ENEMY
-                            </span>
-
-                            <strong id="enemy-score">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </div>
+                    </span>
 
                 </div>
 
 
-                <!-- =================================
-                     CROSSHAIR
-                ================================== -->
-                <div
-                    id="crosshair"
-                    class="crosshair"
-                >
+                <div class="reload-indicator">
 
-                    <span class="crosshair-top"></span>
-                    <span class="crosshair-right"></span>
-                    <span class="crosshair-bottom"></span>
-                    <span class="crosshair-left"></span>
-
-                    <span class="crosshair-dot"></span>
+                    <span
+                        id="reload-text">
+                    </span>
 
                 </div>
 
+            </div>
 
-                <!-- =================================
-                     HIT MARKER
-                ================================== -->
+
+            <!-- =================================================
+                 KILL FEED
+                 ================================================= -->
+
+            <div
+                id="kill-feed"
+                class="kill-feed">
+
+            </div>
+
+
+            <!-- =================================================
+                 SCORE
+                 ================================================= -->
+
+            <div
+                id="score-board"
+                class="score-board">
+
+                <div class="score-label">
+                    SCORE
+                </div>
+
                 <div
-                    id="hit-marker"
-                    class="hit-marker hidden"
-                >
-                    ×
+                    id="score-value"
+                    class="score-value">
+                    000000
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             START SCREEN
+             ================================================= -->
+
+        <section
+            id="start-screen"
+            class="screen start-screen">
+
+
+            <div class="screen-background"></div>
+
+
+            <div class="start-content">
+
+
+                <div class="start-kicker">
+                    TACTICAL COMBAT SYSTEM
                 </div>
 
 
-                <!-- =================================
-                     DAMAGE INDICATOR
-                ================================== -->
-                <div
-                    id="damage-indicator"
-                    class="damage-indicator"
-                ></div>
+                <h1>
+                    BLACK
+                    <span>OPS</span>
+                </h1>
 
 
-                <!-- =================================
-                     WEAPON HUD
-                ================================== -->
-                <div id="weapon-hud">
-
-                    <div class="weapon-info">
-
-                        <div class="weapon-category">
-                            ASSAULT RIFLE
-                        </div>
-
-                        <div
-                            id="weapon-name"
-                            class="weapon-name"
-                        >
-                            PHANTOM-X
-                        </div>
-
-                    </div>
+                <div class="start-line"></div>
 
 
-                    <div class="ammo-info">
+                <p class="start-description">
 
-                        <div
-                            id="ammo-current"
-                            class="ammo-current"
-                        >
-                            30
-                        </div>
+                    ENTER THE COMBAT ZONE
 
-                        <div class="ammo-divider">
-                            /
-                        </div>
+                    <br>
 
-                        <div
-                            id="ammo-reserve"
-                            class="ammo-reserve"
-                        >
-                            120
-                        </div>
+                    ELIMINATE HOSTILE TARGETS
 
-                    </div>
-
-                </div>
+                </p>
 
 
-                <!-- =================================
-                     RELOAD INDICATOR
-                ================================== -->
-                <div
-                    id="reload-indicator"
-                    class="reload-indicator hidden"
-                >
+                <button
+                    id="start-button"
+                    class="primary-button">
+
+                    <span>
+                        DEPLOY
+                    </span>
+
+                    <span class="button-arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <div class="controls-preview">
 
                     <div>
-                        RELOADING
+                        <kbd>W</kbd>
+                        <kbd>A</kbd>
+                        <kbd>S</kbd>
+                        <kbd>D</kbd>
+
+                        <span>
+                            MOVE
+                        </span>
                     </div>
 
-                    <div class="reload-bar">
 
-                        <div
-                            id="reload-progress"
-                            class="reload-progress"
-                        ></div>
+                    <div>
 
-                    </div>
+                        <kbd>MOUSE</kbd>
 
-                </div>
-
-
-                <!-- =================================
-                     KILL FEED
-                ================================== -->
-                <div
-                    id="kill-feed"
-                    class="kill-feed"
-                ></div>
-
-
-                <!-- =================================
-                     OBJECTIVE
-                ================================== -->
-                <div id="objective">
-
-                    <div class="objective-label">
-                        CURRENT OBJECTIVE
-                    </div>
-
-                    <div
-                        id="objective-text"
-                        class="objective-text"
-                    >
-                        ELIMINATE ALL ENEMIES
-                    </div>
-
-                </div>
-
-
-                <!-- =================================
-                     MOBILE CONTROLS
-                ================================== -->
-                <div
-                    id="mobile-controls"
-                    class="mobile-only"
-                >
-
-                    <div
-                        id="joystick"
-                        class="joystick"
-                    >
-
-                        <div
-                            id="joystick-knob"
-                            class="joystick-knob"
-                        ></div>
+                        <span>
+                            AIM
+                        </span>
 
                     </div>
 
 
-                    <div class="mobile-actions">
+                    <div>
 
-                        <button
-                            id="mobile-fire"
-                            class="mobile-button fire"
-                        >
+                        <kbd>LMB</kbd>
+
+                        <span>
                             FIRE
-                        </button>
+                        </span>
 
-                        <button
-                            id="mobile-reload"
-                            class="mobile-button"
-                        >
-                            ↻
-                        </button>
+                    </div>
 
-                        <button
-                            id="mobile-jump"
-                            class="mobile-button"
-                        >
-                            ↑
-                        </button>
+
+                    <div>
+
+                        <kbd>SPACE</kbd>
+
+                        <span>
+                            JUMP
+                        </span>
 
                     </div>
 
@@ -661,20 +440,26 @@
 
             </div>
 
-        </main>
+
+            <div class="version">
+                BLACK OPS // BUILD 0.2
+            </div>
+
+        </section>
 
 
-        <!-- =====================================
-             PAUSE MENU
-        ====================================== -->
+        <!-- =================================================
+             PAUSE SCREEN
+             ================================================= -->
+
         <section
-            id="pause-menu"
-            class="overlay-screen hidden"
-        >
+            id="pause-screen"
+            class="screen pause-screen hidden">
+
 
             <div class="pause-panel">
 
-                <div class="pause-label">
+                <div class="pause-kicker">
                     SYSTEM PAUSED
                 </div>
 
@@ -682,60 +467,59 @@
                     PAUSED
                 </h2>
 
-                <div class="pause-buttons">
+                <div class="pause-line"></div>
 
-                    <button
-                        id="resume-game"
-                        class="menu-button primary"
-                    >
-                        RESUME
-                    </button>
 
-                    <button
-                        id="restart-game"
-                        class="menu-button"
-                    >
-                        RESTART
-                    </button>
+                <button
+                    id="resume-button"
+                    class="primary-button">
 
-                    <button
-                        id="exit-game"
-                        class="menu-button"
-                    >
-                        EXIT TO MENU
-                    </button>
+                    RESUME
 
-                </div>
+                </button>
+
+
+                <button
+                    id="restart-button"
+                    class="secondary-button">
+
+                    RESTART
+
+                </button>
 
             </div>
 
         </section>
 
 
-        <!-- =====================================
+        <!-- =================================================
              GAME OVER
-        ====================================== -->
+             ================================================= -->
+
         <section
             id="game-over-screen"
-            class="overlay-screen hidden"
-        >
+            class="screen result-screen hidden">
+
 
             <div class="result-panel">
 
-                <div
-                    id="result-status"
-                    class="result-status"
-                >
-                    MISSION COMPLETE
+                <div class="result-kicker">
+                    COMBAT TERMINATED
                 </div>
 
-                <h2
-                    id="result-title"
-                >
-                    VICTORY
+                <h2 id="result-title">
+                    MISSION FAILED
                 </h2>
 
-                <div class="result-score">
+                <p
+                    id="result-description">
+
+                    ALL OPERATIVES LOST.
+
+                </p>
+
+
+                <div class="result-stats">
 
                     <div>
 
@@ -743,32 +527,23 @@
                             SCORE
                         </span>
 
-                        <strong id="final-score">
-                            0
+                        <strong
+                            id="result-score">
+                            000000
                         </strong>
 
                     </div>
 
+
                     <div>
 
                         <span>
-                            KILLS
+                            ELIMINATIONS
                         </span>
 
-                        <strong id="final-kills">
+                        <strong
+                            id="result-kills">
                             0
-                        </strong>
-
-                    </div>
-
-                    <div>
-
-                        <span>
-                            ACCURACY
-                        </span>
-
-                        <strong id="final-accuracy">
-                            0%
                         </strong>
 
                     </div>
@@ -777,17 +552,11 @@
 
 
                 <button
-                    id="play-again"
-                    class="menu-button primary"
-                >
-                    PLAY AGAIN
-                </button>
+                    id="result-restart"
+                    class="primary-button">
 
-                <button
-                    id="back-to-menu"
-                    class="menu-button"
-                >
-                    MAIN MENU
+                    PLAY AGAIN
+
                 </button>
 
             </div>
@@ -795,13 +564,14 @@
         </section>
 
 
-        <!-- =====================================
+        <!-- =================================================
              LOADING SCREEN
-        ====================================== -->
+             ================================================= -->
+
         <section
             id="loading-screen"
-            class="loading-screen"
-        >
+            class="loading-screen">
+
 
             <div class="loading-content">
 
@@ -809,150 +579,88 @@
                     BLACK OPS
                 </div>
 
-                <div class="loading-status">
+                <div class="loading-sub">
                     INITIALIZING COMBAT SYSTEM
                 </div>
+
 
                 <div class="loading-bar">
 
                     <div
-                        id="loading-progress"
-                        class="loading-progress"
-                    ></div>
+                        id="loading-fill"
+                        class="loading-fill">
+                    </div>
 
                 </div>
 
+
                 <div
                     id="loading-percent"
-                    class="loading-percent"
-                >
+                    class="loading-percent">
+
                     0%
+
                 </div>
 
             </div>
 
         </section>
 
-    </div>
+
+        <!-- =================================================
+             MOBILE CONTROLS
+             ================================================= -->
+
+        <section
+            id="mobile-controls"
+            class="mobile-controls hidden">
 
 
-    <!-- =========================================
-         GAME DATA
-    ========================================== -->
-    <script>
+            <div
+                id="joystick"
+                class="joystick">
 
-        /*
-         * Global game configuration.
-         *
-         * engine.js dan script.js
-         * akan menggunakan object ini.
-         */
+                <div
+                    id="joystick-knob"
+                    class="joystick-knob">
+                </div>
 
-        window.GAME_CONFIG = {
-
-            name: "BLACK OPS",
-
-            version: "1.0.0",
-
-            player: {
-
-                maxHealth: 100,
-
-                health: 100,
-
-                speed: 5,
-
-                jumpPower: 8,
-
-                sensitivity: 0.8
-
-            },
-
-            weapon: {
-
-                name: "PHANTOM-X",
-
-                magazineSize: 30,
-
-                ammo: 30,
-
-                reserveAmmo: 120,
-
-                damage: 25,
-
-                fireRate: 100,
-
-                reloadTime: 1500
-
-            },
-
-            match: {
-
-                duration: 600,
-
-                enemyCount: 5,
-
-                score: 0,
-
-                kills: 0,
-
-                shots: 0,
-
-                hits: 0
-
-            }
-
-        };
-
-    </script>
+            </div>
 
 
-    <!-- =========================================
-         GAME JAVASCRIPT
-    ========================================== -->
+            <button
+                id="mobile-fire"
+                class="mobile-action">
 
-    <script src="engine.js"></script>
+                FIRE
+
+            </button>
+
+
+            <button
+                id="mobile-jump"
+                class="mobile-action">
+
+                JUMP
+
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         GAME SCRIPTS
+         ===================================================== -->
 
     <script src="script.js"></script>
 
+    <script src="engine.js"></script>
 
-    <!-- =========================================
-         INITIALIZATION
-    ========================================== -->
-
-    <script>
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            () => {
-
-                /*
-                 * Pastikan semua sistem
-                 * telah dimuat sebelum game dimulai.
-                 */
-
-                if (
-                    typeof window.GameEngine !==
-                    "undefined"
-                ) {
-
-                    window.GameEngine.init();
-
-                }
-
-                if (
-                    typeof window.GameUI !==
-                    "undefined"
-                ) {
-
-                    window.GameUI.init();
-
-                }
-
-            }
-        );
-
-    </script>
 
 </body>
+
 </html>
+```
