@@ -1,142 +1,90 @@
+```javascript
 /* =========================================================
    BLACK OPS // FPS ARENA
    ENGINE.JS
-   FPS ENGINE - CANVAS RAYCASTER
+   PHASE 2 — THREE.JS 3D FPS ENGINE
    ========================================================= */
 
-window.GameEngine = {
 
-    /* =====================================================
-       01. ENGINE STATE
-    ===================================================== */
+/* =========================================================
+   01. GAME ENGINE
+   ========================================================= */
 
-    initialized: false,
+const GameEngine = {
+
+    /* -----------------------------------------------------
+       CORE
+       ----------------------------------------------------- */
+
+    scene: null,
+    camera: null,
+    renderer: null,
+
+    container: null,
+
+    clock: null,
+
     running: false,
     paused: false,
 
-    canvas: null,
-    ctx: null,
+    initialized: false,
 
-    width: 0,
-    height: 0,
-
-    lastTime: 0,
-
-    keys: {},
-
-    mouseX: 0,
-    mouseY: 0,
-
-    pointerLocked: false,
-
-    mobileX: 0,
-    mobileY: 0,
-
-    /* =====================================================
-       02. PLAYER
-    ===================================================== */
+    /* -----------------------------------------------------
+       PLAYER
+       ----------------------------------------------------- */
 
     player: {
 
-        x: 3.5,
-        y: 3.5,
+        height: 1.7,
 
-        angle: 0,
+        speed: 5.5,
 
-        height: 0,
+        sprintSpeed: 8,
 
-        verticalVelocity: 0,
+        jumpForce: 6.5,
 
-        speed: 3.2,
+        gravity: 18,
 
-        radius: 0.22,
-
-        eyeHeight: 0.55,
+        velocityY: 0,
 
         grounded: true,
 
-        health: 100
+        health: 100,
+
+        armor: 100,
+
+        radius: 0.35
 
     },
 
-    /* =====================================================
-       03. CAMERA
-    ===================================================== */
 
-    camera: {
+    /* -----------------------------------------------------
+       CAMERA
+       ----------------------------------------------------- */
 
-        fov: Math.PI / 3,
+    cameraData: {
 
-        viewDistance: 20,
+        yaw: 0,
 
-        shake: 0,
+        pitch: 0,
 
-        recoil: 0
+        sensitivity: 0.0022,
 
-    },
-
-    /* =====================================================
-       04. WORLD
-    ===================================================== */
-
-    map: [
-
-        "################",
-        "#..............#",
-        "#..##..........#",
-        "#..............#",
-        "#......##......#",
-        "#..............#",
-        "#..............#",
-        "#....####......#",
-        "#..............#",
-        "#......##......#",
-        "#..............#",
-        "#..........##..#",
-        "#..............#",
-        "#..............#",
-        "#..............#",
-        "################"
-
-    ],
-
-    tileSize: 1,
-
-    /* =====================================================
-       05. ENEMIES
-    ===================================================== */
-
-    enemies: [],
-
-    enemyId: 0,
-
-    maxEnemies: 5,
-
-    /* =====================================================
-       06. WEAPON
-    ===================================================== */
-
-    weapon: {
-
-        damage: 25,
-
-        fireRate: 120,
-
-        lastShot: 0,
-
-        muzzleFlash: 0,
+        maxPitch:
+            Math.PI / 2 - 0.08,
 
         recoil: 0,
 
-        range: 20
+        shake: 0
 
     },
 
-    /* =====================================================
-       07. INPUT
-    ===================================================== */
 
-    input: {
+    /* -----------------------------------------------------
+       MOVEMENT
+       ----------------------------------------------------- */
+
+    keys: {
 
         forward: false,
 
@@ -146,13 +94,88 @@ window.GameEngine = {
 
         right: false,
 
-        jump: false
+        sprint: false
 
     },
 
+
+    /* -----------------------------------------------------
+       WEAPON
+       ----------------------------------------------------- */
+
+    weapon: {
+
+        name: "M4A1",
+
+        mode: "AUTO",
+
+        damage: 34,
+
+        fireRate: 95,
+
+        magazineSize: 30,
+
+        ammo: 30,
+
+        reserve: 120,
+
+        reloadTime: 1.7,
+
+        lastShot: 0,
+
+        reloading: false,
+
+        reloadTimer: 0,
+
+        recoil: 0,
+
+        muzzleFlash: 0
+
+    },
+
+
+    /* -----------------------------------------------------
+       WORLD
+       ----------------------------------------------------- */
+
+    world: {
+
+        floor: null,
+
+        walls: [],
+
+        obstacles: [],
+
+        lights: []
+
+    },
+
+
+    /* -----------------------------------------------------
+       ENEMIES
+       ----------------------------------------------------- */
+
+    enemies: [],
+
+    enemyCount: 6,
+
+    kills: 0,
+
+    score: 0,
+
+
+    /* -----------------------------------------------------
+       TEMP OBJECTS
+       ----------------------------------------------------- */
+
+    bullets: [],
+
+    particles: [],
+
+
     /* =====================================================
-       08. INIT
-    ===================================================== */
+       02. INIT
+       ===================================================== */
 
     init() {
 
@@ -162,90 +185,1138 @@ window.GameEngine = {
 
         }
 
-        this.canvas =
+
+        this.container =
             document.getElementById(
-                "game-canvas"
+                "game-world"
             );
 
-        if (!this.canvas) {
+
+        if (!this.container) {
 
             console.error(
-                "[ENGINE] Canvas not found."
+                "Game world not found."
             );
 
             return;
 
         }
 
-        this.ctx =
-            this.canvas.getContext(
-                "2d"
+
+        /* -------------------------------------------------
+           Scene
+           ------------------------------------------------- */
+
+        this.scene =
+            new THREE.Scene();
+
+
+        this.scene.background =
+            new THREE.Color(
+                0x050608
             );
 
-        this.initialized = true;
 
-        this.resize();
+        this.scene.fog =
+            new THREE.Fog(
+                0x080b0d,
+                18,
+                60
+            );
+
+
+        /* -------------------------------------------------
+           Camera
+           ------------------------------------------------- */
+
+        this.camera =
+            new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth /
+                window.innerHeight,
+                0.05,
+                100
+            );
+
+
+        this.camera.position.set(
+            3,
+            this.player.height,
+            3
+        );
+
+
+        /* -------------------------------------------------
+           Renderer
+           ------------------------------------------------- */
+
+        this.renderer =
+            new THREE.WebGLRenderer({
+
+                antialias: true,
+
+                powerPreference:
+                    "high-performance"
+
+            });
+
+
+        this.renderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio,
+                2
+            )
+        );
+
+
+        this.renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+
+        this.renderer.shadowMap.enabled =
+            true;
+
+
+        this.renderer.shadowMap.type =
+            THREE.PCFSoftShadowMap;
+
+
+        this.container.appendChild(
+            this.renderer.domElement
+        );
+
+
+        /* -------------------------------------------------
+           Clock
+           ------------------------------------------------- */
+
+        this.clock =
+            new THREE.Clock();
+
+
+        /* -------------------------------------------------
+           Build world
+           ------------------------------------------------- */
+
+        this.createLights();
+
+        this.createFloor();
+
+        this.createArena();
+
+        this.createObstacles();
+
+        this.createEnemies();
+
+        this.createWeaponModel();
+
+
+        /* -------------------------------------------------
+           Events
+           ------------------------------------------------- */
 
         this.bindEvents();
 
-        this.generateEnemies();
+
+        this.initialized =
+            true;
+
 
         console.log(
-            "[ENGINE] Initialized."
+            "BLACK OPS 3D ENGINE READY"
         );
 
     },
 
+
     /* =====================================================
-       09. RESIZE
-    ===================================================== */
+       03. LIGHTING
+       ===================================================== */
 
-    resize() {
+    createLights() {
 
-        if (!this.canvas) {
+        /* -------------------------------------------------
+           Ambient
+           ------------------------------------------------- */
 
-            return;
+        const ambient =
+            new THREE.AmbientLight(
+                0xffffff,
+                0.45
+            );
+
+
+        this.scene.add(
+            ambient
+        );
+
+
+        /* -------------------------------------------------
+           Main directional light
+           ------------------------------------------------- */
+
+        const sun =
+            new THREE.DirectionalLight(
+                0xffffff,
+                1.4
+            );
+
+
+        sun.position.set(
+            10,
+            18,
+            5
+        );
+
+
+        sun.castShadow =
+            true;
+
+
+        sun.shadow.mapSize.width =
+            2048;
+
+        sun.shadow.mapSize.height =
+            2048;
+
+
+        sun.shadow.camera.left =
+            -30;
+
+        sun.shadow.camera.right =
+            30;
+
+        sun.shadow.camera.top =
+            30;
+
+        sun.shadow.camera.bottom =
+            -30;
+
+
+        this.scene.add(
+            sun
+        );
+
+
+        this.world.lights.push(
+            sun
+        );
+
+
+        /* -------------------------------------------------
+           Red arena lights
+           ------------------------------------------------- */
+
+        const redLight1 =
+            new THREE.PointLight(
+                0xff2020,
+                12,
+                14
+            );
+
+
+        redLight1.position.set(
+            4,
+            4,
+            -4
+        );
+
+
+        this.scene.add(
+            redLight1
+        );
+
+
+        const redLight2 =
+            new THREE.PointLight(
+                0xff2020,
+                10,
+                12
+            );
+
+
+        redLight2.position.set(
+            -8,
+            3,
+            7
+        );
+
+
+        this.scene.add(
+            redLight2
+        );
+
+
+        this.world.lights.push(
+            redLight1,
+            redLight2
+        );
+
+    },
+
+
+    /* =====================================================
+       04. FLOOR
+       ===================================================== */
+
+    createFloor() {
+
+        const geometry =
+            new THREE.PlaneGeometry(
+                40,
+                40
+            );
+
+
+        const material =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x15191c,
+
+                roughness:
+                    0.85,
+
+                metalness:
+                    0.15
+
+            });
+
+
+        const floor =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+
+        floor.rotation.x =
+            -Math.PI / 2;
+
+
+        floor.receiveShadow =
+            true;
+
+
+        this.scene.add(
+            floor
+        );
+
+
+        this.world.floor =
+            floor;
+
+
+        /* -------------------------------------------------
+           Floor grid
+           ------------------------------------------------- */
+
+        const grid =
+            new THREE.GridHelper(
+                40,
+                40,
+                0x44484c,
+                0x222629
+            );
+
+
+        grid.position.y =
+            0.01;
+
+
+        this.scene.add(
+            grid
+        );
+
+    },
+
+
+    /* =====================================================
+       05. ARENA
+       ===================================================== */
+
+    createArena() {
+
+        const wallMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x252b2f,
+
+                roughness:
+                    0.7,
+
+                metalness:
+                    0.3
+
+            });
+
+
+        /* -------------------------------------------------
+           North wall
+           ------------------------------------------------- */
+
+        this.createWall(
+            0,
+            2,
+            -20,
+            40,
+            4,
+            1,
+            wallMaterial
+        );
+
+
+        /* -------------------------------------------------
+           South wall
+           ------------------------------------------------- */
+
+        this.createWall(
+            0,
+            2,
+            20,
+            40,
+            4,
+            1,
+            wallMaterial
+        );
+
+
+        /* -------------------------------------------------
+           East wall
+           ------------------------------------------------- */
+
+        this.createWall(
+            20,
+            2,
+            0,
+            1,
+            4,
+            40,
+            wallMaterial
+        );
+
+
+        /* -------------------------------------------------
+           West wall
+           ------------------------------------------------- */
+
+        this.createWall(
+            -20,
+            2,
+            0,
+            1,
+            4,
+            40,
+            wallMaterial
+        );
+
+    },
+
+
+    /* =====================================================
+       06. CREATE WALL
+       ===================================================== */
+
+    createWall(
+        x,
+        y,
+        z,
+        width,
+        height,
+        depth,
+        material
+    ) {
+
+        const geometry =
+            new THREE.BoxGeometry(
+                width,
+                height,
+                depth
+            );
+
+
+        const mesh =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+
+        mesh.position.set(
+            x,
+            y,
+            z
+        );
+
+
+        mesh.castShadow =
+            true;
+
+
+        mesh.receiveShadow =
+            true;
+
+
+        this.scene.add(
+            mesh
+        );
+
+
+        this.world.walls.push(
+            mesh
+        );
+
+
+        return mesh;
+
+    },
+
+
+    /* =====================================================
+       07. OBSTACLES
+       ===================================================== */
+
+    createObstacles() {
+
+        const material =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x30363a,
+
+                roughness:
+                    0.75,
+
+                metalness:
+                    0.25
+
+            });
+
+
+        const objects = [
+
+            {
+                x: 0,
+                y: 1,
+                z: -7,
+                w: 5,
+                h: 2,
+                d: 2
+            },
+
+            {
+                x: 7,
+                y: 1,
+                z: -3,
+                w: 2,
+                h: 2,
+                d: 5
+            },
+
+            {
+                x: -7,
+                y: 1,
+                z: 3,
+                w: 2,
+                h: 2,
+                d: 5
+            },
+
+            {
+                x: 3,
+                y: 1,
+                z: 7,
+                w: 6,
+                h: 2,
+                d: 2
+            },
+
+            {
+                x: -4,
+                y: 1,
+                z: -1,
+                w: 3,
+                h: 2,
+                d: 3
+            }
+
+        ];
+
+
+        for (
+            const object of objects
+        ) {
+
+            const geometry =
+                new THREE.BoxGeometry(
+                    object.w,
+                    object.h,
+                    object.d
+                );
+
+
+            const mesh =
+                new THREE.Mesh(
+                    geometry,
+                    material
+                );
+
+
+            mesh.position.set(
+                object.x,
+                object.y,
+                object.z
+            );
+
+
+            mesh.castShadow =
+                true;
+
+
+            mesh.receiveShadow =
+                true;
+
+
+            this.scene.add(
+                mesh
+            );
+
+
+            this.world.obstacles.push(
+                mesh
+            );
 
         }
 
-        const dpr =
-            Math.min(
-                window.devicePixelRatio || 1,
-                2
-            );
+    },
 
-        this.width =
-            window.innerWidth;
 
-        this.height =
-            window.innerHeight;
+    /* =====================================================
+       08. ENEMIES
+       ===================================================== */
 
-        this.canvas.width =
-            this.width * dpr;
+    createEnemies() {
 
-        this.canvas.height =
-            this.height * dpr;
+        this.enemies = [];
 
-        this.canvas.style.width =
-            `${this.width}px`;
 
-        this.canvas.style.height =
-            `${this.height}px`;
+        const positions = [
 
-        this.ctx.setTransform(
-            dpr,
-            0,
-            0,
-            dpr,
-            0,
-            0
+            [-12, 0, -12],
+
+            [10, 0, -12],
+
+            [13, 0, 4],
+
+            [-12, 0, 10],
+
+            [8, 0, 12],
+
+            [-5, 0, -13]
+
+        ];
+
+
+        positions.forEach(
+            (position, index) => {
+
+                this.createEnemy(
+                    position[0],
+                    position[1],
+                    position[2],
+                    index
+                );
+
+            }
         );
 
     },
 
+
     /* =====================================================
-       10. EVENTS
-    ===================================================== */
+       09. CREATE ENEMY
+       ===================================================== */
+
+    createEnemy(
+        x,
+        y,
+        z,
+        id
+    ) {
+
+        const group =
+            new THREE.Group();
+
+
+        /* -------------------------------------------------
+           Body
+           ------------------------------------------------- */
+
+        const bodyGeometry =
+            new THREE.BoxGeometry(
+                0.9,
+                1.2,
+                0.55
+            );
+
+
+        const bodyMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x202529,
+
+                roughness:
+                    0.65,
+
+                metalness:
+                    0.3
+
+            });
+
+
+        const body =
+            new THREE.Mesh(
+                bodyGeometry,
+                bodyMaterial
+            );
+
+
+        body.position.y =
+            1.05;
+
+
+        body.castShadow =
+            true;
+
+
+        group.add(
+            body
+        );
+
+
+        /* -------------------------------------------------
+           Head
+           ------------------------------------------------- */
+
+        const headGeometry =
+            new THREE.SphereGeometry(
+                0.32,
+                16,
+                16
+            );
+
+
+        const headMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x343a3e,
+
+                roughness:
+                    0.6
+
+            });
+
+
+        const head =
+            new THREE.Mesh(
+                headGeometry,
+                headMaterial
+            );
+
+
+        head.position.y =
+            1.9;
+
+
+        head.castShadow =
+            true;
+
+
+        group.add(
+            head
+        );
+
+
+        /* -------------------------------------------------
+           Red visor
+           ------------------------------------------------- */
+
+        const visorGeometry =
+            new THREE.BoxGeometry(
+                0.45,
+                0.08,
+                0.08
+            );
+
+
+        const visorMaterial =
+            new THREE.MeshBasicMaterial({
+
+                color:
+                    0xff2020
+
+            });
+
+
+        const visor =
+            new THREE.Mesh(
+                visorGeometry,
+                visorMaterial
+            );
+
+
+        visor.position.set(
+            0,
+            1.91,
+            -0.29
+        );
+
+
+        group.add(
+            visor
+        );
+
+
+        /* -------------------------------------------------
+           Weapon
+           ------------------------------------------------- */
+
+        const weaponGeometry =
+            new THREE.BoxGeometry(
+                1.1,
+                0.12,
+                0.12
+            );
+
+
+        const weaponMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x090b0c,
+
+                metalness:
+                    0.7,
+
+                roughness:
+                    0.35
+
+            });
+
+
+        const weapon =
+            new THREE.Mesh(
+                weaponGeometry,
+                weaponMaterial
+            );
+
+
+        weapon.position.set(
+            0.65,
+            1.15,
+            -0.25
+        );
+
+
+        weapon.rotation.z =
+            -0.1;
+
+
+        group.add(
+            weapon
+        );
+
+
+        /* -------------------------------------------------
+           Group
+           ------------------------------------------------- */
+
+        group.position.set(
+            x,
+            y,
+            z
+        );
+
+
+        this.scene.add(
+            group
+        );
+
+
+        const enemy = {
+
+            id,
+
+            mesh:
+                group,
+
+            health:
+                100,
+
+            maxHealth:
+                100,
+
+            speed:
+                1.2,
+
+            attackDistance:
+                10,
+
+            attackTimer:
+                0,
+
+            attackCooldown:
+                1.5,
+
+            alive:
+                true,
+
+            hitTimer:
+                0
+
+        };
+
+
+        group.userData.enemy =
+            enemy;
+
+
+        this.enemies.push(
+            enemy
+        );
+
+    },
+
+
+    /* =====================================================
+       10. WEAPON MODEL
+       ===================================================== */
+
+    createWeaponModel() {
+
+        const group =
+            new THREE.Group();
+
+
+        /* -------------------------------------------------
+           Main receiver
+           ------------------------------------------------- */
+
+        const receiverGeometry =
+            new THREE.BoxGeometry(
+                0.85,
+                0.25,
+                0.22
+            );
+
+
+        const receiverMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x111518,
+
+                metalness:
+                    0.8,
+
+                roughness:
+                    0.3
+
+            });
+
+
+        const receiver =
+            new THREE.Mesh(
+                receiverGeometry,
+                receiverMaterial
+            );
+
+
+        receiver.position.z =
+            -0.45;
+
+
+        group.add(
+            receiver
+        );
+
+
+        /* -------------------------------------------------
+           Barrel
+           ------------------------------------------------- */
+
+        const barrelGeometry =
+            new THREE.CylinderGeometry(
+                0.055,
+                0.055,
+                0.75,
+                12
+            );
+
+
+        const barrelMaterial =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x090b0d,
+
+                metalness:
+                    0.9,
+
+                roughness:
+                    0.25
+
+            });
+
+
+        const barrel =
+            new THREE.Mesh(
+                barrelGeometry,
+                barrelMaterial
+            );
+
+
+        barrel.rotation.x =
+            Math.PI / 2;
+
+
+        barrel.position.z =
+            -0.92;
+
+
+        group.add(
+            barrel
+        );
+
+
+        /* -------------------------------------------------
+           Grip
+           ------------------------------------------------- */
+
+        const gripGeometry =
+            new THREE.BoxGeometry(
+                0.18,
+                0.5,
+                0.18
+            );
+
+
+        const grip =
+            new THREE.Mesh(
+                gripGeometry,
+                receiverMaterial
+            );
+
+
+        grip.position.set(
+            0.1,
+            -0.28,
+            -0.35
+        );
+
+
+        grip.rotation.x =
+            -0.15;
+
+
+        group.add(
+            grip
+        );
+
+
+        /* -------------------------------------------------
+           Magazine
+           ------------------------------------------------- */
+
+        const magazineGeometry =
+            new THREE.BoxGeometry(
+                0.22,
+                0.5,
+                0.18
+            );
+
+
+        const magazine =
+            new THREE.Mesh(
+                magazineGeometry,
+                receiverMaterial
+            );
+
+
+        magazine.position.set(
+            0,
+            -0.28,
+            -0.45
+        );
+
+
+        group.add(
+            magazine
+        );
+
+
+        /* -------------------------------------------------
+           Position weapon
+           ------------------------------------------------- */
+
+        group.position.set(
+            0.48,
+            -0.48,
+            -0.85
+        );
+
+
+        group.rotation.y =
+            -0.03;
+
+
+        this.camera.add(
+            group
+        );
+
+
+        this.weaponModel =
+            group;
+
+
+        /* -------------------------------------------------
+           Muzzle light
+           ------------------------------------------------- */
+
+        const muzzleLight =
+            new THREE.PointLight(
+                0xff8800,
+                0,
+                5
+            );
+
+
+        muzzleLight.position.set(
+            0,
+            0,
+            -1.3
+        );
+
+
+        group.add(
+            muzzleLight
+        );
+
+
+        this.muzzleLight =
+            muzzleLight;
+
+    },
+
+
+    /* =====================================================
+       11. INPUT EVENTS
+       ===================================================== */
 
     bindEvents() {
 
@@ -258,13 +1329,10 @@ window.GameEngine = {
             }
         );
 
-        window.addEventListener(
+
+        document.addEventListener(
             "keydown",
             event => {
-
-                this.keys[
-                    event.code
-                ] = true;
 
                 this.handleKeyDown(
                     event
@@ -273,57 +1341,108 @@ window.GameEngine = {
             }
         );
 
-        window.addEventListener(
+
+        document.addEventListener(
             "keyup",
             event => {
 
-                this.keys[
-                    event.code
-                ] = false;
+                this.handleKeyUp(
+                    event
+                );
 
             }
         );
+
 
         document.addEventListener(
             "mousemove",
             event => {
 
                 if (
-                    !this.pointerLocked
+                    !this.running ||
+                    this.paused
                 ) {
 
                     return;
 
                 }
 
-                this.player.angle +=
+
+                if (
+                    document.pointerLockElement !==
+                    this.renderer.domElement
+                ) {
+
+                    return;
+
+                }
+
+
+                this.cameraData.yaw -=
                     event.movementX *
-                    this.getSensitivity();
+                    this.cameraData.sensitivity;
+
+
+                this.cameraData.pitch -=
+                    event.movementY *
+                    this.cameraData.sensitivity;
+
+
+                this.cameraData.pitch =
+                    THREE.MathUtils.clamp(
+                        this.cameraData.pitch,
+                        -this.cameraData.maxPitch,
+                        this.cameraData.maxPitch
+                    );
 
             }
         );
+
+
+        document.addEventListener(
+            "mousedown",
+            event => {
+
+                if (
+                    event.button !== 0
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !this.running ||
+                    this.paused
+                ) {
+
+                    return;
+
+                }
+
+
+                this.shoot();
+
+            }
+        );
+
 
         document.addEventListener(
             "pointerlockchange",
             () => {
 
-                this.pointerLocked =
+                const locked =
                     document.pointerLockElement ===
-                    this.canvas;
+                    this.renderer.domElement;
 
-            }
-        );
-
-        this.canvas.addEventListener(
-            "click",
-            () => {
 
                 if (
-                    this.running &&
-                    !this.paused
+                    !locked &&
+                    this.running
                 ) {
 
-                    this.requestPointerLock();
+                    this.pause();
 
                 }
 
@@ -332,326 +1451,454 @@ window.GameEngine = {
 
     },
 
+
     /* =====================================================
-       11. KEY DOWN
-    ===================================================== */
+       12. KEY DOWN
+       ===================================================== */
 
-    handleKeyDown(event) {
+    handleKeyDown(
+        event
+    ) {
 
-        if (
-            event.code === "Space"
+        switch (
+            event.code
         ) {
 
-            if (
-                this.running &&
-                !this.paused
-            ) {
+            case "KeyW":
+
+                this.keys.forward =
+                    true;
+
+                break;
+
+
+            case "KeyS":
+
+                this.keys.backward =
+                    true;
+
+                break;
+
+
+            case "KeyA":
+
+                this.keys.left =
+                    true;
+
+                break;
+
+
+            case "KeyD":
+
+                this.keys.right =
+                    true;
+
+                break;
+
+
+            case "ShiftLeft":
+
+            case "ShiftRight":
+
+                this.keys.sprint =
+                    true;
+
+                break;
+
+
+            case "Space":
 
                 this.jump();
 
-            }
+                break;
+
+
+            case "KeyR":
+
+                this.reload();
+
+                break;
+
+
+            case "Escape":
+
+                if (
+                    this.running
+                ) {
+
+                    this.pause();
+
+                }
+
+                break;
 
         }
 
     },
 
+
     /* =====================================================
-       12. SENSITIVITY
-    ===================================================== */
+       13. KEY UP
+       ===================================================== */
 
-    getSensitivity() {
+    handleKeyUp(
+        event
+    ) {
 
-        if (
-            window.GAME_CONFIG &&
-            window.GAME_CONFIG.player
+        switch (
+            event.code
         ) {
 
-            return (
-                Number(
-                    window.GAME_CONFIG.player.sensitivity
-                ) || 0.8
-            ) * 0.002;
+            case "KeyW":
+
+                this.keys.forward =
+                    false;
+
+                break;
+
+
+            case "KeyS":
+
+                this.keys.backward =
+                    false;
+
+                break;
+
+
+            case "KeyA":
+
+                this.keys.left =
+                    false;
+
+                break;
+
+
+            case "KeyD":
+
+                this.keys.right =
+                    false;
+
+                break;
+
+
+            case "ShiftLeft":
+
+            case "ShiftRight":
+
+                this.keys.sprint =
+                    false;
+
+                break;
 
         }
 
-        return 0.0016;
-
     },
 
-    /* =====================================================
-       13. POINTER LOCK
-    ===================================================== */
 
-    requestPointerLock() {
+    /* =====================================================
+       14. RESIZE
+       ===================================================== */
+
+    resize() {
 
         if (
-            this.canvas &&
-            document.pointerLockElement !==
-            this.canvas
+            !this.camera ||
+            !this.renderer
         ) {
-
-            this.canvas.requestPointerLock?.();
-
-        }
-
-    },
-
-    /* =====================================================
-       14. START
-    ===================================================== */
-
-    start() {
-
-        if (!this.initialized) {
-
-            this.init();
-
-        }
-
-        this.running = true;
-
-        this.paused = false;
-
-        this.reset();
-
-        this.spawnEnemies();
-
-        this.lastTime =
-            performance.now();
-
-        requestAnimationFrame(
-            this.loop.bind(this)
-        );
-
-        console.log(
-            "[ENGINE] Game started."
-        );
-
-    },
-
-    /* =====================================================
-       15. STOP
-    ===================================================== */
-
-    stop() {
-
-        this.running = false;
-
-        this.paused = false;
-
-        this.enemies = [];
-
-        this.resetPlayer();
-
-    },
-
-    /* =====================================================
-       16. PAUSE
-    ===================================================== */
-
-    pause() {
-
-        this.paused = true;
-
-    },
-
-    /* =====================================================
-       17. RESUME
-    ===================================================== */
-
-    resume() {
-
-        this.paused = false;
-
-        this.lastTime =
-            performance.now();
-
-    },
-
-    /* =====================================================
-       18. RESET
-    ===================================================== */
-
-    reset() {
-
-        this.resetPlayer();
-
-        this.weapon.lastShot = 0;
-
-        this.weapon.muzzleFlash = 0;
-
-        this.weapon.recoil = 0;
-
-        this.camera.shake = 0;
-
-        this.camera.recoil = 0;
-
-        this.generateEnemies();
-
-    },
-
-    /* =====================================================
-       19. RESET PLAYER
-    ===================================================== */
-
-    resetPlayer() {
-
-        this.player.x = 3.5;
-
-        this.player.y = 3.5;
-
-        this.player.angle = 0;
-
-        this.player.height = 0;
-
-        this.player.verticalVelocity = 0;
-
-        this.player.grounded = true;
-
-        this.player.health = 100;
-
-    },
-
-    /* =====================================================
-       20. GAME LOOP
-    ===================================================== */
-
-    loop(currentTime) {
-
-        if (!this.running) {
 
             return;
 
         }
 
-        const delta =
-            Math.min(
-                (currentTime -
-                    this.lastTime) /
-                    1000,
-                0.05
-            );
+
+        this.camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+
+        this.camera.updateProjectionMatrix();
+
+
+        this.renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+    },
+
+
+    /* =====================================================
+       15. START
+       ===================================================== */
+
+    start() {
+
+        if (
+            !this.initialized
+        ) {
+
+            this.init();
+
+        }
+
+
+        this.running =
+            true;
+
+
+        this.paused =
+            false;
+
+
+        this.playerReset();
+
+
+        this.clock.start();
+
+
+        this.requestPointerLock();
+
 
         this.lastTime =
-            currentTime;
+            performance.now();
 
-        if (!this.paused) {
 
-            this.update(
-                delta
+        this.animate();
+
+
+        this.updateHUD();
+
+
+        console.log(
+            "MISSION STARTED"
+        );
+
+    },
+
+
+    /* =====================================================
+       16. RESET PLAYER
+       ===================================================== */
+
+    playerReset() {
+
+        this.camera.position.set(
+            0,
+            this.player.height,
+            5
+        );
+
+
+        this.cameraData.yaw =
+            0;
+
+
+        this.cameraData.pitch =
+            0;
+
+
+        this.player.velocityY =
+            0;
+
+
+        this.player.grounded =
+            true;
+
+
+        this.player.health =
+            100;
+
+
+        this.player.armor =
+            100;
+
+
+        this.weapon.ammo =
+            this.weapon.magazineSize;
+
+
+        this.weapon.reserve =
+            120;
+
+
+        this.kills =
+            0;
+
+
+        this.score =
+            0;
+
+
+        this.enemies.forEach(
+            enemy => {
+
+                enemy.health =
+                    enemy.maxHealth;
+
+                enemy.alive =
+                    true;
+
+                enemy.mesh.visible =
+                    true;
+
+            }
+        );
+
+    },
+
+
+    /* =====================================================
+       17. POINTER LOCK
+       ===================================================== */
+
+    requestPointerLock() {
+
+        if (
+            !this.renderer
+        ) {
+
+            return;
+
+        }
+
+
+        this.renderer.domElement
+            .requestPointerLock?.();
+
+    },
+
+
+    /* =====================================================
+       18. PAUSE
+       ===================================================== */
+
+    pause() {
+
+        if (
+            !this.running
+        ) {
+
+            return;
+
+        }
+
+
+        this.paused =
+            true;
+
+
+        document
+            .getElementById(
+                "pause-screen"
+            )
+            ?.classList
+            .remove(
+                "hidden"
             );
 
-        }
+    },
 
-        this.render();
 
-        requestAnimationFrame(
-            this.loop.bind(this)
-        );
+    /* =====================================================
+       19. RESUME
+       ===================================================== */
+
+    resume() {
+
+        this.paused =
+            false;
+
+
+        document
+            .getElementById(
+                "pause-screen"
+            )
+            ?.classList
+            .add(
+                "hidden"
+            );
+
+
+        this.clock.getDelta();
+
+
+        this.requestPointerLock();
 
     },
 
-    /* =====================================================
-       21. UPDATE
-    ===================================================== */
-
-    update(delta) {
-
-        this.updateInput();
-
-        this.updatePlayer(
-            delta
-        );
-
-        this.updateEnemies(
-            delta
-        );
-
-        this.updateWeapon(
-            delta
-        );
-
-    },
 
     /* =====================================================
-       22. INPUT
-    ===================================================== */
+       20. MOVEMENT
+       ===================================================== */
 
-    updateInput() {
-
-        this.input.forward =
-            !!this.keys["KeyW"];
-
-        this.input.backward =
-            !!this.keys["KeyS"];
-
-        this.input.left =
-            !!this.keys["KeyA"];
-
-        this.input.right =
-            !!this.keys["KeyD"];
-
-    },
-
-    /* =====================================================
-       23. PLAYER MOVEMENT
-    ===================================================== */
-
-    updatePlayer(delta) {
-
-        let forward = 0;
-        let strafe = 0;
+    updateMovement(
+        delta
+    ) {
 
         if (
-            this.input.forward
+            this.paused
         ) {
 
-            forward += 1;
+            return;
 
         }
 
+
+        let forward =
+            0;
+
+        let strafe =
+            0;
+
+
         if (
-            this.input.backward
+            this.keys.forward
         ) {
 
-            forward -= 1;
+            forward +=
+                1;
 
         }
 
+
         if (
-            this.input.right
+            this.keys.backward
         ) {
 
-            strafe += 1;
+            forward -=
+                1;
 
         }
 
+
         if (
-            this.input.left
+            this.keys.right
         ) {
 
-            strafe -= 1;
+            strafe +=
+                1;
 
         }
 
+
         if (
-            this.mobileY !== 0 ||
-            this.mobileX !== 0
+            this.keys.left
         ) {
 
-            forward =
-                -this.mobileY;
-
-            strafe =
-                this.mobileX;
+            strafe -=
+                1;
 
         }
+
 
         const length =
             Math.sqrt(
-                forward * forward +
-                strafe * strafe
+                forward *
+                forward +
+                strafe *
+                strafe
             );
+
 
         if (
             length > 0
@@ -665,155 +1912,229 @@ window.GameEngine = {
 
         }
 
+
         const speed =
-            this.player.speed *
+            this.keys.sprint
+                ? this.player.sprintSpeed
+                : this.player.speed;
+
+
+        const move =
+            speed *
             delta;
 
-        const sin =
-            Math.sin(
-                this.player.angle
-            );
 
-        const cos =
-            Math.cos(
-                this.player.angle
-            );
+        const direction =
+            new THREE.Vector3();
 
-        const moveX =
-            (
-                cos * forward -
-                sin * strafe
-            ) * speed;
 
-        const moveY =
-            (
-                sin * forward +
-                cos * strafe
-            ) * speed;
-
-        this.movePlayer(
-            moveX,
-            moveY
+        this.camera.getWorldDirection(
+            direction
         );
 
-        this.updateGravity(
-            delta
+
+        direction.y =
+            0;
+
+
+        direction.normalize();
+
+
+        const right =
+            new THREE.Vector3();
+
+
+        right.crossVectors(
+            direction,
+            new THREE.Vector3(
+                0,
+                1,
+                0
+            )
+        );
+
+
+        right.normalize();
+
+
+        const movement =
+            new THREE.Vector3();
+
+
+        movement.addScaledVector(
+            direction,
+            forward *
+            move
+        );
+
+
+        movement.addScaledVector(
+            right,
+            strafe *
+            move
+        );
+
+
+        this.tryMove(
+            movement.x,
+            movement.z
         );
 
     },
 
-    /* =====================================================
-       24. MOVE PLAYER + COLLISION
-    ===================================================== */
 
-    movePlayer(
+    /* =====================================================
+       21. COLLISION MOVEMENT
+       ===================================================== */
+
+    tryMove(
         dx,
-        dy
+        dz
     ) {
 
         const nextX =
-            this.player.x +
+            this.camera.position.x +
             dx;
 
-        const nextY =
-            this.player.y +
-            dy;
+
+        const nextZ =
+            this.camera.position.z +
+            dz;
+
 
         if (
-            !this.isWall(
+            !this.checkCollision(
                 nextX,
-                this.player.y
+                this.camera.position.z
             )
         ) {
 
-            this.player.x =
+            this.camera.position.x =
                 nextX;
 
         }
 
+
         if (
-            !this.isWall(
-                this.player.x,
-                nextY
+            !this.checkCollision(
+                this.camera.position.x,
+                nextZ
             )
         ) {
 
-            this.player.y =
-                nextY;
+            this.camera.position.z =
+                nextZ;
 
         }
 
     },
 
-    /* =====================================================
-       25. WALL CHECK
-    ===================================================== */
 
-    isWall(
+    /* =====================================================
+       22. COLLISION CHECK
+       ===================================================== */
+
+    checkCollision(
         x,
-        y
+        z
     ) {
 
-        const mapX =
-            Math.floor(
-                x
-            );
+        const radius =
+            this.player.radius;
 
-        const mapY =
-            Math.floor(
-                y
-            );
 
-        if (
-            mapY < 0 ||
-            mapY >= this.map.length ||
-            mapX < 0 ||
-            mapX >= this.map[0].length
+        const playerBox =
+            new THREE.Box3();
+
+
+        playerBox.min.set(
+            x - radius,
+            0,
+            z - radius
+        );
+
+
+        playerBox.max.set(
+            x + radius,
+            this.player.height,
+            z + radius
+        );
+
+
+        const objects = [
+            ...this.world.walls,
+            ...this.world.obstacles
+        ];
+
+
+        for (
+            const object of objects
         ) {
 
-            return true;
+            const box =
+                new THREE.Box3()
+                    .setFromObject(
+                        object
+                    );
+
+
+            if (
+                playerBox.intersectsBox(
+                    box
+                )
+            ) {
+
+                return true;
+
+            }
 
         }
 
-        return (
-            this.map[mapY][mapX] ===
-            "#"
-        );
+
+        return false;
 
     },
 
-    /* =====================================================
-       26. GRAVITY
-    ===================================================== */
 
-    updateGravity(delta) {
+    /* =====================================================
+       23. GRAVITY
+       ===================================================== */
+
+    updateGravity(
+        delta
+    ) {
 
         if (
             this.player.grounded
         ) {
 
-            this.player.verticalVelocity =
-                0;
-
             return;
 
         }
 
-        this.player.verticalVelocity -=
-            18 * delta;
 
-        this.player.height +=
-            this.player.verticalVelocity *
+        this.player.velocityY -=
+            this.player.gravity *
             delta;
 
+
+        this.camera.position.y +=
+            this.player.velocityY *
+            delta;
+
+
         if (
-            this.player.height <= 0
+            this.camera.position.y <=
+            this.player.height
         ) {
 
-            this.player.height = 0;
+            this.camera.position.y =
+                this.player.height;
 
-            this.player.verticalVelocity =
+
+            this.player.velocityY =
                 0;
+
 
             this.player.grounded =
                 true;
@@ -822,159 +2143,44 @@ window.GameEngine = {
 
     },
 
+
     /* =====================================================
-       27. JUMP
-    ===================================================== */
+       24. JUMP
+       ===================================================== */
 
     jump() {
 
         if (
-            !this.player.grounded
+            !this.player.grounded ||
+            this.paused
         ) {
 
             return;
 
         }
 
+
         this.player.grounded =
             false;
 
-        this.player.verticalVelocity =
-            7;
+
+        this.player.velocityY =
+            this.player.jumpForce;
 
     },
 
-    /* =====================================================
-       28. MOBILE MOVEMENT
-    ===================================================== */
 
-    setMobileMovement(
-        x,
-        y
+    /* =====================================================
+       25. ENEMY UPDATE
+       ===================================================== */
+
+    updateEnemies(
+        delta
     ) {
 
-        this.mobileX = x;
+        const playerPosition =
+            this.camera.position;
 
-        this.mobileY = y;
-
-    },
-
-    /* =====================================================
-       29. ENEMY GENERATION
-    ===================================================== */
-
-    generateEnemies() {
-
-        this.enemies = [];
-
-    },
-
-    /* =====================================================
-       30. SPAWN ENEMIES
-    ===================================================== */
-
-    spawnEnemies() {
-
-        this.enemies = [];
-
-        const spawnPoints = [
-
-            {
-                x: 11.5,
-                y: 3.5
-            },
-
-            {
-                x: 13.5,
-                y: 6.5
-            },
-
-            {
-                x: 5.5,
-                y: 11.5
-            },
-
-            {
-                x: 10.5,
-                y: 13.5
-            },
-
-            {
-                x: 13.5,
-                y: 11.5
-            }
-
-        ];
-
-        const count =
-            Math.min(
-                this.maxEnemies,
-                spawnPoints.length
-            );
-
-        for (
-            let i = 0;
-            i < count;
-            i++
-        ) {
-
-            const point =
-                spawnPoints[i];
-
-            this.enemies.push({
-
-                id:
-                    ++this.enemyId,
-
-                x:
-                    point.x,
-
-                y:
-                    point.y,
-
-                health: 100,
-
-                maxHealth: 100,
-
-                speed:
-                    0.7 +
-                    Math.random() *
-                    0.25,
-
-                radius:
-                    0.25,
-
-                alive:
-                    true,
-
-                attackTimer:
-                    0,
-
-                attackCooldown:
-                    1.5 +
-                    Math.random(),
-
-                rotation:
-                    Math.random() *
-                    Math.PI * 2,
-
-                hitFlash:
-                    0,
-
-                deathTimer:
-                    0
-
-            });
-
-        }
-
-    },
-
-    /* =====================================================
-       31. ENEMY UPDATE
-    ===================================================== */
-
-    updateEnemies(delta) {
 
         for (
             const enemy of this.enemies
@@ -984,105 +2190,111 @@ window.GameEngine = {
                 !enemy.alive
             ) {
 
-                enemy.deathTimer +=
-                    delta;
-
                 continue;
 
             }
 
-            enemy.hitFlash =
-                Math.max(
+
+            const position =
+                enemy.mesh.position;
+
+
+            const direction =
+                new THREE.Vector3(
+                    playerPosition.x -
+                    position.x,
+
                     0,
-                    enemy.hitFlash -
-                    delta
+
+                    playerPosition.z -
+                    position.z
                 );
 
-            const dx =
-                this.player.x -
-                enemy.x;
-
-            const dy =
-                this.player.y -
-                enemy.y;
 
             const distance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
+                direction.length();
 
-            /*
-             * Enemy bergerak mendekati player
-             */
 
             if (
-                distance > 1.8 &&
-                distance < 15
+                distance >
+                1.8 &&
+                distance <
+                30
             ) {
 
-                const angle =
-                    Math.atan2(
-                        dy,
-                        dx
-                    );
+                direction.normalize();
 
-                const moveSpeed =
+
+                const speed =
                     enemy.speed *
                     delta;
 
-                const moveX =
-                    Math.cos(angle) *
-                    moveSpeed;
-
-                const moveY =
-                    Math.sin(angle) *
-                    moveSpeed;
 
                 const nextX =
-                    enemy.x +
-                    moveX;
+                    position.x +
+                    direction.x *
+                    speed;
 
-                const nextY =
-                    enemy.y +
-                    moveY;
+
+                const nextZ =
+                    position.z +
+                    direction.z *
+                    speed;
+
 
                 if (
-                    !this.isWall(
+                    !this.checkEnemyCollision(
+                        enemy,
                         nextX,
-                        enemy.y
+                        position.z
                     )
                 ) {
 
-                    enemy.x =
+                    position.x =
                         nextX;
 
                 }
 
+
                 if (
-                    !this.isWall(
-                        enemy.x,
-                        nextY
+                    !this.checkEnemyCollision(
+                        enemy,
+                        position.x,
+                        nextZ
                     )
                 ) {
 
-                    enemy.y =
-                        nextY;
+                    position.z =
+                        nextZ;
 
                 }
 
             }
 
-            /*
-             * Enemy menyerang
-             */
+
+            /* ---------------------------------------------
+               Look at player
+               --------------------------------------------- */
+
+            enemy.mesh.lookAt(
+                playerPosition.x,
+                1,
+                playerPosition.z
+            );
+
+
+            /* ---------------------------------------------
+               Attack
+               --------------------------------------------- */
 
             if (
-                distance < 7
+                distance <=
+                enemy.attackDistance
             ) {
 
                 enemy.attackTimer +=
                     delta;
+
 
                 if (
                     enemy.attackTimer >=
@@ -1092,6 +2304,7 @@ window.GameEngine = {
                     enemy.attackTimer =
                         0;
 
+
                     this.enemyAttack(
                         enemy
                     );
@@ -1100,77 +2313,17 @@ window.GameEngine = {
 
             }
 
-        }
 
-    },
-
-    /* =====================================================
-       32. ENEMY ATTACK
-    ===================================================== */
-
-    enemyAttack(
-        enemy
-    ) {
-
-        const dx =
-            this.player.x -
-            enemy.x;
-
-        const dy =
-            this.player.y -
-            enemy.y;
-
-        const distance =
-            Math.sqrt(
-                dx * dx +
-                dy * dy
-            );
-
-        /*
-         * Basic line-of-sight
-         */
-
-        const angle =
-            Math.atan2(
-                dy,
-                dx
-            );
-
-        if (
-            !this.hasLineOfSight(
-                enemy.x,
-                enemy.y,
-                this.player.x,
-                this.player.y
-            )
-        ) {
-
-            return;
-
-        }
-
-        const enemyAccuracy =
-            0.55;
-
-        if (
-            Math.random() <
-            enemyAccuracy
-        ) {
-
-            const damage =
-                5 +
-                Math.floor(
-                    Math.random() * 6
-                );
+            /* ---------------------------------------------
+               Hit flash
+               --------------------------------------------- */
 
             if (
-                typeof window.damagePlayer ===
-                "function"
+                enemy.hitTimer > 0
             ) {
 
-                window.damagePlayer(
-                    damage
-                );
+                enemy.hitTimer -=
+                    delta;
 
             }
 
@@ -1178,136 +2331,27 @@ window.GameEngine = {
 
     },
 
-    /* =====================================================
-       33. LINE OF SIGHT
-    ===================================================== */
 
-    hasLineOfSight(
-        x1,
-        y1,
-        x2,
-        y2
+    /* =====================================================
+       26. ENEMY COLLISION
+       ===================================================== */
+
+    checkEnemyCollision(
+        currentEnemy,
+        x,
+        z
     ) {
 
-        const distance =
-            Math.sqrt(
-                (x2 - x1) ** 2 +
-                (y2 - y1) ** 2
-            );
+        const radius =
+            0.45;
 
-        const steps =
-            Math.ceil(
-                distance * 8
-            );
-
-        for (
-            let i = 0;
-            i <= steps;
-            i++
-        ) {
-
-            const t =
-                i / steps;
-
-            const x =
-                x1 +
-                (x2 - x1) * t;
-
-            const y =
-                y1 +
-                (y2 - y1) * t;
-
-            if (
-                this.isWall(
-                    x,
-                    y
-                )
-            ) {
-
-                return false;
-
-            }
-
-        }
-
-        return true;
-
-    },
-
-    /* =====================================================
-       34. SHOOTING
-    ===================================================== */
-
-    shoot() {
-
-        const now =
-            performance.now();
-
-        if (
-            now -
-            this.weapon.lastShot <
-            this.weapon.fireRate
-        ) {
-
-            return false;
-
-        }
-
-        this.weapon.lastShot =
-            now;
-
-        this.weapon.muzzleFlash =
-            0.07;
-
-        this.weapon.recoil =
-            0.08;
-
-        this.camera.shake =
-            0.04;
-
-        /*
-         * Hit detection
-         */
-
-        const target =
-            this.findTarget();
-
-        if (
-            target
-        ) {
-
-            this.damageEnemy(
-                target,
-                this.weapon.damage
-            );
-
-            return true;
-
-        }
-
-        return false;
-
-    },
-
-    /* =====================================================
-       35. FIND TARGET
-    ===================================================== */
-
-    findTarget() {
-
-        let closest = null;
-
-        let closestDistance =
-            Infinity;
-
-        const playerAngle =
-            this.player.angle;
 
         for (
             const enemy of this.enemies
         ) {
 
             if (
+                enemy === currentEnemy ||
                 !enemy.alive
             ) {
 
@@ -1315,106 +2359,53 @@ window.GameEngine = {
 
             }
 
-            const dx =
-                enemy.x -
-                this.player.x;
 
-            const dy =
-                enemy.y -
-                this.player.y;
+            const dx =
+                enemy.mesh.position.x -
+                x;
+
+
+            const dz =
+                enemy.mesh.position.z -
+                z;
+
 
             const distance =
                 Math.sqrt(
                     dx * dx +
-                    dy * dy
+                    dz * dz
                 );
 
-            if (
-                distance >
-                this.weapon.range
-            ) {
-
-                continue;
-
-            }
-
-            const angle =
-                Math.atan2(
-                    dy,
-                    dx
-                );
-
-            let difference =
-                angle -
-                playerAngle;
-
-            difference =
-                Math.atan2(
-                    Math.sin(difference),
-                    Math.cos(difference)
-                );
-
-            /*
-             * Target cone
-             */
-
-            const targetLimit =
-                0.055;
-
-            if (
-                Math.abs(
-                    difference
-                ) >
-                targetLimit
-            ) {
-
-                continue;
-
-            }
-
-            if (
-                !this.hasLineOfSight(
-                    this.player.x,
-                    this.player.y,
-                    enemy.x,
-                    enemy.y
-                )
-            ) {
-
-                continue;
-
-            }
 
             if (
                 distance <
-                closestDistance
+                radius * 2
             ) {
 
-                closest =
-                    enemy;
-
-                closestDistance =
-                    distance;
+                return true;
 
             }
 
         }
 
-        return closest;
+
+        return this.checkCollision(
+            x,
+            z
+        );
 
     },
 
-    /* =====================================================
-       36. DAMAGE ENEMY
-    ===================================================== */
 
-    damageEnemy(
-        enemy,
-        amount
+    /* =====================================================
+       27. ENEMY ATTACK
+       ===================================================== */
+
+    enemyAttack(
+        enemy
     ) {
 
         if (
-            !enemy ||
             !enemy.alive
         ) {
 
@@ -1422,14 +2413,334 @@ window.GameEngine = {
 
         }
 
-        enemy.health -=
-            amount;
 
-        enemy.hitFlash =
-            0.15;
+        const origin =
+            enemy.mesh.position.clone();
+
+
+        origin.y =
+            1.4;
+
+
+        const target =
+            this.camera.position.clone();
+
+
+        const direction =
+            new THREE.Vector3()
+                .subVectors(
+                    target,
+                    origin
+                )
+                .normalize();
+
+
+        const raycaster =
+            new THREE.Raycaster(
+                origin,
+                direction,
+                0,
+                30
+            );
+
+
+        const objects = [
+            ...this.world.walls,
+            ...this.world.obstacles
+        ];
+
+
+        const hits =
+            raycaster.intersectObjects(
+                objects,
+                false
+            );
+
 
         if (
-            enemy.health <= 0
+            hits.length > 0
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            Math.random() <
+            0.55
+        ) {
+
+            this.damagePlayer(
+                8
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
+       28. DAMAGE PLAYER
+       ===================================================== */
+
+    damagePlayer(
+        amount
+    ) {
+
+        if (
+            !this.running
+        ) {
+
+            return;
+
+        }
+
+
+        let damage =
+            amount;
+
+
+        if (
+            this.player.armor >
+            0
+        ) {
+
+            const absorbed =
+                Math.min(
+                    this.player.armor,
+                    Math.floor(
+                        damage *
+                        0.5
+                    )
+                );
+
+
+            this.player.armor -=
+                absorbed;
+
+
+            damage -=
+                absorbed;
+
+        }
+
+
+        this.player.health -=
+            damage;
+
+
+        this.player.health =
+            Math.max(
+                0,
+                this.player.health
+            );
+
+
+        this.showDamageEffect();
+
+
+        this.updateHUD();
+
+
+        if (
+            this.player.health <=
+            0
+        ) {
+
+            this.gameOver();
+
+        }
+
+    },
+
+
+    /* =====================================================
+       29. SHOOT
+       ===================================================== */
+
+    shoot() {
+
+        if (
+            this.weapon.reloading
+        ) {
+
+            return;
+
+        }
+
+
+        const now =
+            performance.now();
+
+
+        if (
+            now -
+            this.weapon.lastShot <
+            this.weapon.fireRate
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            this.weapon.ammo <= 0
+        ) {
+
+            this.reload();
+
+            return;
+
+        }
+
+
+        this.weapon.lastShot =
+            now;
+
+
+        this.weapon.ammo--;
+
+
+        this.weapon.muzzleFlash =
+            0.08;
+
+
+        this.weapon.recoil =
+            0.08;
+
+
+        this.cameraData.recoil =
+            0.035;
+
+
+        this.createMuzzleFlash();
+
+
+        /* -------------------------------------------------
+           Raycast
+           ------------------------------------------------- */
+
+        const direction =
+            new THREE.Vector3();
+
+
+        this.camera.getWorldDirection(
+            direction
+        );
+
+
+        const raycaster =
+            new THREE.Raycaster(
+                this.camera.position,
+                direction,
+                0,
+                100
+            );
+
+
+        const enemyMeshes = [];
+
+
+        this.enemies.forEach(
+            enemy => {
+
+                if (
+                    enemy.alive
+                ) {
+
+                    enemy.mesh.traverse(
+                        object => {
+
+                            if (
+                                object.isMesh
+                            ) {
+
+                                object.userData.enemy =
+                                    enemy;
+
+                                enemyMeshes.push(
+                                    object
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        const hits =
+            raycaster.intersectObjects(
+                [
+                    ...enemyMeshes,
+                    ...this.world.walls,
+                    ...this.world.obstacles
+                ],
+                true
+            );
+
+
+        if (
+            hits.length > 0
+        ) {
+
+            const hit =
+                hits[0];
+
+
+            const enemy =
+                hit.object.userData.enemy;
+
+
+            if (
+                enemy &&
+                enemy.alive
+            ) {
+
+                this.damageEnemy(
+                    enemy,
+                    this.weapon.damage
+                );
+
+
+                this.showHitMarker();
+
+            }
+
+        }
+
+
+        this.updateHUD();
+
+    },
+
+
+    /* =====================================================
+       30. DAMAGE ENEMY
+       ===================================================== */
+
+    damageEnemy(
+        enemy,
+        damage
+    ) {
+
+        enemy.health -=
+            damage;
+
+
+        enemy.hitTimer =
+            0.15;
+
+
+        if (
+            enemy.health <=
+            0
         ) {
 
             this.killEnemy(
@@ -1440,9 +2751,10 @@ window.GameEngine = {
 
     },
 
+
     /* =====================================================
-       37. KILL ENEMY
-    ===================================================== */
+       31. KILL ENEMY
+       ===================================================== */
 
     killEnemy(
         enemy
@@ -1456,33 +2768,173 @@ window.GameEngine = {
 
         }
 
+
         enemy.alive =
             false;
 
-        enemy.health =
-            0;
 
-        enemy.deathTimer =
-            0;
+        enemy.mesh.visible =
+            false;
+
+
+        this.kills++;
+
+
+        this.score +=
+            100;
+
+
+        this.showKillFeed(
+            `HOSTILE ${enemy.id + 1} ELIMINATED`
+        );
+
+
+        this.updateHUD();
+
 
         if (
-            typeof window.enemyKilled ===
-            "function"
+            this.enemies.every(
+                item =>
+                    !item.alive
+            )
         ) {
 
-            window.enemyKilled(
-                `TARGET-${enemy.id}`
-            );
+            this.victory();
 
         }
 
     },
 
-    /* =====================================================
-       38. WEAPON UPDATE
-    ===================================================== */
 
-    updateWeapon(delta) {
+    /* =====================================================
+       32. RELOAD
+       ===================================================== */
+
+    reload() {
+
+        if (
+            this.weapon.reloading
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            this.weapon.ammo >=
+            this.weapon.magazineSize
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            this.weapon.reserve <=
+            0
+        ) {
+
+            return;
+
+        }
+
+
+        this.weapon.reloading =
+            true;
+
+
+        this.weapon.reloadTimer =
+            0;
+
+
+        const reloadText =
+            document.getElementById(
+                "reload-text"
+            );
+
+
+        if (
+            reloadText
+        ) {
+
+            reloadText.textContent =
+                "RELOADING";
+
+        }
+
+    },
+
+
+    /* =====================================================
+       33. UPDATE WEAPON
+       ===================================================== */
+
+    updateWeapon(
+        delta
+    ) {
+
+        if (
+            this.weapon.reloading
+        ) {
+
+            this.weapon.reloadTimer +=
+                delta;
+
+
+            if (
+                this.weapon.reloadTimer >=
+                this.weapon.reloadTime
+            ) {
+
+                const needed =
+                    this.weapon.magazineSize -
+                    this.weapon.ammo;
+
+
+                const amount =
+                    Math.min(
+                        needed,
+                        this.weapon.reserve
+                    );
+
+
+                this.weapon.ammo +=
+                    amount;
+
+
+                this.weapon.reserve -=
+                    amount;
+
+
+                this.weapon.reloading =
+                    false;
+
+
+                this.weapon.reloadTimer =
+                    0;
+
+
+                const reloadText =
+                    document.getElementById(
+                        "reload-text"
+                    );
+
+
+                if (
+                    reloadText
+                ) {
+
+                    reloadText.textContent =
+                        "";
+
+                }
+
+            }
+
+        }
+
 
         this.weapon.muzzleFlash =
             Math.max(
@@ -1491,6 +2943,7 @@ window.GameEngine = {
                 delta
             );
 
+
         this.weapon.recoil =
             Math.max(
                 0,
@@ -1498,1077 +2951,634 @@ window.GameEngine = {
                 delta * 2
             );
 
-        this.camera.shake =
+
+        this.cameraData.recoil =
             Math.max(
                 0,
-                this.camera.shake -
+                this.cameraData.recoil -
                 delta * 2
             );
 
-    },
-
-    /* =====================================================
-       39. RENDER
-    ===================================================== */
-
-    render() {
 
         if (
-            !this.ctx
+            this.weaponModel
+        ) {
+
+            this.weaponModel.position.y =
+                -0.48 +
+                this.weapon.recoil;
+
+
+            this.weaponModel.rotation.x =
+                this.weapon.recoil *
+                0.5;
+
+        }
+
+
+        if (
+            this.muzzleLight
+        ) {
+
+            this.muzzleLight.intensity =
+                this.weapon.muzzleFlash >
+                0
+                    ? 8
+                    : 0;
+
+        }
+
+    },
+
+
+    /* =====================================================
+       34. MUZZLE FLASH
+       ===================================================== */
+
+    createMuzzleFlash() {
+
+        if (
+            !this.muzzleLight
         ) {
 
             return;
 
         }
 
-        this.clearScreen();
 
-        this.renderSky();
+        this.muzzleLight.intensity =
+            12;
 
-        this.renderWalls();
 
-        this.renderEnemies();
-
-        this.renderWeapon();
-
-        this.renderMuzzleFlash();
-
-    },
-
-    /* =====================================================
-       40. CLEAR SCREEN
-    ===================================================== */
-
-    clearScreen() {
-
-        this.ctx.clearRect(
-            0,
-            0,
-            this.width,
-            this.height
-        );
-
-    },
-
-    /* =====================================================
-       41. SKY
-    ===================================================== */
-
-    renderSky() {
-
-        const ctx =
-            this.ctx;
-
-        const horizon =
-            this.height / 2;
-
-        const sky =
-            ctx.createLinearGradient(
-                0,
-                0,
-                0,
-                horizon
+        const flashGeometry =
+            new THREE.SphereGeometry(
+                0.09,
+                8,
+                8
             );
 
-        sky.addColorStop(
-            0,
-            "#050709"
-        );
 
-        sky.addColorStop(
-            0.55,
-            "#11171b"
-        );
+        const flashMaterial =
+            new THREE.MeshBasicMaterial({
 
-        sky.addColorStop(
-            1,
-            "#252a2d"
-        );
-
-        ctx.fillStyle =
-            sky;
-
-        ctx.fillRect(
-            0,
-            0,
-            this.width,
-            horizon
-        );
-
-        const floor =
-            ctx.createLinearGradient(
-                0,
-                horizon,
-                0,
-                this.height
-            );
-
-        floor.addColorStop(
-            0,
-            "#202427"
-        );
-
-        floor.addColorStop(
-            1,
-            "#050607"
-        );
-
-        ctx.fillStyle =
-            floor;
-
-        ctx.fillRect(
-            0,
-            horizon,
-            this.width,
-            this.height -
-            horizon
-        );
-
-    },
-
-    /* =====================================================
-       42. WALL RENDER
-    ===================================================== */
-
-    renderWalls() {
-
-        const ctx =
-            this.ctx;
-
-        const width =
-            this.width;
-
-        const height =
-            this.height;
-
-        const horizon =
-            height / 2;
-
-        const fov =
-            this.camera.fov;
-
-        const rayCount =
-            Math.min(
-                Math.floor(
-                    width / 2
-                ),
-                900
-            );
-
-        const columnWidth =
-            width /
-            rayCount;
-
-        for (
-            let ray = 0;
-            ray < rayCount;
-            ray++
-        ) {
-
-            const cameraX =
-                ray /
-                rayCount;
-
-            const rayAngle =
-                this.player.angle -
-                fov / 2 +
-                fov * cameraX;
-
-            const hit =
-                this.castRay(
-                    rayAngle
-                );
-
-            if (
-                !hit
-            ) {
-
-                continue;
-
-            }
-
-            let distance =
-                hit.distance;
-
-            /*
-             * Fisheye correction
-             */
-
-            const angleDifference =
-                rayAngle -
-                this.player.angle;
-
-            distance *=
-                Math.cos(
-                    angleDifference
-                );
-
-            distance =
-                Math.max(
-                    distance,
-                    0.01
-                );
-
-            const wallHeight =
-                (
-                    height /
-                    distance
-                ) *
-                0.72;
-
-            const top =
-                horizon -
-                wallHeight / 2;
-
-            const bottom =
-                horizon +
-                wallHeight / 2;
-
-            const brightness =
-                Math.max(
-                    0.12,
-                    1 -
-                    distance / 16
-                );
-
-            const base =
-                hit.side
-                    ? 70
-                    : 95;
-
-            const red =
-                Math.floor(
-                    base *
-                    brightness
-                );
-
-            const green =
-                Math.floor(
-                    base *
-                    brightness
-                );
-
-            const blue =
-                Math.floor(
-                    (base + 5) *
-                    brightness
-                );
-
-            ctx.fillStyle =
-                `rgb(${red},${green},${blue})`;
-
-            ctx.fillRect(
-                ray *
-                columnWidth,
-                top,
-                columnWidth + 1,
-                wallHeight
-            );
-
-            /*
-             * Wall edge highlight
-             */
-
-            if (
-                distance < 8
-            ) {
-
-                ctx.fillStyle =
-                    `rgba(255,255,255,${0.02 * brightness})`;
-
-                ctx.fillRect(
-                    ray *
-                    columnWidth,
-                    top,
-                    columnWidth + 1,
-                    2
-                );
-
-            }
-
-        }
-
-        /*
-         * Floor grid
-         */
-
-        this.renderFloorGrid();
-
-    },
-
-    /* =====================================================
-       43. FLOOR GRID
-    ===================================================== */
-
-    renderFloorGrid() {
-
-        const ctx =
-            this.ctx;
-
-        const horizon =
-            this.height / 2;
-
-        ctx.save();
-
-        ctx.globalAlpha =
-            0.08;
-
-        ctx.strokeStyle =
-            "#ffffff";
-
-        ctx.lineWidth =
-            1;
-
-        for (
-            let i = 1;
-            i < 12;
-            i++
-        ) {
-
-            const y =
-                horizon +
-                Math.pow(
-                    i / 12,
-                    1.7
-                ) *
-                (this.height -
-                horizon);
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                0,
-                y
-            );
-
-            ctx.lineTo(
-                this.width,
-                y
-            );
-
-            ctx.stroke();
-
-        }
-
-        ctx.restore();
-
-    },
-
-    /* =====================================================
-       44. RAYCAST
-    ===================================================== */
-
-    castRay(
-        angle
-    ) {
-
-        const cos =
-            Math.cos(
-                angle
-            );
-
-        const sin =
-            Math.sin(
-                angle
-            );
-
-        let distance = 0;
-
-        const step =
-            0.025;
-
-        while (
-            distance <
-            this.camera.viewDistance
-        ) {
-
-            distance +=
-                step;
-
-            const x =
-                this.player.x +
-                cos *
-                distance;
-
-            const y =
-                this.player.y +
-                sin *
-                distance;
-
-            if (
-                this.isWall(
-                    x,
-                    y
-                )
-            ) {
-
-                const mapX =
-                    Math.floor(
-                        x
-                    );
-
-                const mapY =
-                    Math.floor(
-                        y
-                    );
-
-                const offsetX =
-                    x -
-                    mapX;
-
-                const offsetY =
-                    y -
-                    mapY;
-
-                const side =
-                    Math.min(
-                        offsetX,
-                        1 -
-                        offsetX,
-                        offsetY,
-                        1 -
-                        offsetY
-                    ) < 0.03;
-
-                return {
-
-                    distance:
-                        distance,
-
-                    side:
-                        side
-
-                };
-
-            }
-
-        }
-
-        return null;
-
-    },
-
-    /* =====================================================
-       45. ENEMY RENDER
-    ===================================================== */
-
-    renderEnemies() {
-
-        const ctx =
-            this.ctx;
-
-        const visibleEnemies =
-            [];
-
-        for (
-            const enemy of this.enemies
-        ) {
-
-            if (
-                !enemy.alive
-            ) {
-
-                continue;
-
-            }
-
-            const dx =
-                enemy.x -
-                this.player.x;
-
-            const dy =
-                enemy.y -
-                this.player.y;
-
-            const distance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-            if (
-                distance >
-                this.camera.viewDistance
-            ) {
-
-                continue;
-
-            }
-
-            const angle =
-                Math.atan2(
-                    dy,
-                    dx
-                );
-
-            let relative =
-                angle -
-                this.player.angle;
-
-            relative =
-                Math.atan2(
-                    Math.sin(relative),
-                    Math.cos(relative)
-                );
-
-            if (
-                Math.abs(relative) >
-                this.camera.fov / 2
-            ) {
-
-                continue;
-
-            }
-
-            visibleEnemies.push({
-
-                enemy,
-                distance,
-                relative
+                color:
+                    0xffaa33
 
             });
 
-        }
 
-        /*
-         * Render far enemies first
-         */
+        const flash =
+            new THREE.Mesh(
+                flashGeometry,
+                flashMaterial
+            );
 
-        visibleEnemies.sort(
-            (
-                a,
-                b
-            ) =>
-                b.distance -
-                a.distance
+
+        flash.position.set(
+            0,
+            0,
+            -1.35
         );
 
 
-        for (
-            const item of visibleEnemies
-        ) {
+        this.weaponModel.add(
+            flash
+        );
 
-            this.drawEnemy(
-                item.enemy,
-                item.distance,
-                item.relative
-            );
 
-        }
+        setTimeout(
+            () => {
+
+                this.weaponModel.remove(
+                    flash
+                );
+
+
+                flash.geometry.dispose();
+
+                flash.material.dispose();
+
+            },
+            50
+        );
 
     },
 
+
     /* =====================================================
-       46. DRAW ENEMY
-    ===================================================== */
+       35. CAMERA
+       ===================================================== */
 
-    drawEnemy(
-        enemy,
-        distance,
-        relativeAngle
-    ) {
+    updateCamera() {
 
-        const ctx =
-            this.ctx;
+        this.camera.rotation.order =
+            "YXZ";
 
-        const width =
-            this.width;
 
-        const height =
-            this.height;
+        this.camera.rotation.y =
+            this.cameraData.yaw;
 
-        const horizon =
-            height / 2;
 
-        const fov =
-            this.camera.fov;
+        this.camera.rotation.x =
+            this.cameraData.pitch;
 
-        const screenX =
-            width / 2 +
-            (
-                relativeAngle /
-                fov
-            ) *
-            width;
 
-        const size =
-            (
-                height /
-                distance
-            ) *
-            0.45;
-
-        const bodyWidth =
-            size * 0.38;
-
-        const bodyHeight =
-            size * 0.68;
-
-        const bodyTop =
-            horizon -
-            bodyHeight / 2;
-
-        /*
-         * Shadow
-         */
-
-        ctx.save();
-
-        ctx.globalAlpha =
-            Math.max(
-                0.1,
-                1 -
-                distance / 18
-            );
-
-        /*
-         * Enemy body
-         */
-
-        const hit =
-            enemy.hitFlash >
+        this.camera.rotation.z =
             0;
 
-        ctx.fillStyle =
-            hit
-                ? "#ffffff"
-                : "#161b1f";
-
-        ctx.fillRect(
-            screenX -
-            bodyWidth / 2,
-            bodyTop,
-            bodyWidth,
-            bodyHeight
-        );
-
-        /*
-         * Armor highlight
-         */
-
-        ctx.fillStyle =
-            hit
-                ? "#ffb0b0"
-                : "#343b40";
-
-        ctx.fillRect(
-            screenX -
-            bodyWidth * 0.32,
-            bodyTop +
-            bodyHeight * 0.15,
-            bodyWidth * 0.64,
-            bodyHeight * 0.08
-        );
-
-        /*
-         * Head
-         */
-
-        const headSize =
-            size * 0.20;
-
-        ctx.fillStyle =
-            hit
-                ? "#ffffff"
-                : "#22282c";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            screenX,
-            bodyTop -
-            headSize * 0.55,
-            headSize / 2,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-        /*
-         * Red visor
-         */
-
-        ctx.fillStyle =
-            "#ff2424";
-
-        ctx.fillRect(
-            screenX -
-            headSize * 0.34,
-            bodyTop -
-            headSize * 0.62,
-            headSize * 0.68,
-            Math.max(
-                2,
-                headSize * 0.10
-            )
-        );
-
-        /*
-         * Weapon
-         */
-
-        ctx.fillStyle =
-            "#090b0d";
-
-        ctx.fillRect(
-            screenX +
-            bodyWidth * 0.25,
-            bodyTop +
-            bodyHeight * 0.28,
-            bodyWidth * 0.75,
-            Math.max(
-                2,
-                size * 0.055
-            )
-        );
-
-        /*
-         * Health bar
-         */
-
-        const healthWidth =
-            bodyWidth * 1.4;
-
-        const healthRatio =
-            Math.max(
-                0,
-                enemy.health /
-                enemy.maxHealth
-            );
-
-        ctx.fillStyle =
-            "rgba(0,0,0,0.65)";
-
-        ctx.fillRect(
-            screenX -
-            healthWidth / 2,
-            bodyTop -
-            size * 0.38,
-            healthWidth,
-            4
-        );
-
-        ctx.fillStyle =
-            "#ff2a2a";
-
-        ctx.fillRect(
-            screenX -
-            healthWidth / 2,
-            bodyTop -
-            size * 0.38,
-            healthWidth *
-            healthRatio,
-            4
-        );
-
-        ctx.restore();
-
     },
 
-    /* =====================================================
-       47. WEAPON
-    ===================================================== */
-
-    renderWeapon() {
-
-        const ctx =
-            this.ctx;
-
-        const width =
-            this.width;
-
-        const height =
-            this.height;
-
-        const recoil =
-            this.weapon.recoil *
-            100;
-
-        const weaponWidth =
-            Math.min(
-                400,
-                width * 0.36
-            );
-
-        const weaponHeight =
-            weaponWidth * 0.48;
-
-        const x =
-            width / 2 -
-            weaponWidth / 2;
-
-        const y =
-            height -
-            weaponHeight +
-            recoil;
-
-        ctx.save();
-
-        /*
-         * Weapon shadow
-         */
-
-        ctx.fillStyle =
-            "rgba(0,0,0,0.75)";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.28,
-            y +
-            weaponHeight * 0.20,
-            weaponWidth * 0.45,
-            weaponHeight * 0.55
-        );
-
-        /*
-         * Main body
-         */
-
-        ctx.fillStyle =
-            "#151a1e";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.20,
-            y +
-            weaponHeight * 0.15,
-            weaponWidth * 0.60,
-            weaponHeight * 0.42
-        );
-
-        /*
-         * Weapon upper section
-         */
-
-        ctx.fillStyle =
-            "#242b30";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.28,
-            y +
-            weaponHeight * 0.08,
-            weaponWidth * 0.45,
-            weaponHeight * 0.13
-        );
-
-        /*
-         * Barrel
-         */
-
-        ctx.fillStyle =
-            "#090b0d";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.70,
-            y +
-            weaponHeight * 0.25,
-            weaponWidth * 0.27,
-            weaponHeight * 0.08
-        );
-
-        /*
-         * Magazine
-         */
-
-        ctx.fillStyle =
-            "#101417";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x +
-            weaponWidth * 0.40,
-            y +
-            weaponHeight * 0.52
-        );
-
-        ctx.lineTo(
-            x +
-            weaponWidth * 0.55,
-            y +
-            weaponHeight * 0.52
-        );
-
-        ctx.lineTo(
-            x +
-            weaponWidth * 0.50,
-            y +
-            weaponHeight * 0.92
-        );
-
-        ctx.lineTo(
-            x +
-            weaponWidth * 0.43,
-            y +
-            weaponHeight * 0.92
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-
-        /*
-         * Grip
-         */
-
-        ctx.fillStyle =
-            "#0b0e10";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.58,
-            y +
-            weaponHeight * 0.48,
-            weaponWidth * 0.14,
-            weaponHeight * 0.42
-        );
-
-        /*
-         * Red accent
-         */
-
-        ctx.fillStyle =
-            "#ff2a2a";
-
-        ctx.fillRect(
-            x +
-            weaponWidth * 0.30,
-            y +
-            weaponHeight * 0.16,
-            weaponWidth * 0.22,
-            weaponHeight * 0.025
-        );
-
-        ctx.restore();
-
-    },
 
     /* =====================================================
-       48. MUZZLE FLASH
-    ===================================================== */
+       36. ANIMATION
+       ===================================================== */
 
-    renderMuzzleFlash() {
+    animate() {
 
         if (
-            this.weapon.muzzleFlash <= 0
+            !this.running
         ) {
 
             return;
 
         }
 
-        const ctx =
-            this.ctx;
 
-        const width =
-            this.width;
-
-        const height =
-            this.height;
-
-        const centerX =
-            width / 2;
-
-        const centerY =
-            height -
-            height * 0.18;
-
-        const size =
-            30 +
-            Math.random() *
-            30;
-
-        ctx.save();
-
-        ctx.globalAlpha =
-            this.weapon.muzzleFlash /
-            0.07;
-
-        ctx.fillStyle =
-            "#ffb000";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            centerX,
-            centerY -
-            size
+        requestAnimationFrame(
+            () =>
+                this.animate()
         );
 
-        ctx.lineTo(
-            centerX +
-            size * 0.28,
-            centerY -
-            size * 0.25
+
+        const delta =
+            Math.min(
+                this.clock.getDelta(),
+                0.05
+            );
+
+
+        if (
+            !this.paused
+        ) {
+
+            this.updateMovement(
+                delta
+            );
+
+
+            this.updateGravity(
+                delta
+            );
+
+
+            this.updateEnemies(
+                delta
+            );
+
+
+            this.updateWeapon(
+                delta
+            );
+
+
+            this.updateCamera();
+
+        }
+
+
+        this.renderer.render(
+            this.scene,
+            this.camera
         );
-
-        ctx.lineTo(
-            centerX +
-            size,
-            centerY
-        );
-
-        ctx.lineTo(
-            centerX +
-            size * 0.25,
-            centerY +
-            size * 0.2
-        );
-
-        ctx.lineTo(
-            centerX,
-            centerY +
-            size
-        );
-
-        ctx.lineTo(
-            centerX -
-            size * 0.25,
-            centerY +
-            size * 0.2
-        );
-
-        ctx.lineTo(
-            centerX -
-            size,
-            centerY
-        );
-
-        ctx.lineTo(
-            centerX -
-            size * 0.25,
-            centerY -
-            size * 0.25
-        );
-
-        ctx.closePath();
-
-        ctx.fill();
-
-        ctx.restore();
 
     },
 
+
     /* =====================================================
-       49. MOBILE JUMP BRIDGE
-    ===================================================== */
+       37. HUD
+       ===================================================== */
 
-    setJump() {
+    updateHUD() {
 
-        this.jump();
+        const healthValue =
+            document.getElementById(
+                "health-value"
+            );
+
+
+        const healthFill =
+            document.getElementById(
+                "health-fill"
+            );
+
+
+        const armorValue =
+            document.getElementById(
+                "armor-value"
+            );
+
+
+        const ammoCurrent =
+            document.getElementById(
+                "ammo-current"
+            );
+
+
+        const ammoReserve =
+            document.getElementById(
+                "ammo-reserve"
+            );
+
+
+        const scoreValue =
+            document.getElementById(
+                "score-value"
+            );
+
+
+        const kills =
+            document.getElementById(
+                "result-kills"
+            );
+
+
+        if (
+            healthValue
+        ) {
+
+            healthValue.textContent =
+                Math.ceil(
+                    this.player.health
+                );
+
+        }
+
+
+        if (
+            healthFill
+        ) {
+
+            healthFill.style.width =
+                `${this.player.health}%`;
+
+        }
+
+
+        if (
+            armorValue
+        ) {
+
+            armorValue.textContent =
+                Math.ceil(
+                    this.player.armor
+                );
+
+        }
+
+
+        if (
+            ammoCurrent
+        ) {
+
+            ammoCurrent.textContent =
+                this.weapon.ammo;
+
+        }
+
+
+        if (
+            ammoReserve
+        ) {
+
+            ammoReserve.textContent =
+                this.weapon.reserve;
+
+        }
+
+
+        if (
+            scoreValue
+        ) {
+
+            scoreValue.textContent =
+                String(
+                    this.score
+                ).padStart(
+                    6,
+                    "0"
+                );
+
+        }
+
+
+        if (
+            kills
+        ) {
+
+            kills.textContent =
+                this.kills;
+
+        }
 
     },
 
+
     /* =====================================================
-       50. PLAYER DEATH
-    ===================================================== */
+       38. HIT MARKER
+       ===================================================== */
 
-    playerDeath() {
+    showHitMarker() {
 
-        this.running = false;
+        const marker =
+            document.getElementById(
+                "hit-marker"
+            );
+
+
+        if (
+            !marker
+        ) {
+
+            return;
+
+        }
+
+
+        marker.classList.remove(
+            "active"
+        );
+
+
+        void marker.offsetWidth;
+
+
+        marker.classList.add(
+            "active"
+        );
+
+    },
+
+
+    /* =====================================================
+       39. DAMAGE EFFECT
+       ===================================================== */
+
+    showDamageEffect() {
+
+        let overlay =
+            document.querySelector(
+                ".damage-overlay"
+            );
+
+
+        if (
+            !overlay
+        ) {
+
+            overlay =
+                document.createElement(
+                    "div"
+                );
+
+
+            overlay.className =
+                "damage-overlay";
+
+
+            document
+                .getElementById(
+                    "game"
+                )
+                ?.appendChild(
+                    overlay
+                );
+
+        }
+
+
+        overlay.classList.remove(
+            "active"
+        );
+
+
+        void overlay.offsetWidth;
+
+
+        overlay.classList.add(
+            "active"
+        );
+
+    },
+
+
+    /* =====================================================
+       40. KILL FEED
+       ===================================================== */
+
+    showKillFeed(
+        message
+    ) {
+
+        const feed =
+            document.getElementById(
+                "kill-feed"
+            );
+
+
+        if (
+            !feed
+        ) {
+
+            return;
+
+        }
+
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+
+        item.className =
+            "kill-message";
+
+
+        item.textContent =
+            message;
+
+
+        feed.appendChild(
+            item
+        );
+
+
+        setTimeout(
+            () => {
+
+                item.remove();
+
+            },
+            3000
+        );
+
+    },
+
+
+    /* =====================================================
+       41. GAME OVER
+       ===================================================== */
+
+    gameOver() {
+
+        this.running =
+            false;
+
+
+        document.exitPointerLock?.();
+
+
+        const screen =
+            document.getElementById(
+                "game-over-screen"
+            );
+
+
+        const title =
+            document.getElementById(
+                "result-title"
+            );
+
+
+        const description =
+            document.getElementById(
+                "result-description"
+            );
+
+
+        const score =
+            document.getElementById(
+                "result-score"
+            );
+
+
+        if (
+            title
+        ) {
+
+            title.textContent =
+                "MISSION FAILED";
+
+        }
+
+
+        if (
+            description
+        ) {
+
+            description.textContent =
+                "ALL OPERATIVES LOST.";
+
+        }
+
+
+        if (
+            score
+        ) {
+
+            score.textContent =
+                String(
+                    this.score
+                ).padStart(
+                    6,
+                    "0"
+                );
+
+        }
+
+
+        screen?.classList.remove(
+            "hidden"
+        );
+
+    },
+
+
+    /* =====================================================
+       42. VICTORY
+       ===================================================== */
+
+    victory() {
+
+        this.running =
+            false;
+
+
+        document.exitPointerLock?.();
+
+
+        const screen =
+            document.getElementById(
+                "game-over-screen"
+            );
+
+
+        const title =
+            document.getElementById(
+                "result-title"
+            );
+
+
+        const description =
+            document.getElementById(
+                "result-description"
+            );
+
+
+        const score =
+            document.getElementById(
+                "result-score"
+            );
+
+
+        if (
+            title
+        ) {
+
+            title.textContent =
+                "MISSION COMPLETE";
+
+        }
+
+
+        if (
+            description
+        ) {
+
+            description.textContent =
+                "ALL HOSTILE TARGETS ELIMINATED.";
+
+        }
+
+
+        if (
+            score
+        ) {
+
+            score.textContent =
+                String(
+                    this.score
+                ).padStart(
+                    6,
+                    "0"
+                );
+
+        }
+
+
+        screen?.classList.remove(
+            "hidden"
+        );
 
     }
 
@@ -2576,35 +3586,33 @@ window.GameEngine = {
 
 
 /* =========================================================
-   AUTO INITIALIZE
+   DOM READY
    ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        if (
-            window.GameEngine
-        ) {
-
-            window.GameEngine.init();
-
-        }
+        GameEngine.init();
 
     }
 );
 
 
 /* =========================================================
-   ENGINE READY
+   GLOBAL ACCESS
+   ========================================================= */
+
+window.GameEngine =
+    GameEngine;
+
+
+/* =========================================================
+   DEBUG
    ========================================================= */
 
 console.log(
-    "%c BLACK OPS ENGINE ",
-    "background:#050607;color:#ff2a2a;font-size:15px;font-weight:bold;padding:7px;"
+    "%c BLACK OPS 3D ENGINE ",
+    "background:#ff3030;color:#fff;font-weight:bold;padding:6px;"
 );
-
-console.log(
-    "%c FPS renderer ready.",
-    "color:#8a9297;"
-);
+```
