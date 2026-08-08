@@ -1,2730 +1,667 @@
-/* =========================================================
-   BLACK OPS // FPS ARENA
-   MAIN STYLE SHEET
-   ========================================================= */
+```html
+<!DOCTYPE html>
+<html lang="id">
 
+<head>
 
-/* =========================================================
-   01. ROOT VARIABLES
-   ========================================================= */
+    <meta charset="UTF-8">
 
-:root {
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    --bg-main: #050607;
-    --bg-dark: #020304;
-    --bg-panel: rgba(8, 11, 14, 0.88);
+    <meta
+        name="theme-color"
+        content="#050608"
+    >
 
-    --white: #f4f7f8;
-    --text: #d7dcdf;
-    --muted: #7d858a;
+    <meta
+        name="description"
+        content="Futuristic FPS Arena"
+    >
 
-    --red: #ff2a2a;
-    --red-dark: #9f1111;
-    --red-soft: rgba(255, 42, 42, 0.25);
+    <title>BLACK OPS // FPS ARENA</title>
 
-    --orange: #ff7b00;
+    <!-- =================================================
+         THREE.JS
+         ================================================= -->
 
-    --green: #4cff8a;
+    <script
+        src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js">
+    </script>
 
-    --border: rgba(255,255,255,0.10);
-    --border-bright: rgba(255,255,255,0.22);
+    <script
+        src="https://cdn.jsdelivr.net/npm/three@0.180.0/examples/js/controls/PointerLockControls.js">
+    </script>
 
-    --shadow: 0 20px 60px rgba(0,0,0,0.55);
+</head>
 
-    --font-main: "Orbitron", Arial, sans-serif;
 
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.3s ease;
-}
+<body>
 
+    <!-- =================================================
+         GAME ROOT
+         ================================================= -->
 
-/* =========================================================
-   02. RESET
-   ========================================================= */
+    <main id="game">
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        <!-- =================================================
+             3D CANVAS
+             Three.js akan membuat canvas secara otomatis
+             ================================================= -->
 
+        <div
+            id="game-world"
+            aria-label="FPS Game World">
+        </div>
 
-html,
-body {
 
-    width: 100%;
-    height: 100%;
+        <!-- =================================================
+             HUD
+             ================================================= -->
 
-    overflow: hidden;
+        <section
+            id="hud"
+            class="hud">
 
-    background: var(--bg-main);
 
-    color: var(--white);
+            <!-- TOP BAR -->
 
-    font-family: var(--font-main);
+            <div class="hud-top">
 
-    user-select: none;
+                <div class="game-logo">
 
-    -webkit-user-select: none;
+                    <span class="logo-main">
+                        BLACK OPS
+                    </span>
 
-    -webkit-tap-highlight-color: transparent;
-}
+                    <span class="logo-sub">
+                        FPS // ARENA
+                    </span>
 
+                </div>
 
-body {
 
-    position: relative;
+                <div class="mission-status">
 
-    cursor: default;
-}
+                    <span class="status-dot"></span>
 
+                    <span>
+                        LIVE COMBAT
+                    </span>
 
-button,
-input,
-select {
+                </div>
 
-    font-family: inherit;
-}
+            </div>
 
 
-button {
+            <!-- =================================================
+                 CROSSHAIR
+                 ================================================= -->
 
-    border: none;
+            <div
+                id="crosshair"
+                class="crosshair"
+                aria-hidden="true">
 
-    outline: none;
+                <span class="crosshair-top"></span>
+                <span class="crosshair-right"></span>
+                <span class="crosshair-bottom"></span>
+                <span class="crosshair-left"></span>
 
-    cursor: pointer;
-}
+                <span class="crosshair-center"></span>
 
+            </div>
 
-/* =========================================================
-   03. GAME ROOT
-   ========================================================= */
 
-#game {
+            <!-- =================================================
+                 HIT MARKER
+                 ================================================= -->
 
-    position: relative;
+            <div
+                id="hit-marker"
+                class="hit-marker">
 
-    width: 100vw;
-    height: 100vh;
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
 
-    min-height: 500px;
+            </div>
 
-    overflow: hidden;
 
-    background:
+            <!-- =================================================
+                 TOP RIGHT
+                 ================================================= -->
 
-        radial-gradient(
-            circle at center,
-            rgba(255, 35, 35, 0.04),
-            transparent 40%
-        ),
+            <div
+                id="match-info"
+                class="match-info">
 
-        #050607;
-}
+                <div class="match-label">
+                    MATCH
+                </div>
 
+                <div
+                    id="match-timer"
+                    class="match-timer">
+                    10:00
+                </div>
 
-/* =========================================================
-   04. GLOBAL BACKGROUND
-   ========================================================= */
+            </div>
 
-#background-layer {
 
-    position: absolute;
+            <!-- =================================================
+                 OBJECTIVE
+                 ================================================= -->
 
-    inset: 0;
+            <div
+                id="objective"
+                class="objective">
 
-    z-index: 0;
+                <div class="objective-title">
+                    OBJECTIVE
+                </div>
 
-    background:
+                <div
+                    id="objective-text"
+                    class="objective-text">
 
-        linear-gradient(
-            180deg,
-            rgba(0,0,0,0.15),
-            rgba(0,0,0,0.85)
-        ),
+                    ELIMINATE ALL HOSTILES
 
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(120, 120, 120, 0.08),
-            transparent 55%
-        ),
+                </div>
 
-        linear-gradient(
-            135deg,
-            #101418,
-            #040506 50%,
-            #090b0d
-        );
+            </div>
 
-    background-size: cover;
 
-    background-position: center;
+            <!-- =================================================
+                 BOTTOM LEFT
+                 ================================================= -->
 
-    transform: scale(1.03);
+            <div
+                id="player-hud"
+                class="player-hud">
 
-    transition:
-        transform 1.5s ease,
-        filter 1s ease;
-}
 
+                <div class="health-panel">
 
-#fog-layer {
+                    <div class="health-icon">
+                        +
+                    </div>
 
-    position: absolute;
+                    <div class="health-content">
 
-    inset: -20%;
+                        <div class="health-label">
+                            HEALTH
+                        </div>
 
-    z-index: 1;
+                        <div
+                            id="health-value"
+                            class="health-value">
+                            100
+                        </div>
 
-    pointer-events: none;
+                        <div class="health-bar">
 
-    background:
+                            <div
+                                id="health-fill"
+                                class="health-fill">
+                            </div>
 
-        radial-gradient(
-            ellipse at 30% 70%,
-            rgba(255,255,255,0.035),
-            transparent 35%
-        ),
+                        </div>
 
-        radial-gradient(
-            ellipse at 70% 30%,
-            rgba(255,40,20,0.035),
-            transparent 40%
-        );
+                    </div>
 
-    filter: blur(20px);
+                </div>
 
-    animation: fogMove 14s ease-in-out infinite alternate;
-}
 
+                <div class="armor-panel">
 
-#vignette {
+                    <div class="armor-label">
+                        ARMOR
+                    </div>
 
-    position: absolute;
+                    <div
+                        id="armor-value"
+                        class="armor-value">
+                        100
+                    </div>
 
-    inset: 0;
+                </div>
 
-    z-index: 99;
 
-    pointer-events: none;
+            </div>
 
-    background:
 
-        radial-gradient(
-            ellipse at center,
-            transparent 35%,
-            rgba(0,0,0,0.25) 65%,
-            rgba(0,0,0,0.82) 100%
-        );
-}
+            <!-- =================================================
+                 BOTTOM RIGHT - WEAPON
+                 ================================================= -->
 
+            <div
+                id="weapon-hud"
+                class="weapon-hud">
 
-/* =========================================================
-   05. SCREEN SYSTEM
-   ========================================================= */
 
-.screen {
+                <div class="weapon-info">
 
-    position: absolute;
+                    <div
+                        id="weapon-name"
+                        class="weapon-name">
 
-    inset: 0;
+                        M4A1
 
-    z-index: 10;
+                    </div>
 
-    display: flex;
+                    <div
+                        id="weapon-mode"
+                        class="weapon-mode">
 
-    align-items: center;
+                        AUTO
 
-    justify-content: center;
+                    </div>
 
-    opacity: 1;
+                </div>
 
-    visibility: visible;
 
-    transition:
-        opacity 0.4s ease,
-        visibility 0.4s ease;
-}
+                <div class="ammo-display">
 
+                    <span
+                        id="ammo-current"
+                        class="ammo-current">
 
-.screen.hidden {
+                        30
 
-    opacity: 0;
+                    </span>
 
-    visibility: hidden;
+                    <span class="ammo-divider">
+                        /
+                    </span>
 
-    pointer-events: none;
-}
+                    <span
+                        id="ammo-reserve"
+                        class="ammo-reserve">
 
+                        120
 
-.overlay-screen {
+                    </span>
 
-    position: absolute;
+                </div>
 
-    inset: 0;
 
-    z-index: 80;
+                <div class="reload-indicator">
 
-    display: flex;
+                    <span
+                        id="reload-text">
+                    </span>
 
-    align-items: center;
+                </div>
 
-    justify-content: center;
+            </div>
 
-    background: rgba(0,0,0,0.72);
 
-    backdrop-filter: blur(8px);
+            <!-- =================================================
+                 KILL FEED
+                 ================================================= -->
 
-    -webkit-backdrop-filter: blur(8px);
-}
+            <div
+                id="kill-feed"
+                class="kill-feed">
 
+            </div>
 
-.overlay-screen.hidden {
 
-    display: none;
-}
+            <!-- =================================================
+                 SCORE
+                 ================================================= -->
 
+            <div
+                id="score-board"
+                class="score-board">
 
-/* =========================================================
-   06. MAIN MENU BACKGROUND
-   ========================================================= */
+                <div class="score-label">
+                    SCORE
+                </div>
 
-.menu-background {
+                <div
+                    id="score-value"
+                    class="score-value">
+                    000000
+                </div>
 
-    position: absolute;
+            </div>
 
-    inset: 0;
 
-    z-index: -2;
+        </section>
 
-    background:
 
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,0.92) 0%,
-            rgba(0,0,0,0.72) 40%,
-            rgba(0,0,0,0.30) 100%
-        ),
+        <!-- =================================================
+             START SCREEN
+             ================================================= -->
 
-        radial-gradient(
-            circle at 70% 55%,
-            rgba(255,40,20,0.13),
-            transparent 35%
-        ),
+        <section
+            id="start-screen"
+            class="screen start-screen">
 
-        linear-gradient(
-            120deg,
-            #0a0d10,
-            #11161a 50%,
-            #050607
-        );
 
-    background-size: cover;
+            <div class="screen-background"></div>
 
-    background-position: center;
-}
 
+            <div class="start-content">
 
-.menu-background::before {
 
-    content: "";
+                <div class="start-kicker">
+                    TACTICAL COMBAT SYSTEM
+                </div>
 
-    position: absolute;
 
-    inset: 0;
+                <h1>
+                    BLACK
+                    <span>OPS</span>
+                </h1>
 
-    background:
 
-        linear-gradient(
-            90deg,
-            transparent 49.5%,
-            rgba(255,255,255,0.025) 50%,
-            transparent 50.5%
-        ),
+                <div class="start-line"></div>
 
-        linear-gradient(
-            0deg,
-            transparent 49.5%,
-            rgba(255,255,255,0.025) 50%,
-            transparent 50.5%
-        );
 
-    background-size: 70px 70px;
+                <p class="start-description">
 
-    opacity: 0.25;
-}
+                    ENTER THE COMBAT ZONE
 
+                    <br>
 
-.menu-overlay {
+                    ELIMINATE HOSTILE TARGETS
 
-    position: absolute;
+                </p>
 
-    inset: 0;
 
-    z-index: -1;
+                <button
+                    id="start-button"
+                    class="primary-button">
 
-    background:
+                    <span>
+                        DEPLOY
+                    </span>
 
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,0.45),
-            transparent 55%
-        );
-}
+                    <span class="button-arrow">
+                        →
+                    </span>
 
+                </button>
 
-/* =========================================================
-   07. MENU CONTENT
-   ========================================================= */
 
-.menu-content {
+                <div class="controls-preview">
 
-    position: relative;
+                    <div>
+                        <kbd>W</kbd>
+                        <kbd>A</kbd>
+                        <kbd>S</kbd>
+                        <kbd>D</kbd>
 
-    width: min(92%, 1200px);
+                        <span>
+                            MOVE
+                        </span>
+                    </div>
 
-    height: 100%;
 
-    display: flex;
+                    <div>
 
-    flex-direction: column;
+                        <kbd>MOUSE</kbd>
 
-    justify-content: center;
+                        <span>
+                            AIM
+                        </span>
 
-    align-items: flex-start;
+                    </div>
 
-    padding-left: clamp(25px, 7vw, 120px);
 
-    animation: menuEnter 0.9s ease forwards;
-}
+                    <div>
 
+                        <kbd>LMB</kbd>
 
-.game-label {
+                        <span>
+                            FIRE
+                        </span>
 
-    display: flex;
+                    </div>
 
-    align-items: center;
 
-    gap: 12px;
+                    <div>
 
-    margin-bottom: 15px;
+                        <kbd>SPACE</kbd>
 
-    color: var(--red);
+                        <span>
+                            JUMP
+                        </span>
 
-    font-size: 11px;
+                    </div>
 
-    font-weight: 700;
+                </div>
 
-    letter-spacing: 4px;
-}
+            </div>
 
 
-.game-label span {
+            <div class="version">
+                BLACK OPS // BUILD 0.2
+            </div>
 
-    display: block;
+        </section>
 
-    width: 35px;
 
-    height: 1px;
+        <!-- =================================================
+             PAUSE SCREEN
+             ================================================= -->
 
-    background: var(--red);
-}
+        <section
+            id="pause-screen"
+            class="screen pause-screen hidden">
 
 
-.game-title {
+            <div class="pause-panel">
 
-    position: relative;
+                <div class="pause-kicker">
+                    SYSTEM PAUSED
+                </div>
 
-    font-size: clamp(60px, 10vw, 150px);
+                <h2>
+                    PAUSED
+                </h2>
 
-    line-height: 0.82;
+                <div class="pause-line"></div>
 
-    font-weight: 900;
 
-    letter-spacing: -5px;
+                <button
+                    id="resume-button"
+                    class="primary-button">
 
-    color: #ffffff;
+                    RESUME
 
-    text-shadow:
+                </button>
 
-        0 0 20px rgba(255,255,255,0.08),
 
-        0 15px 50px rgba(0,0,0,0.8);
-}
+                <button
+                    id="restart-button"
+                    class="secondary-button">
 
+                    RESTART
 
-.game-title strong {
+                </button>
 
-    display: block;
+            </div>
 
-    color: transparent;
+        </section>
 
-    -webkit-text-stroke: 2px rgba(255,255,255,0.9);
 
-    text-shadow:
+        <!-- =================================================
+             GAME OVER
+             ================================================= -->
 
-        0 0 35px rgba(255,42,42,0.18);
-}
+        <section
+            id="game-over-screen"
+            class="screen result-screen hidden">
 
 
-.game-subtitle {
+            <div class="result-panel">
 
-    margin-top: 25px;
+                <div class="result-kicker">
+                    COMBAT TERMINATED
+                </div>
 
-    color: #8c969c;
+                <h2 id="result-title">
+                    MISSION FAILED
+                </h2>
 
-    font-size: 12px;
+                <p
+                    id="result-description">
 
-    letter-spacing: 7px;
+                    ALL OPERATIVES LOST.
 
-    font-weight: 600;
-}
+                </p>
 
 
-/* =========================================================
-   08. MENU BUTTONS
-   ========================================================= */
+                <div class="result-stats">
 
-.menu-buttons {
+                    <div>
 
-    display: flex;
+                        <span>
+                            SCORE
+                        </span>
 
-    flex-direction: column;
+                        <strong
+                            id="result-score">
+                            000000
+                        </strong>
 
-    gap: 8px;
+                    </div>
 
-    margin-top: 45px;
 
-    width: min(390px, 85vw);
-}
+                    <div>
 
+                        <span>
+                            ELIMINATIONS
+                        </span>
 
-.menu-button {
+                        <strong
+                            id="result-kills">
+                            0
+                        </strong>
 
-    position: relative;
+                    </div>
 
-    display: flex;
+                </div>
 
-    align-items: center;
 
-    gap: 22px;
+                <button
+                    id="result-restart"
+                    class="primary-button">
 
-    width: 100%;
+                    PLAY AGAIN
 
-    min-height: 58px;
+                </button>
 
-    padding: 0 22px;
+            </div>
 
-    overflow: hidden;
+        </section>
 
-    color: #dfe3e5;
 
-    background:
+        <!-- =================================================
+             LOADING SCREEN
+             ================================================= -->
 
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,0.055),
-            rgba(255,255,255,0.015)
-        );
+        <section
+            id="loading-screen"
+            class="loading-screen">
 
-    border: 1px solid rgba(255,255,255,0.08);
 
-    text-align: left;
+            <div class="loading-content">
 
-    font-size: 12px;
+                <div class="loading-logo">
+                    BLACK OPS
+                </div>
 
-    font-weight: 700;
+                <div class="loading-sub">
+                    INITIALIZING COMBAT SYSTEM
+                </div>
 
-    letter-spacing: 2px;
 
-    transition:
-        transform var(--transition-fast),
-        background var(--transition-fast),
-        border var(--transition-fast),
-        color var(--transition-fast);
-}
+                <div class="loading-bar">
 
+                    <div
+                        id="loading-fill"
+                        class="loading-fill">
+                    </div>
 
-.menu-button::before {
+                </div>
 
-    content: "";
 
-    position: absolute;
+                <div
+                    id="loading-percent"
+                    class="loading-percent">
 
-    left: 0;
+                    0%
 
-    top: 0;
+                </div>
 
-    width: 3px;
+            </div>
 
-    height: 100%;
+        </section>
 
-    background: transparent;
 
-    transition:
-        background var(--transition-fast);
-}
+        <!-- =================================================
+             MOBILE CONTROLS
+             ================================================= -->
 
+        <section
+            id="mobile-controls"
+            class="mobile-controls hidden">
 
-.menu-button::after {
 
-    content: "";
+            <div
+                id="joystick"
+                class="joystick">
 
-    position: absolute;
+                <div
+                    id="joystick-knob"
+                    class="joystick-knob">
+                </div>
 
-    left: -100%;
+            </div>
 
-    top: 0;
 
-    width: 100%;
+            <button
+                id="mobile-fire"
+                class="mobile-action">
 
-    height: 100%;
+                FIRE
 
-    background:
+            </button>
 
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,0.08),
-            transparent
-        );
 
-    transition:
-        left 0.5s ease;
-}
+            <button
+                id="mobile-jump"
+                class="mobile-action">
 
+                JUMP
 
-.menu-button:hover {
+            </button>
 
-    color: #ffffff;
+        </section>
 
-    border-color: rgba(255,255,255,0.22);
 
-    background:
+    </main>
 
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,0.10),
-            rgba(255,255,255,0.025)
-        );
 
-    transform: translateX(6px);
-}
+    <!-- =====================================================
+         GAME SCRIPTS
+         ===================================================== -->
 
+    <script src="script.js"></script>
 
-.menu-button:hover::after {
+    <script src="engine.js"></script>
 
-    left: 100%;
-}
 
+</body>
 
-.menu-button.primary {
+</html>
+```
 
-    background:
-
-        linear-gradient(
-            90deg,
-            rgba(255,42,42,0.28),
-            rgba(120,0,0,0.12)
-        );
-
-    border-color: rgba(255,42,42,0.45);
-
-    color: #ffffff;
-}
-
-
-.menu-button.primary::before {
-
-    background: var(--red);
-}
-
-
-.menu-button.primary:hover {
-
-    background:
-
-        linear-gradient(
-            90deg,
-            rgba(255,42,42,0.42),
-            rgba(130,0,0,0.16)
-        );
-
-    box-shadow:
-        0 0 25px rgba(255,42,42,0.10);
-}
-
-
-.button-number {
-
-    color: #667078;
-
-    font-size: 10px;
-
-    min-width: 22px;
-}
-
-
-.menu-button.primary .button-number {
-
-    color: var(--red);
-}
-
-
-/* =========================================================
-   09. MENU FOOTER
-   ========================================================= */
-
-.menu-footer {
-
-    position: absolute;
-
-    bottom: 35px;
-
-    left: clamp(25px, 7vw, 120px);
-
-    right: clamp(25px, 7vw, 120px);
-
-    display: flex;
-
-    justify-content: space-between;
-
-    color: #596167;
-
-    font-size: 8px;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   10. PANELS
-   ========================================================= */
-
-.panel {
-
-    position: relative;
-
-    width: min(900px, 92vw);
-
-    max-height: 85vh;
-
-    overflow: auto;
-
-    padding: 30px;
-
-    background:
-
-        linear-gradient(
-            145deg,
-            rgba(15,19,22,0.97),
-            rgba(5,7,8,0.96)
-        );
-
-    border: 1px solid rgba(255,255,255,0.12);
-
-    box-shadow:
-
-        0 30px 100px rgba(0,0,0,0.75),
-
-        inset 0 1px 0 rgba(255,255,255,0.04);
-
-    animation: panelEnter 0.35s ease;
-}
-
-
-.panel::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    width: 80px;
-
-    height: 3px;
-
-    background: var(--red);
-}
-
-
-.panel-header {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding-bottom: 20px;
-
-    margin-bottom: 25px;
-
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-
-    color: #ffffff;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    letter-spacing: 3px;
-}
-
-
-.close-button {
-
-    width: 35px;
-
-    height: 35px;
-
-    color: #8a9297;
-
-    background: transparent;
-
-    border: 1px solid rgba(255,255,255,0.08);
-
-    font-size: 24px;
-
-    line-height: 1;
-
-    transition: 0.2s ease;
-}
-
-
-.close-button:hover {
-
-    color: #ffffff;
-
-    border-color: var(--red);
-
-    background: rgba(255,42,42,0.1);
-}
-
-
-/* =========================================================
-   11. INSTRUCTIONS
-   ========================================================= */
-
-.instructions-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 10px;
-}
-
-
-.instruction-card {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    min-height: 75px;
-
-    padding: 14px;
-
-    background: rgba(255,255,255,0.025);
-
-    border: 1px solid rgba(255,255,255,0.07);
-}
-
-
-.instruction-key {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-width: 45px;
-
-    height: 45px;
-
-    padding: 0 8px;
-
-    color: #ffffff;
-
-    background: rgba(255,255,255,0.06);
-
-    border: 1px solid rgba(255,255,255,0.13);
-
-    font-size: 12px;
-
-    font-weight: 800;
-}
-
-
-.instruction-key.wide {
-
-    min-width: 70px;
-}
-
-
-.instruction-card h3 {
-
-    margin-bottom: 4px;
-
-    color: #ffffff;
-
-    font-size: 10px;
-
-    letter-spacing: 1px;
-}
-
-
-.instruction-card p {
-
-    color: #697277;
-
-    font-size: 9px;
-}
-
-
-/* =========================================================
-   12. SETTINGS
-   ========================================================= */
-
-.settings-content {
-
-    display: flex;
-
-    flex-direction: column;
-}
-
-
-.setting-row {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 30px;
-
-    min-height: 85px;
-
-    padding: 15px 0;
-
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-
-
-.setting-row:last-child {
-
-    border-bottom: none;
-}
-
-
-.setting-row h3 {
-
-    margin-bottom: 5px;
-
-    font-size: 11px;
-
-    letter-spacing: 1px;
-}
-
-
-.setting-row p {
-
-    color: #687176;
-
-    font-size: 9px;
-}
-
-
-.setting-row select {
-
-    min-width: 150px;
-
-    padding: 10px;
-
-    color: #ffffff;
-
-    background: #0b0e10;
-
-    border: 1px solid rgba(255,255,255,0.12);
-
-    outline: none;
-}
-
-
-.setting-row input[type="range"] {
-
-    width: 180px;
-
-    accent-color: var(--red);
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   13. GAME WORLD
-   ========================================================= */
-
-#game-world {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 20;
-
-    overflow: hidden;
-}
-
-
-#game-world.hidden {
-
-    display: none;
-}
-
-
-#game-canvas {
-
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-
-    height: 100%;
-
-    display: block;
-
-    background: #050607;
-}
-
-
-/* =========================================================
-   14. HUD
-   ========================================================= */
-
-#hud {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 30;
-
-    pointer-events: none;
-}
-
-
-#hud-top-left {
-
-    position: absolute;
-
-    top: 30px;
-
-    left: 30px;
-}
-
-
-#hud-top-center {
-
-    position: absolute;
-
-    top: 25px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-}
-
-
-#hud-top-right {
-
-    position: absolute;
-
-    top: 30px;
-
-    right: 30px;
-}
-
-
-/* =========================================================
-   15. PLAYER STATUS
-   ========================================================= */
-
-.player-status {
-
-    min-width: 230px;
-
-    padding: 10px 14px;
-
-    background: rgba(0,0,0,0.30);
-
-    border-left: 2px solid var(--red);
-
-    backdrop-filter: blur(4px);
-}
-
-
-.status-label {
-
-    color: #6f777b;
-
-    font-size: 8px;
-
-    letter-spacing: 3px;
-}
-
-
-.player-name {
-
-    margin: 3px 0 9px;
-
-    color: #ffffff;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-}
-
-
-.health-container {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-}
-
-
-.health-icon {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 20px;
-
-    height: 20px;
-
-    color: var(--red);
-
-    border: 1px solid rgba(255,42,42,0.4);
-
-    font-size: 13px;
-
-    font-weight: 900;
-}
-
-
-.health-bar {
-
-    position: relative;
-
-    width: 150px;
-
-    height: 5px;
-
-    overflow: hidden;
-
-    background: rgba(255,255,255,0.12);
-}
-
-
-.health-fill {
-
-    width: 100%;
-
-    height: 100%;
-
-    background: var(--red);
-
-    box-shadow:
-        0 0 12px rgba(255,42,42,0.45);
-
-    transition: width 0.25s ease;
-}
-
-
-.health-value {
-
-    min-width: 30px;
-
-    color: #ffffff;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    text-align: right;
-}
-
-
-/* =========================================================
-   16. MATCH TIMER
-   ========================================================= */
-
-.match-status {
-
-    text-align: center;
-}
-
-
-.match-label {
-
-    color: #777f84;
-
-    font-size: 7px;
-
-    letter-spacing: 3px;
-}
-
-
-.match-timer {
-
-    margin-top: 3px;
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-    letter-spacing: 3px;
-
-    text-shadow:
-        0 0 12px rgba(255,255,255,0.15);
-}
-
-
-/* =========================================================
-   17. SCORE
-   ========================================================= */
-
-.score-panel {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 10px 14px;
-
-    background: rgba(0,0,0,0.30);
-
-    border-right: 2px solid var(--red);
-}
-
-
-.score-team {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 3px;
-}
-
-
-.score-team span {
-
-    color: #697176;
-
-    font-size: 7px;
-
-    letter-spacing: 2px;
-}
-
-
-.score-team strong {
-
-    color: #ffffff;
-
-    font-size: 16px;
-}
-
-
-.score-divider {
-
-    color: var(--red);
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   18. CROSSHAIR
-   ========================================================= */
-
-.crosshair {
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 32px;
-
-    height: 32px;
-
-    transform: translate(-50%, -50%);
-}
-
-
-.crosshair span {
-
-    position: absolute;
-
-    display: block;
-
-    background: rgba(255,255,255,0.92);
-
-    box-shadow:
-        0 0 4px rgba(0,0,0,0.8);
-}
-
-
-.crosshair-top {
-
-    top: 0;
-
-    left: 50%;
-
-    width: 2px;
-
-    height: 8px;
-
-    transform: translateX(-50%);
-}
-
-
-.crosshair-right {
-
-    right: 0;
-
-    top: 50%;
-
-    width: 8px;
-
-    height: 2px;
-
-    transform: translateY(-50%);
-}
-
-
-.crosshair-bottom {
-
-    bottom: 0;
-
-    left: 50%;
-
-    width: 2px;
-
-    height: 8px;
-
-    transform: translateX(-50%);
-}
-
-
-.crosshair-left {
-
-    left: 0;
-
-    top: 50%;
-
-    width: 8px;
-
-    height: 2px;
-
-    transform: translateY(-50%);
-}
-
-
-.crosshair-dot {
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 3px;
-
-    height: 3px;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 50%;
-}
-
-
-/* =========================================================
-   19. HIT MARKER
-   ========================================================= */
-
-.hit-marker {
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    color: #ffffff;
-
-    font-size: 28px;
-
-    font-weight: 900;
-
-    text-shadow:
-        0 0 10px rgba(255,255,255,0.8);
-
-    animation: hitMarker 0.2s ease;
-}
-
-
-.hit-marker.hidden {
-
-    display: none;
-}
-
-
-/* =========================================================
-   20. DAMAGE INDICATOR
-   ========================================================= */
-
-.damage-indicator {
-
-    position: absolute;
-
-    inset: 0;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    background:
-
-        radial-gradient(
-            ellipse at center,
-            transparent 45%,
-            rgba(255,0,0,0.30) 100%
-        );
-}
-
-
-.damage-indicator.active {
-
-    animation: damageFlash 0.4s ease;
-}
-
-
-/* =========================================================
-   21. WEAPON HUD
-   ========================================================= */
-
-#weapon-hud {
-
-    position: absolute;
-
-    right: 40px;
-
-    bottom: 35px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    gap: 35px;
-
-    padding: 15px 20px;
-
-    background:
-
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(0,0,0,0.35)
-        );
-
-    border-right: 2px solid rgba(255,42,42,0.65);
-}
-
-
-.weapon-info {
-
-    text-align: right;
-}
-
-
-.weapon-category {
-
-    color: #697176;
-
-    font-size: 8px;
-
-    letter-spacing: 2px;
-}
-
-
-.weapon-name {
-
-    margin-top: 4px;
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-}
-
-
-.ammo-info {
-
-    display: flex;
-
-    align-items: baseline;
-
-    gap: 4px;
-}
-
-
-.ammo-current {
-
-    color: #ffffff;
-
-    font-size: 42px;
-
-    line-height: 1;
-
-    font-weight: 900;
-}
-
-
-.ammo-divider {
-
-    color: #555e63;
-
-    font-size: 18px;
-}
-
-
-.ammo-reserve {
-
-    color: #747d82;
-
-    font-size: 18px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   22. RELOAD
-   ========================================================= */
-
-.reload-indicator {
-
-    position: absolute;
-
-    left: 50%;
-
-    bottom: 90px;
-
-    transform: translateX(-50%);
-
-    width: 180px;
-
-    text-align: center;
-
-    color: #ffffff;
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-}
-
-
-.reload-indicator.hidden {
-
-    display: none;
-}
-
-
-.reload-bar {
-
-    width: 100%;
-
-    height: 3px;
-
-    margin-top: 8px;
-
-    background: rgba(255,255,255,0.15);
-}
-
-
-.reload-progress {
-
-    width: 0%;
-
-    height: 100%;
-
-    background: var(--red);
-}
-
-
-/* =========================================================
-   23. KILL FEED
-   ========================================================= */
-
-.kill-feed {
-
-    position: absolute;
-
-    top: 105px;
-
-    right: 30px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: flex-end;
-
-    gap: 5px;
-
-    width: 300px;
-}
-
-
-.kill-message {
-
-    padding: 8px 12px;
-
-    color: #d9dddf;
-
-    background: rgba(0,0,0,0.45);
-
-    border-right: 2px solid var(--red);
-
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    animation: killFeedIn 0.25s ease;
-}
-
-
-/* =========================================================
-   24. OBJECTIVE
-   ========================================================= */
-
-#objective {
-
-    position: absolute;
-
-    left: 30px;
-
-    bottom: 35px;
-
-    padding-left: 12px;
-
-    border-left: 2px solid var(--red);
-}
-
-
-.objective-label {
-
-    color: #697176;
-
-    font-size: 7px;
-
-    letter-spacing: 2px;
-}
-
-
-.objective-text {
-
-    margin-top: 5px;
-
-    color: #ffffff;
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================================================
-   25. PAUSE SCREEN
-   ========================================================= */
-
-.pause-panel,
-.result-panel {
-
-    position: relative;
-
-    width: min(500px, 90vw);
-
-    padding: 45px;
-
-    text-align: center;
-
-    background:
-
-        linear-gradient(
-            145deg,
-            rgba(13,16,19,0.98),
-            rgba(3,5,6,0.98)
-        );
-
-    border: 1px solid rgba(255,255,255,0.12);
-
-    box-shadow:
-        0 40px 100px rgba(0,0,0,0.8);
-}
-
-
-.pause-panel::before,
-.result-panel::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 0;
-
-    width: 80px;
-
-    height: 3px;
-
-    transform: translateX(-50%);
-
-    background: var(--red);
-}
-
-
-.pause-label,
-.result-status {
-
-    color: #6e777c;
-
-    font-size: 8px;
-
-    letter-spacing: 4px;
-}
-
-
-.pause-panel h2,
-.result-panel h2 {
-
-    margin: 15px 0 30px;
-
-    color: #ffffff;
-
-    font-size: 42px;
-
-    font-weight: 900;
-
-    letter-spacing: 4px;
-}
-
-
-.pause-buttons {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-}
-
-
-/* =========================================================
-   26. RESULT
-   ========================================================= */
-
-.result-score {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    margin-bottom: 30px;
-
-    border-top: 1px solid rgba(255,255,255,0.08);
-
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-
-.result-score div {
-
-    padding: 18px 5px;
-
-    border-right: 1px solid rgba(255,255,255,0.08);
-}
-
-
-.result-score div:last-child {
-
-    border-right: none;
-}
-
-
-.result-score span {
-
-    display: block;
-
-    color: #697176;
-
-    font-size: 7px;
-
-    letter-spacing: 2px;
-}
-
-
-.result-score strong {
-
-    display: block;
-
-    margin-top: 6px;
-
-    color: #ffffff;
-
-    font-size: 20px;
-}
-
-
-.result-panel > .menu-button {
-
-    margin-top: 8px;
-}
-
-
-/* =========================================================
-   27. LOADING SCREEN
-   ========================================================= */
-
-.loading-screen {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 200;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #030405;
-
-    transition:
-        opacity 0.6s ease,
-        visibility 0.6s ease;
-}
-
-
-.loading-screen.loaded {
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-}
-
-
-.loading-content {
-
-    width: min(450px, 80vw);
-
-    text-align: center;
-}
-
-
-.loading-logo {
-
-    color: #ffffff;
-
-    font-size: 28px;
-
-    font-weight: 900;
-
-    letter-spacing: 5px;
-}
-
-
-.loading-status {
-
-    margin-top: 12px;
-
-    color: #6d767b;
-
-    font-size: 8px;
-
-    letter-spacing: 3px;
-}
-
-
-.loading-bar {
-
-    width: 100%;
-
-    height: 3px;
-
-    margin-top: 30px;
-
-    background: rgba(255,255,255,0.1);
-
-    overflow: hidden;
-}
-
-
-.loading-progress {
-
-    width: 0%;
-
-    height: 100%;
-
-    background: var(--red);
-
-    box-shadow:
-        0 0 15px rgba(255,42,42,0.7);
-
-    transition: width 0.15s linear;
-}
-
-
-.loading-percent {
-
-    margin-top: 10px;
-
-    color: #697176;
-
-    font-size: 8px;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   28. MOBILE CONTROLS
-   ========================================================= */
-
-.mobile-only {
-
-    display: none;
-}
-
-
-.joystick {
-
-    position: absolute;
-
-    left: 25px;
-
-    bottom: 35px;
-
-    width: 120px;
-
-    height: 120px;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.035);
-
-    border: 1px solid rgba(255,255,255,0.12);
-}
-
-
-.joystick-knob {
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 55px;
-
-    height: 55px;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.10);
-
-    border: 1px solid rgba(255,255,255,0.18);
-}
-
-
-.mobile-actions {
-
-    position: absolute;
-
-    right: 20px;
-
-    bottom: 30px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    gap: 10px;
-}
-
-
-.mobile-button {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 55px;
-
-    height: 55px;
-
-    border-radius: 50%;
-
-    color: #ffffff;
-
-    background: rgba(0,0,0,0.45);
-
-    border: 1px solid rgba(255,255,255,0.15);
-
-    font-size: 10px;
-
-    font-weight: 800;
-}
-
-
-.mobile-button.fire {
-
-    width: 75px;
-
-    height: 75px;
-
-    color: #ffffff;
-
-    border-color: rgba(255,42,42,0.55);
-
-    background: rgba(150,0,0,0.30);
-}
-
-
-/* =========================================================
-   29. SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar {
-
-    width: 4px;
-}
-
-
-::-webkit-scrollbar-track {
-
-    background: #050607;
-}
-
-
-::-webkit-scrollbar-thumb {
-
-    background: #343b3f;
-}
-
-
-::-webkit-scrollbar-thumb:hover {
-
-    background: var(--red);
-}
-
-
-/* =========================================================
-   30. ANIMATIONS
-   ========================================================= */
-
-@keyframes menuEnter {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateX(-30px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateX(0);
-    }
-}
-
-
-@keyframes panelEnter {
-
-    from {
-
-        opacity: 0;
-
-        transform: scale(0.96) translateY(10px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: scale(1) translateY(0);
-    }
-}
-
-
-@keyframes fogMove {
-
-    from {
-
-        transform:
-            translate3d(-2%, -1%, 0)
-            scale(1);
-    }
-
-    to {
-
-        transform:
-            translate3d(2%, 1%, 0)
-            scale(1.05);
-    }
-}
-
-
-@keyframes hitMarker {
-
-    0% {
-
-        opacity: 0;
-
-        transform:
-            translate(-50%, -50%)
-            scale(1.5);
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform:
-            translate(-50%, -50%)
-            scale(1);
-    }
-}
-
-
-@keyframes damageFlash {
-
-    0% {
-
-        opacity: 0;
-    }
-
-    30% {
-
-        opacity: 1;
-    }
-
-    100% {
-
-        opacity: 0;
-    }
-}
-
-
-@keyframes killFeedIn {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateX(20px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateX(0);
-    }
-}
-
-
-/* =========================================================
-   31. RESPONSIVE TABLET
-   ========================================================= */
-
-@media (max-width: 900px) {
-
-    .game-title {
-
-        font-size: clamp(55px, 12vw, 100px);
-    }
-
-
-    .instructions-grid {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    #hud-top-center {
-
-        top: 20px;
-    }
-
-
-    #weapon-hud {
-
-        right: 20px;
-
-        bottom: 25px;
-    }
-
-}
-
-
-/* =========================================================
-   32. MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    .menu-content {
-
-        padding-left: 25px;
-
-        padding-right: 25px;
-    }
-
-
-    .game-title {
-
-        font-size: 18vw;
-
-        letter-spacing: -2px;
-    }
-
-
-    .game-subtitle {
-
-        font-size: 8px;
-
-        letter-spacing: 4px;
-    }
-
-
-    .menu-buttons {
-
-        margin-top: 35px;
-
-        width: 100%;
-    }
-
-
-    .menu-button {
-
-        min-height: 52px;
-    }
-
-
-    .menu-footer {
-
-        left: 25px;
-
-        right: 25px;
-
-        bottom: 20px;
-
-        font-size: 6px;
-    }
-
-
-    #hud-top-left {
-
-        top: 15px;
-
-        left: 15px;
-    }
-
-
-    #hud-top-right {
-
-        top: 15px;
-
-        right: 15px;
-    }
-
-
-    #hud-top-center {
-
-        top: 15px;
-    }
-
-
-    .player-status {
-
-        min-width: 160px;
-    }
-
-
-    .health-bar {
-
-        width: 90px;
-    }
-
-
-    .score-panel {
-
-        gap: 8px;
-
-        padding: 8px;
-    }
-
-
-    .score-team strong {
-
-        font-size: 13px;
-    }
-
-
-    .match-timer {
-
-        font-size: 13px;
-    }
-
-
-    #weapon-hud {
-
-        right: 15px;
-
-        bottom: 20px;
-
-        gap: 15px;
-
-        padding: 10px;
-    }
-
-
-    .weapon-category {
-
-        font-size: 6px;
-    }
-
-
-    .weapon-name {
-
-        font-size: 11px;
-    }
-
-
-    .ammo-current {
-
-        font-size: 32px;
-    }
-
-
-    .ammo-reserve {
-
-        font-size: 14px;
-    }
-
-
-    #objective {
-
-        left: 15px;
-
-        bottom: 25px;
-
-        max-width: 190px;
-    }
-
-
-    .objective-text {
-
-        font-size: 8px;
-    }
-
-
-    .kill-feed {
-
-        top: 90px;
-
-        right: 15px;
-
-        width: 220px;
-    }
-
-
-    .panel {
-
-        width: 94vw;
-
-        padding: 20px;
-
-        max-height: 90vh;
-    }
-
-
-    .setting-row {
-
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 15px;
-    }
-
-
-    .setting-row input[type="range"] {
-
-        width: 100%;
-    }
-
-
-    .setting-row select {
-
-        width: 100%;
-    }
-
-
-    .pause-panel,
-    .result-panel {
-
-        padding: 30px 20px;
-    }
-
-
-    .pause-panel h2,
-    .result-panel h2 {
-
-        font-size: 30px;
-    }
-
-
-    .mobile-only {
-
-        display: block;
-    }
-
-}
-
-
-/* =========================================================
-   33. SMALL MOBILE
-   ========================================================= */
-
-@media (max-width: 420px) {
-
-    .game-label {
-
-        font-size: 8px;
-
-        letter-spacing: 2px;
-    }
-
-
-    .game-label span {
-
-        width: 20px;
-    }
-
-
-    .game-title {
-
-        font-size: 17vw;
-    }
-
-
-    .game-subtitle {
-
-        margin-top: 15px;
-
-        font-size: 7px;
-    }
-
-
-    .menu-buttons {
-
-        margin-top: 25px;
-    }
-
-
-    .player-status {
-
-        min-width: 130px;
-
-        padding: 7px;
-    }
-
-
-    .status-label {
-
-        font-size: 6px;
-    }
-
-
-    .player-name {
-
-        font-size: 9px;
-    }
-
-
-    .health-bar {
-
-        width: 60px;
-    }
-
-
-    .health-value {
-
-        font-size: 9px;
-    }
-
-
-    #weapon-hud {
-
-        right: 10px;
-
-        bottom: 10px;
-    }
-
-
-    .weapon-info {
-
-        display: none;
-    }
-
-
-    .ammo-current {
-
-        font-size: 28px;
-    }
-
-
-    .joystick {
-
-        width: 100px;
-
-        height: 100px;
-
-        left: 15px;
-
-        bottom: 20px;
-    }
-
-
-    .mobile-actions {
-
-        right: 12px;
-
-        bottom: 20px;
-    }
-
-}
-
-
-/* =========================================================
-   34. LANDSCAPE MOBILE
-   ========================================================= */
-
-@media (
-    max-height: 500px
-) and (
-    orientation: landscape
-) {
-
-    .menu-content {
-
-        padding-top: 10px;
-    }
-
-
-    .game-title {
-
-        font-size: 65px;
-    }
-
-
-    .game-subtitle {
-
-        margin-top: 10px;
-    }
-
-
-    .menu-buttons {
-
-        margin-top: 15px;
-
-        gap: 4px;
-    }
-
-
-    .menu-button {
-
-        min-height: 40px;
-    }
-
-
-    .menu-footer {
-
-        bottom: 10px;
-    }
-
-
-    .panel {
-
-        max-height: 90vh;
-
-        padding: 15px;
-    }
-
-}
-
-
-/* =========================================================
-   35. ACCESSIBILITY / REDUCED MOTION
-   ========================================================= */
-
-@media (
-    prefers-reduced-motion: reduce
-) {
-
-    *,
-    *::before,
-    *::after {
-
-        animation-duration: 0.01ms !important;
-
-        animation-iteration-count: 1 !important;
-
-        transition-duration: 0.01ms !important;
-
-        scroll-behavior: auto !important;
-    }
-
-}
-
-
-/* =========================================================
-   36. EXTRA FPS EFFECTS
-   ========================================================= */
-
-.scanlines {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 95;
-
-    pointer-events: none;
-
-    opacity: 0.08;
-
-    background:
-
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.025) 0px,
-            rgba(255,255,255,0.025) 1px,
-            transparent 1px,
-            transparent 4px
-        );
-}
-
-
-.noise {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 96;
-
-    pointer-events: none;
-
-    opacity: 0.035;
-
-    background-image:
-
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
-
-    mix-blend-mode: screen;
-}
-
-
-/* =========================================================
-   37. UTILITY
-   ========================================================= */
-
-.hidden {
-
-    display: none !important;
-}
-
-
-.disabled {
-
-    opacity: 0.4;
-
-    pointer-events: none;
-}
-
-
-.pointer-none {
-
-    pointer-events: none;
-}
-
-
-.fullscreen {
-
-    width: 100%;
-
-    height: 100%;
-}
-
-
-/* =========================================================
-   END OF STYLE.CSS
-   ========================================================= */
