@@ -1,667 +1,1719 @@
-```html
-<!DOCTYPE html>
-<html lang="id">
+```css
+/* =========================================================
+   BLACK OPS // FPS ARENA
+   STYLE.CSS
+   PHASE 2 — 3D FPS UI
+   ========================================================= */
 
-<head>
 
-    <meta charset="UTF-8">
+/* =========================================================
+   01. RESET
+   ========================================================= */
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <meta
-        name="theme-color"
-        content="#050608"
-    >
 
-    <meta
-        name="description"
-        content="Futuristic FPS Arena"
-    >
+html,
+body {
+    width: 100%;
+    height: 100%;
 
-    <title>BLACK OPS // FPS ARENA</title>
+    overflow: hidden;
 
-    <!-- =================================================
-         THREE.JS
-         ================================================= -->
+    background: #050608;
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js">
-    </script>
+    color: #ffffff;
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/three@0.180.0/examples/js/controls/PointerLockControls.js">
-    </script>
+    font-family:
+        "Arial",
+        "Helvetica Neue",
+        sans-serif;
+}
 
-</head>
 
+body {
+    user-select: none;
 
-<body>
+    -webkit-user-select: none;
 
-    <!-- =================================================
-         GAME ROOT
-         ================================================= -->
+    cursor: default;
+}
 
-    <main id="game">
 
-        <!-- =================================================
-             3D CANVAS
-             Three.js akan membuat canvas secara otomatis
-             ================================================= -->
+/* =========================================================
+   02. ROOT
+   ========================================================= */
 
-        <div
-            id="game-world"
-            aria-label="FPS Game World">
-        </div>
+#game {
+    position: relative;
 
+    width: 100vw;
+    height: 100vh;
 
-        <!-- =================================================
-             HUD
-             ================================================= -->
+    overflow: hidden;
 
-        <section
-            id="hud"
-            class="hud">
+    background: #050608;
+}
 
 
-            <!-- TOP BAR -->
+/* =========================================================
+   03. GAME WORLD
+   ========================================================= */
 
-            <div class="hud-top">
+#game-world {
+    position: absolute;
 
-                <div class="game-logo">
+    inset: 0;
 
-                    <span class="logo-main">
-                        BLACK OPS
-                    </span>
+    width: 100%;
+    height: 100%;
 
-                    <span class="logo-sub">
-                        FPS // ARENA
-                    </span>
+    z-index: 1;
+}
 
-                </div>
 
+#game-world canvas {
+    display: block;
 
-                <div class="mission-status">
+    width: 100%;
+    height: 100%;
+}
 
-                    <span class="status-dot"></span>
 
-                    <span>
-                        LIVE COMBAT
-                    </span>
+/* =========================================================
+   04. HUD
+   ========================================================= */
 
-                </div>
+.hud {
+    position: absolute;
 
-            </div>
+    inset: 0;
 
+    z-index: 20;
 
-            <!-- =================================================
-                 CROSSHAIR
-                 ================================================= -->
+    pointer-events: none;
 
-            <div
-                id="crosshair"
-                class="crosshair"
-                aria-hidden="true">
+    font-family:
+        "Arial",
+        "Helvetica Neue",
+        sans-serif;
+}
 
-                <span class="crosshair-top"></span>
-                <span class="crosshair-right"></span>
-                <span class="crosshair-bottom"></span>
-                <span class="crosshair-left"></span>
 
-                <span class="crosshair-center"></span>
+/* =========================================================
+   05. TOP BAR
+   ========================================================= */
 
-            </div>
+.hud-top {
+    position: absolute;
 
+    top: 28px;
+    left: 34px;
+    right: 34px;
 
-            <!-- =================================================
-                 HIT MARKER
-                 ================================================= -->
+    display: flex;
 
-            <div
-                id="hit-marker"
-                class="hit-marker">
+    justify-content: space-between;
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+    align-items: flex-start;
+}
 
-            </div>
 
+.game-logo {
+    display: flex;
 
-            <!-- =================================================
-                 TOP RIGHT
-                 ================================================= -->
+    flex-direction: column;
 
-            <div
-                id="match-info"
-                class="match-info">
+    gap: 3px;
+}
 
-                <div class="match-label">
-                    MATCH
-                </div>
 
-                <div
-                    id="match-timer"
-                    class="match-timer">
-                    10:00
-                </div>
+.logo-main {
+    font-size: 20px;
 
-            </div>
+    font-weight: 900;
 
+    letter-spacing: 5px;
 
-            <!-- =================================================
-                 OBJECTIVE
-                 ================================================= -->
+    color: #ffffff;
+}
 
-            <div
-                id="objective"
-                class="objective">
 
-                <div class="objective-title">
-                    OBJECTIVE
-                </div>
+.logo-sub {
+    font-size: 8px;
 
-                <div
-                    id="objective-text"
-                    class="objective-text">
+    font-weight: 700;
 
-                    ELIMINATE ALL HOSTILES
+    letter-spacing: 4px;
 
-                </div>
+    color: rgba(255,255,255,0.45);
+}
 
-            </div>
 
+.mission-status {
+    display: flex;
 
-            <!-- =================================================
-                 BOTTOM LEFT
-                 ================================================= -->
+    align-items: center;
 
-            <div
-                id="player-hud"
-                class="player-hud">
+    gap: 9px;
 
+    padding: 8px 13px;
 
-                <div class="health-panel">
+    background:
+        rgba(0,0,0,0.35);
 
-                    <div class="health-icon">
-                        +
-                    </div>
+    border:
+        1px solid
+        rgba(255,255,255,0.12);
 
-                    <div class="health-content">
+    backdrop-filter:
+        blur(8px);
 
-                        <div class="health-label">
-                            HEALTH
-                        </div>
+    font-size: 9px;
 
-                        <div
-                            id="health-value"
-                            class="health-value">
-                            100
-                        </div>
+    font-weight: 800;
 
-                        <div class="health-bar">
+    letter-spacing: 2px;
+}
 
-                            <div
-                                id="health-fill"
-                                class="health-fill">
-                            </div>
 
-                        </div>
+.status-dot {
+    width: 7px;
+    height: 7px;
 
-                    </div>
+    border-radius: 50%;
 
-                </div>
+    background: #ff3131;
 
+    box-shadow:
+        0 0 10px
+        rgba(255,49,49,0.9);
 
-                <div class="armor-panel">
+    animation:
+        statusPulse 1.3s
+        infinite;
+}
 
-                    <div class="armor-label">
-                        ARMOR
-                    </div>
 
-                    <div
-                        id="armor-value"
-                        class="armor-value">
-                        100
-                    </div>
+@keyframes statusPulse {
 
-                </div>
+    0%,
+    100% {
+        opacity: 1;
+    }
 
+    50% {
+        opacity: 0.35;
+    }
 
-            </div>
+}
 
 
-            <!-- =================================================
-                 BOTTOM RIGHT - WEAPON
-                 ================================================= -->
+/* =========================================================
+   06. CROSSHAIR
+   ========================================================= */
 
-            <div
-                id="weapon-hud"
-                class="weapon-hud">
+.crosshair {
+    position: absolute;
 
+    top: 50%;
+    left: 50%;
 
-                <div class="weapon-info">
+    width: 30px;
+    height: 30px;
 
-                    <div
-                        id="weapon-name"
-                        class="weapon-name">
+    transform:
+        translate(-50%, -50%);
+}
 
-                        M4A1
 
-                    </div>
+.crosshair span {
+    position: absolute;
 
-                    <div
-                        id="weapon-mode"
-                        class="weapon-mode">
+    display: block;
 
-                        AUTO
+    background:
+        rgba(255,255,255,0.9);
 
-                    </div>
+    box-shadow:
+        0 0 4px
+        rgba(0,0,0,0.7);
+}
 
-                </div>
 
+.crosshair-top {
+    width: 2px;
+    height: 8px;
 
-                <div class="ammo-display">
+    left: 14px;
+    top: 0;
+}
 
-                    <span
-                        id="ammo-current"
-                        class="ammo-current">
 
-                        30
+.crosshair-right {
+    width: 8px;
+    height: 2px;
 
-                    </span>
+    right: 0;
+    top: 14px;
+}
 
-                    <span class="ammo-divider">
-                        /
-                    </span>
 
-                    <span
-                        id="ammo-reserve"
-                        class="ammo-reserve">
+.crosshair-bottom {
+    width: 2px;
+    height: 8px;
 
-                        120
+    left: 14px;
+    bottom: 0;
+}
 
-                    </span>
 
-                </div>
+.crosshair-left {
+    width: 8px;
+    height: 2px;
 
+    left: 0;
+    top: 14px;
+}
 
-                <div class="reload-indicator">
 
-                    <span
-                        id="reload-text">
-                    </span>
+.crosshair-center {
+    width: 3px;
+    height: 3px;
 
-                </div>
+    left: 13.5px;
+    top: 13.5px;
 
-            </div>
+    border-radius: 50%;
+}
 
 
-            <!-- =================================================
-                 KILL FEED
-                 ================================================= -->
+/* =========================================================
+   07. HIT MARKER
+   ========================================================= */
 
-            <div
-                id="kill-feed"
-                class="kill-feed">
+.hit-marker {
+    position: absolute;
 
-            </div>
+    top: 50%;
+    left: 50%;
 
+    width: 26px;
+    height: 26px;
 
-            <!-- =================================================
-                 SCORE
-                 ================================================= -->
+    transform:
+        translate(-50%, -50%)
+        rotate(45deg);
 
-            <div
-                id="score-board"
-                class="score-board">
+    opacity: 0;
+}
 
-                <div class="score-label">
-                    SCORE
-                </div>
 
-                <div
-                    id="score-value"
-                    class="score-value">
-                    000000
-                </div>
+.hit-marker.active {
+    animation:
+        hitMarker 0.18s
+        ease-out;
+}
 
-            </div>
 
+.hit-marker span {
+    position: absolute;
 
-        </section>
+    width: 2px;
+    height: 9px;
 
+    background: #ffffff;
+}
 
-        <!-- =================================================
-             START SCREEN
-             ================================================= -->
 
-        <section
-            id="start-screen"
-            class="screen start-screen">
+.hit-marker span:nth-child(1) {
+    top: 0;
+    left: 12px;
+}
 
 
-            <div class="screen-background"></div>
+.hit-marker span:nth-child(2) {
+    right: 0;
+    top: 12px;
 
+    transform:
+        rotate(90deg);
+}
 
-            <div class="start-content">
 
+.hit-marker span:nth-child(3) {
+    bottom: 0;
+    left: 12px;
+}
 
-                <div class="start-kicker">
-                    TACTICAL COMBAT SYSTEM
-                </div>
 
+.hit-marker span:nth-child(4) {
+    left: 0;
+    top: 12px;
 
-                <h1>
-                    BLACK
-                    <span>OPS</span>
-                </h1>
+    transform:
+        rotate(90deg);
+}
 
 
-                <div class="start-line"></div>
+@keyframes hitMarker {
 
+    0% {
+        opacity: 1;
 
-                <p class="start-description">
+        transform:
+            translate(-50%, -50%)
+            rotate(45deg)
+            scale(0.65);
+    }
 
-                    ENTER THE COMBAT ZONE
+    100% {
+        opacity: 0;
 
-                    <br>
+        transform:
+            translate(-50%, -50%)
+            rotate(45deg)
+            scale(1.15);
+    }
 
-                    ELIMINATE HOSTILE TARGETS
+}
 
-                </p>
 
+/* =========================================================
+   08. MATCH INFO
+   ========================================================= */
 
-                <button
-                    id="start-button"
-                    class="primary-button">
+.match-info {
+    position: absolute;
 
-                    <span>
-                        DEPLOY
-                    </span>
+    top: 30px;
+    right: 35px;
 
-                    <span class="button-arrow">
-                        →
-                    </span>
+    text-align: right;
 
-                </button>
+    transform:
+        translateY(55px);
+}
 
 
-                <div class="controls-preview">
+.match-label {
+    font-size: 8px;
 
-                    <div>
-                        <kbd>W</kbd>
-                        <kbd>A</kbd>
-                        <kbd>S</kbd>
-                        <kbd>D</kbd>
+    letter-spacing: 3px;
 
-                        <span>
-                            MOVE
-                        </span>
-                    </div>
+    color:
+        rgba(255,255,255,0.45);
+}
 
 
-                    <div>
+.match-timer {
+    margin-top: 3px;
 
-                        <kbd>MOUSE</kbd>
+    font-size: 19px;
 
-                        <span>
-                            AIM
-                        </span>
+    font-weight: 800;
 
-                    </div>
+    letter-spacing: 3px;
+}
 
 
-                    <div>
+/* =========================================================
+   09. OBJECTIVE
+   ========================================================= */
 
-                        <kbd>LMB</kbd>
+.objective {
+    position: absolute;
 
-                        <span>
-                            FIRE
-                        </span>
+    top: 115px;
+    left: 34px;
 
-                    </div>
+    padding-left: 12px;
 
+    border-left:
+        2px solid
+        #ff3030;
+}
 
-                    <div>
 
-                        <kbd>SPACE</kbd>
+.objective-title {
+    font-size: 8px;
 
-                        <span>
-                            JUMP
-                        </span>
+    font-weight: 900;
 
-                    </div>
+    letter-spacing: 3px;
 
-                </div>
+    color:
+        rgba(255,255,255,0.4);
+}
 
-            </div>
 
+.objective-text {
+    margin-top: 5px;
 
-            <div class="version">
-                BLACK OPS // BUILD 0.2
-            </div>
+    font-size: 11px;
 
-        </section>
+    font-weight: 800;
 
+    letter-spacing: 1px;
+}
 
-        <!-- =================================================
-             PAUSE SCREEN
-             ================================================= -->
 
-        <section
-            id="pause-screen"
-            class="screen pause-screen hidden">
+/* =========================================================
+   10. PLAYER HUD
+   ========================================================= */
 
+.player-hud {
+    position: absolute;
 
-            <div class="pause-panel">
+    left: 34px;
+    bottom: 32px;
 
-                <div class="pause-kicker">
-                    SYSTEM PAUSED
-                </div>
+    display: flex;
 
-                <h2>
-                    PAUSED
-                </h2>
+    align-items: flex-end;
 
-                <div class="pause-line"></div>
+    gap: 22px;
+}
 
 
-                <button
-                    id="resume-button"
-                    class="primary-button">
+.health-panel {
+    display: flex;
 
-                    RESUME
+    align-items: center;
 
-                </button>
+    gap: 10px;
+}
 
 
-                <button
-                    id="restart-button"
-                    class="secondary-button">
+.health-icon {
+    width: 38px;
+    height: 38px;
 
-                    RESTART
+    display: flex;
 
-                </button>
+    align-items: center;
+    justify-content: center;
 
-            </div>
+    border:
+        1px solid
+        rgba(255,255,255,0.15);
 
-        </section>
+    background:
+        rgba(0,0,0,0.45);
 
+    color: #ff3838;
 
-        <!-- =================================================
-             GAME OVER
-             ================================================= -->
+    font-size: 21px;
 
-        <section
-            id="game-over-screen"
-            class="screen result-screen hidden">
+    font-weight: 900;
+}
 
 
-            <div class="result-panel">
+.health-content {
+    width: 155px;
+}
 
-                <div class="result-kicker">
-                    COMBAT TERMINATED
-                </div>
 
-                <h2 id="result-title">
-                    MISSION FAILED
-                </h2>
+.health-label,
+.armor-label {
+    margin-bottom: 2px;
 
-                <p
-                    id="result-description">
+    font-size: 8px;
 
-                    ALL OPERATIVES LOST.
+    font-weight: 800;
 
-                </p>
+    letter-spacing: 2px;
 
+    color:
+        rgba(255,255,255,0.45);
+}
 
-                <div class="result-stats">
 
-                    <div>
+.health-value {
+    font-size: 23px;
 
-                        <span>
-                            SCORE
-                        </span>
+    line-height: 25px;
 
-                        <strong
-                            id="result-score">
-                            000000
-                        </strong>
+    font-weight: 900;
+}
 
-                    </div>
 
+.health-bar {
+    width: 100%;
+    height: 4px;
 
-                    <div>
+    margin-top: 5px;
 
-                        <span>
-                            ELIMINATIONS
-                        </span>
+    background:
+        rgba(255,255,255,0.12);
 
-                        <strong
-                            id="result-kills">
-                            0
-                        </strong>
+    overflow: hidden;
+}
 
-                    </div>
 
-                </div>
+.health-fill {
+    width: 100%;
+    height: 100%;
 
+    background: #ff3535;
 
-                <button
-                    id="result-restart"
-                    class="primary-button">
+    box-shadow:
+        0 0 10px
+        rgba(255,53,53,0.4);
 
-                    PLAY AGAIN
+    transition:
+        width 0.2s ease;
+}
 
-                </button>
 
-            </div>
+.armor-panel {
+    padding-bottom: 2px;
+}
 
-        </section>
 
+.armor-value {
+    font-size: 17px;
 
-        <!-- =================================================
-             LOADING SCREEN
-             ================================================= -->
+    font-weight: 900;
+}
 
-        <section
-            id="loading-screen"
-            class="loading-screen">
 
+/* =========================================================
+   11. WEAPON HUD
+   ========================================================= */
 
-            <div class="loading-content">
+.weapon-hud {
+    position: absolute;
 
-                <div class="loading-logo">
-                    BLACK OPS
-                </div>
+    right: 34px;
+    bottom: 30px;
 
-                <div class="loading-sub">
-                    INITIALIZING COMBAT SYSTEM
-                </div>
+    text-align: right;
+}
 
 
-                <div class="loading-bar">
+.weapon-info {
+    display: flex;
 
-                    <div
-                        id="loading-fill"
-                        class="loading-fill">
-                    </div>
+    justify-content: flex-end;
 
-                </div>
+    align-items: center;
 
+    gap: 12px;
 
-                <div
-                    id="loading-percent"
-                    class="loading-percent">
+    margin-bottom: 2px;
+}
 
-                    0%
 
-                </div>
+.weapon-name {
+    font-size: 13px;
 
-            </div>
+    font-weight: 900;
 
-        </section>
+    letter-spacing: 3px;
+}
 
 
-        <!-- =================================================
-             MOBILE CONTROLS
-             ================================================= -->
+.weapon-mode {
+    padding: 4px 7px;
 
-        <section
-            id="mobile-controls"
-            class="mobile-controls hidden">
+    border:
+        1px solid
+        rgba(255,255,255,0.15);
 
+    font-size: 7px;
 
-            <div
-                id="joystick"
-                class="joystick">
+    letter-spacing: 2px;
 
-                <div
-                    id="joystick-knob"
-                    class="joystick-knob">
-                </div>
+    color:
+        rgba(255,255,255,0.55);
+}
 
-            </div>
 
+.ammo-display {
+    font-size: 15px;
 
-            <button
-                id="mobile-fire"
-                class="mobile-action">
+    font-weight: 800;
 
-                FIRE
+    letter-spacing: 2px;
+}
 
-            </button>
 
+.ammo-current {
+    font-size: 42px;
 
-            <button
-                id="mobile-jump"
-                class="mobile-action">
+    font-weight: 900;
 
-                JUMP
+    letter-spacing: -2px;
+}
 
-            </button>
 
-        </section>
+.ammo-divider {
+    margin: 0 5px;
 
+    color:
+        rgba(255,255,255,0.3);
+}
 
-    </main>
 
+.ammo-reserve {
+    font-size: 18px;
 
-    <!-- =====================================================
-         GAME SCRIPTS
-         ===================================================== -->
+    color:
+        rgba(255,255,255,0.55);
+}
 
-    <script src="script.js"></script>
 
-    <script src="engine.js"></script>
+.reload-indicator {
+    height: 15px;
 
+    margin-top: 2px;
 
-</body>
+    font-size: 8px;
 
-</html>
+    letter-spacing: 3px;
+
+    color: #ff3434;
+}
+
+
+/* =========================================================
+   12. KILL FEED
+   ========================================================= */
+
+.kill-feed {
+    position: absolute;
+
+    top: 185px;
+    right: 34px;
+
+    width: 270px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    text-align: right;
+}
+
+
+.kill-message {
+    padding: 7px 10px;
+
+    border-right:
+        2px solid
+        #ff3030;
+
+    background:
+        rgba(0,0,0,0.35);
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    animation:
+        killFeedIn
+        0.2s
+        ease-out;
+}
+
+
+@keyframes killFeedIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateX(0);
+    }
+
+}
+
+
+/* =========================================================
+   13. SCORE
+   ========================================================= */
+
+.score-board {
+    position: absolute;
+
+    top: 115px;
+    right: 34px;
+
+    text-align: right;
+}
+
+
+.score-label {
+    font-size: 7px;
+
+    letter-spacing: 3px;
+
+    color:
+        rgba(255,255,255,0.4);
+}
+
+
+.score-value {
+    margin-top: 2px;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   14. SCREENS
+   ========================================================= */
+
+.screen {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 50;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   15. START SCREEN
+   ========================================================= */
+
+.start-screen {
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(30,34,38,0.35),
+            rgba(3,4,5,0.96)
+        );
+
+    overflow: hidden;
+}
+
+
+.screen-background {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,0.95),
+            rgba(0,0,0,0.25),
+            rgba(0,0,0,0.9)
+        );
+
+    pointer-events: none;
+}
+
+
+.screen-background::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 70px,
+            rgba(255,255,255,0.025) 71px,
+            transparent 72px
+        );
+
+    opacity: 0.5;
+}
+
+
+.start-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: min(
+        800px,
+        calc(100% - 40px)
+    );
+
+    text-align: center;
+}
+
+
+.start-kicker {
+    margin-bottom: 14px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 7px;
+
+    color:
+        rgba(255,255,255,0.45);
+}
+
+
+.start-content h1 {
+    font-size:
+        clamp(
+            65px,
+            12vw,
+            150px
+        );
+
+    line-height: 0.85;
+
+    font-weight: 1000;
+
+    letter-spacing: -6px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 10px 50px
+        rgba(0,0,0,0.8);
+}
+
+
+.start-content h1 span {
+    color: #ff3030;
+}
+
+
+.start-line {
+    width: 80px;
+    height: 2px;
+
+    margin:
+        24px
+        auto;
+
+    background: #ff3030;
+
+    box-shadow:
+        0 0 15px
+        rgba(255,48,48,0.5);
+}
+
+
+.start-description {
+    margin-bottom: 30px;
+
+    font-size: 11px;
+
+    line-height: 1.9;
+
+    letter-spacing: 4px;
+
+    color:
+        rgba(255,255,255,0.55);
+}
+
+
+/* =========================================================
+   16. BUTTONS
+   ========================================================= */
+
+button {
+    font-family: inherit;
+
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+
+.primary-button {
+    min-width: 190px;
+
+    padding: 15px 23px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    background: #ff3030;
+
+    color: #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.primary-button:hover {
+    transform:
+        translateY(-2px);
+
+    background: #ff4141;
+
+    box-shadow:
+        0 10px 35px
+        rgba(255,48,48,0.25);
+}
+
+
+.primary-button:active {
+    transform:
+        translateY(0)
+        scale(0.98);
+}
+
+
+.button-arrow {
+    font-size: 18px;
+
+    line-height: 10px;
+}
+
+
+.secondary-button {
+    min-width: 190px;
+
+    padding: 14px 23px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.15);
+
+    color: #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    transition:
+        background 0.2s ease,
+        border 0.2s ease;
+}
+
+
+.secondary-button:hover {
+    background:
+        rgba(255,255,255,0.1);
+
+    border-color:
+        rgba(255,255,255,0.3);
+}
+
+
+/* =========================================================
+   17. CONTROLS PREVIEW
+   ========================================================= */
+
+.controls-preview {
+    margin-top: 55px;
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 25px;
+}
+
+
+.controls-preview > div {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.controls-preview span {
+    margin-left: 4px;
+
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(255,255,255,0.35);
+}
+
+
+kbd {
+    min-width: 25px;
+
+    height: 25px;
+
+    padding: 0 6px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.18);
+
+    background:
+        rgba(255,255,255,0.05);
+
+    font-family: inherit;
+
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color:
+        rgba(255,255,255,0.7);
+}
+
+
+/* =========================================================
+   18. VERSION
+   ========================================================= */
+
+.version {
+    position: absolute;
+
+    bottom: 25px;
+    right: 30px;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(255,255,255,0.2);
+}
+
+
+/* =========================================================
+   19. PAUSE
+   ========================================================= */
+
+.pause-screen,
+.result-screen {
+    background:
+        rgba(0,0,0,0.72);
+
+    backdrop-filter:
+        blur(12px);
+}
+
+
+.pause-panel,
+.result-panel {
+    width:
+        min(
+            500px,
+            calc(100% - 40px)
+        );
+
+    padding: 50px;
+
+    text-align: center;
+
+    background:
+        rgba(10,12,14,0.88);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,0.6);
+}
+
+
+.pause-kicker,
+.result-kicker {
+    margin-bottom: 10px;
+
+    font-size: 8px;
+
+    letter-spacing: 4px;
+
+    color:
+        rgba(255,255,255,0.4);
+}
+
+
+.pause-panel h2,
+.result-panel h2 {
+    font-size: 45px;
+
+    font-weight: 1000;
+
+    letter-spacing: -2px;
+}
+
+
+.pause-line {
+    width: 50px;
+    height: 2px;
+
+    margin:
+        20px
+        auto
+        30px;
+
+    background: #ff3030;
+}
+
+
+.pause-panel .primary-button,
+.pause-panel .secondary-button {
+    display: flex;
+
+    margin:
+        10px
+        auto;
+}
+
+
+/* =========================================================
+   20. RESULT
+   ========================================================= */
+
+.result-panel h2 {
+    color: #ff3434;
+}
+
+
+.result-panel p {
+    margin:
+        18px
+        0
+        30px;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(255,255,255,0.5);
+}
+
+
+.result-stats {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 55px;
+
+    margin-bottom: 35px;
+}
+
+
+.result-stats div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.result-stats span {
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(255,255,255,0.4);
+}
+
+
+.result-stats strong {
+    font-size: 25px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   21. LOADING SCREEN
+   ========================================================= */
+
+.loading-screen {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #050608;
+
+    transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
+}
+
+
+.loading-screen.loaded {
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+.loading-content {
+    width:
+        min(
+            400px,
+            calc(100% - 50px)
+        );
+
+    text-align: center;
+}
+
+
+.loading-logo {
+    font-size: 28px;
+
+    font-weight: 1000;
+
+    letter-spacing: 7px;
+}
+
+
+.loading-sub {
+    margin-top: 8px;
+
+    font-size: 7px;
+
+    letter-spacing: 4px;
+
+    color:
+        rgba(255,255,255,0.35);
+}
+
+
+.loading-bar {
+    width: 100%;
+    height: 2px;
+
+    margin-top: 35px;
+
+    background:
+        rgba(255,255,255,0.1);
+}
+
+
+.loading-fill {
+    width: 0%;
+    height: 100%;
+
+    background: #ff3030;
+
+    box-shadow:
+        0 0 15px
+        rgba(255,48,48,0.7);
+
+    transition:
+        width 0.15s ease;
+}
+
+
+.loading-percent {
+    margin-top: 12px;
+
+    font-size: 8px;
+
+    letter-spacing: 3px;
+
+    color:
+        rgba(255,255,255,0.4);
+}
+
+
+/* =========================================================
+   22. MOBILE CONTROLS
+   ========================================================= */
+
+.mobile-controls {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 40;
+
+    pointer-events: none;
+}
+
+
+.joystick {
+    position: absolute;
+
+    left: 30px;
+    bottom: 40px;
+
+    width: 125px;
+    height: 125px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.15);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.04);
+
+    pointer-events: auto;
+}
+
+
+.joystick-knob {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 48px;
+    height: 48px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.2);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.1);
+}
+
+
+.mobile-action {
+    position: absolute;
+
+    width: 75px;
+    height: 75px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.2);
+
+    border-radius: 50%;
+
+    background:
+        rgba(0,0,0,0.35);
+
+    color: #ffffff;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    pointer-events: auto;
+}
+
+
+#mobile-fire {
+    right: 30px;
+    bottom: 50px;
+
+    border-color:
+        rgba(255,48,48,0.5);
+}
+
+
+#mobile-jump {
+    right: 125px;
+    bottom: 75px;
+}
+
+
+/* =========================================================
+   23. RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hud-top {
+        top: 18px;
+        left: 18px;
+        right: 18px;
+    }
+
+
+    .logo-main {
+        font-size: 14px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .mission-status {
+        padding: 6px 9px;
+
+        font-size: 7px;
+    }
+
+
+    .objective {
+        top: 90px;
+        left: 18px;
+    }
+
+
+    .score-board {
+        top: 90px;
+        right: 18px;
+    }
+
+
+    .match-info {
+        display: none;
+    }
+
+
+    .player-hud {
+        left: 18px;
+        bottom: 20px;
+    }
+
+
+    .weapon-hud {
+        right: 18px;
+        bottom: 20px;
+    }
+
+
+    .health-content {
+        width: 110px;
+    }
+
+
+    .ammo-current {
+        font-size: 30px;
+    }
+
+
+    .weapon-name {
+        font-size: 10px;
+    }
+
+
+    .controls-preview {
+        gap: 12px;
+
+        margin-top: 35px;
+    }
+
+
+    .start-kicker {
+        font-size: 7px;
+
+        letter-spacing: 4px;
+    }
+
+
+    .start-description {
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .pause-panel,
+    .result-panel {
+        padding: 35px 20px;
+    }
+
+}
+
+
+@media (pointer: coarse) {
+
+    .mobile-controls {
+        display: block;
+    }
+
+
+    .controls-preview {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   24. CRT / SCANLINE EFFECT
+   ========================================================= */
+
+#game::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 200;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.015) 0px,
+            rgba(255,255,255,0.015) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+
+    opacity: 0.18;
+}
+
+
+/* =========================================================
+   25. VIGNETTE
+   ========================================================= */
+
+#game::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 190;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 45%,
+            rgba(0,0,0,0.5) 100%
+        );
+}
+
+
+/* =========================================================
+   26. DAMAGE EFFECT
+   ========================================================= */
+
+.damage-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 180;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(255,0,0,0.35) 100%
+        );
+}
+
+
+.damage-overlay.active {
+    animation:
+        damageFlash
+        0.25s
+        ease-out;
+}
+
+
+@keyframes damageFlash {
+
+    0% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================================================
+   27. DISABLE TEXT SELECTION
+   ========================================================= */
+
+button,
+kbd,
+span,
+div {
+    -webkit-touch-callout: none;
+}
+
+
+/* =========================================================
+   END
+   ========================================================= */
 ```
-
