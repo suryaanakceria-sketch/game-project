@@ -1,687 +1,958 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-<meta charset="UTF-8">
+    <meta name="theme-color" content="#050505">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACK OPS // FPS ARENA</title>
 
+    <!-- ==============================
+         GOOGLE FONT
+    =============================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<title>
-BLACK SERPENT FPS
-</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
-
-
-<!-- =========================
-     STYLE SYSTEM
-========================= -->
-
-
-<link rel="stylesheet" href="css/launcher.css">
-
-<link rel="stylesheet" href="css/animation.css">
-
-<link rel="stylesheet" href="css/responsive.css">
-
-
-
+    <!-- ==============================
+         MAIN CSS
+    =============================== -->
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
+    <!-- =========================================
+         GAME ROOT
+    ========================================== -->
+    <div id="game">
+
+        <!-- =====================================
+             BACKGROUND
+        ====================================== -->
+        <div id="background-layer"></div>
+
+        <div id="fog-layer"></div>
+
+        <div id="vignette"></div>
+
+        <!-- =====================================
+             MAIN MENU
+        ====================================== -->
+        <section id="main-menu" class="screen active">
+
+            <div class="menu-background"></div>
+
+            <div class="menu-overlay"></div>
+
+            <div class="menu-content">
+
+                <div class="game-label">
+                    <span></span>
+                    ONLINE COMBAT SYSTEM
+                    <span></span>
+                </div>
+
+                <h1 class="game-title">
+                    BLACK
+                    <strong>OPS</strong>
+                </h1>
+
+                <p class="game-subtitle">
+                    FUTURISTIC COMBAT ARENA
+                </p>
+
+                <div class="menu-buttons">
+
+                    <button
+                        id="start-game"
+                        class="menu-button primary"
+                    >
+                        <span class="button-number">01</span>
+                        <span>START GAME</span>
+                    </button>
+
+                    <button
+                        id="how-to-play"
+                        class="menu-button"
+                    >
+                        <span class="button-number">02</span>
+                        <span>HOW TO PLAY</span>
+                    </button>
+
+                    <button
+                        id="settings-button"
+                        class="menu-button"
+                    >
+                        <span class="button-number">03</span>
+                        <span>SETTINGS</span>
+                    </button>
+
+                </div>
+
+                <div class="menu-footer">
+
+                    <div>
+                        BUILD 1.0.0
+                    </div>
+
+                    <div>
+                        FPS ARENA SYSTEM
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
-<!-- =================================================
-     GAME LOADING SYSTEM
-================================================= -->
+        <!-- =====================================
+             HOW TO PLAY
+        ====================================== -->
+        <section
+            id="instructions-screen"
+            class="screen hidden"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <span>COMBAT MANUAL</span>
+
+                    <button
+                        id="close-instructions"
+                        class="close-button"
+                    >
+                        ×
+                    </button>
+                </div>
+
+                <div class="instructions-grid">
+
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            W
+                        </div>
+
+                        <div>
+                            <h3>MOVE FORWARD</h3>
+                            <p>Bergerak maju.</p>
+                        </div>
+
+                    </div>
 
 
-<div id="loading-screen">
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            A
+                        </div>
+
+                        <div>
+                            <h3>MOVE LEFT</h3>
+                            <p>Bergerak ke kiri.</p>
+                        </div>
+
+                    </div>
 
 
-    <div class="loading-wrapper">
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            S
+                        </div>
+
+                        <div>
+                            <h3>MOVE BACK</h3>
+                            <p>Bergerak mundur.</p>
+                        </div>
+
+                    </div>
 
 
-        <div class="loading-logo">
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            D
+                        </div>
+
+                        <div>
+                            <h3>MOVE RIGHT</h3>
+                            <p>Bergerak ke kanan.</p>
+                        </div>
+
+                    </div>
 
 
-            BLACK SERPENT
+                    <div class="instruction-card">
+
+                        <div class="instruction-key wide">
+                            SPACE
+                        </div>
+
+                        <div>
+                            <h3>JUMP</h3>
+                            <p>Melompat.</p>
+                        </div>
+
+                    </div>
 
 
-        </div>
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            LMB
+                        </div>
+
+                        <div>
+                            <h3>FIRE</h3>
+                            <p>Menembakkan senjata.</p>
+                        </div>
+
+                    </div>
 
 
+                    <div class="instruction-card">
 
-        <div class="loading-progress">
+                        <div class="instruction-key">
+                            R
+                        </div>
 
+                        <div>
+                            <h3>RELOAD</h3>
+                            <p>Mengisi ulang amunisi.</p>
+                        </div>
 
-            <span></span>
-
-
-        </div>
-
-
-
-        <p>
-
-        CONNECTING TO TACTICAL SERVER...
-
-        </p>
+                    </div>
 
 
+                    <div class="instruction-card">
+
+                        <div class="instruction-key">
+                            ESC
+                        </div>
+
+                        <div>
+                            <h3>PAUSE</h3>
+                            <p>Membuka menu pause.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             SETTINGS
+        ====================================== -->
+        <section
+            id="settings-screen"
+            class="screen hidden"
+        >
+
+            <div class="panel settings-panel">
+
+                <div class="panel-header">
+
+                    <span>SYSTEM SETTINGS</span>
+
+                    <button
+                        id="close-settings"
+                        class="close-button"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <div class="settings-content">
+
+                    <div class="setting-row">
+
+                        <div>
+                            <h3>GRAPHICS QUALITY</h3>
+                            <p>Menentukan kualitas visual.</p>
+                        </div>
+
+                        <select id="graphics-quality">
+
+                            <option value="low">
+                                LOW
+                            </option>
+
+                            <option
+                                value="medium"
+                                selected
+                            >
+                                MEDIUM
+                            </option>
+
+                            <option value="high">
+                                HIGH
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div>
+                            <h3>MOUSE SENSITIVITY</h3>
+                            <p>Kecepatan pergerakan kamera.</p>
+                        </div>
+
+                        <input
+                            id="mouse-sensitivity"
+                            type="range"
+                            min="0.1"
+                            max="2"
+                            step="0.1"
+                            value="0.8"
+                        >
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div>
+                            <h3>MASTER VOLUME</h3>
+                            <p>Volume seluruh suara game.</p>
+                        </div>
+
+                        <input
+                            id="master-volume"
+                            type="range"
+                            min="0"
+                            max="100"
+                            value="70"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             GAME WORLD
+        ====================================== -->
+        <main
+            id="game-world"
+            class="hidden"
+        >
+
+            <!--
+                Canvas akan digunakan oleh engine.js
+            -->
+
+            <canvas id="game-canvas"></canvas>
+
+
+            <!-- =================================
+                 GAME HUD
+            ================================== -->
+            <div id="hud">
+
+                <!-- TOP LEFT -->
+                <div id="hud-top-left">
+
+                    <div class="player-status">
+
+                        <div class="status-label">
+                            PLAYER
+                        </div>
+
+                        <div class="player-name">
+                            OPERATIVE
+                        </div>
+
+                        <div class="health-container">
+
+                            <div class="health-icon">
+                                +
+                            </div>
+
+                            <div class="health-bar">
+
+                                <div
+                                    id="health-fill"
+                                    class="health-fill"
+                                ></div>
+
+                            </div>
+
+                            <div
+                                id="health-value"
+                                class="health-value"
+                            >
+                                100
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOP CENTER -->
+                <div id="hud-top-center">
+
+                    <div class="match-status">
+
+                        <div class="match-label">
+                            MATCH
+                        </div>
+
+                        <div
+                            id="match-timer"
+                            class="match-timer"
+                        >
+                            10:00
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOP RIGHT -->
+                <div id="hud-top-right">
+
+                    <div class="score-panel">
+
+                        <div class="score-team">
+
+                            <span>
+                                YOU
+                            </span>
+
+                            <strong id="player-score">
+                                0
+                            </strong>
+
+                        </div>
+
+                        <div class="score-divider">
+                            :
+                        </div>
+
+                        <div class="score-team">
+
+                            <span>
+                                ENEMY
+                            </span>
+
+                            <strong id="enemy-score">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     CROSSHAIR
+                ================================== -->
+                <div
+                    id="crosshair"
+                    class="crosshair"
+                >
+
+                    <span class="crosshair-top"></span>
+                    <span class="crosshair-right"></span>
+                    <span class="crosshair-bottom"></span>
+                    <span class="crosshair-left"></span>
+
+                    <span class="crosshair-dot"></span>
+
+                </div>
+
+
+                <!-- =================================
+                     HIT MARKER
+                ================================== -->
+                <div
+                    id="hit-marker"
+                    class="hit-marker hidden"
+                >
+                    ×
+                </div>
+
+
+                <!-- =================================
+                     DAMAGE INDICATOR
+                ================================== -->
+                <div
+                    id="damage-indicator"
+                    class="damage-indicator"
+                ></div>
+
+
+                <!-- =================================
+                     WEAPON HUD
+                ================================== -->
+                <div id="weapon-hud">
+
+                    <div class="weapon-info">
+
+                        <div class="weapon-category">
+                            ASSAULT RIFLE
+                        </div>
+
+                        <div
+                            id="weapon-name"
+                            class="weapon-name"
+                        >
+                            PHANTOM-X
+                        </div>
+
+                    </div>
+
+
+                    <div class="ammo-info">
+
+                        <div
+                            id="ammo-current"
+                            class="ammo-current"
+                        >
+                            30
+                        </div>
+
+                        <div class="ammo-divider">
+                            /
+                        </div>
+
+                        <div
+                            id="ammo-reserve"
+                            class="ammo-reserve"
+                        >
+                            120
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     RELOAD INDICATOR
+                ================================== -->
+                <div
+                    id="reload-indicator"
+                    class="reload-indicator hidden"
+                >
+
+                    <div>
+                        RELOADING
+                    </div>
+
+                    <div class="reload-bar">
+
+                        <div
+                            id="reload-progress"
+                            class="reload-progress"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     KILL FEED
+                ================================== -->
+                <div
+                    id="kill-feed"
+                    class="kill-feed"
+                ></div>
+
+
+                <!-- =================================
+                     OBJECTIVE
+                ================================== -->
+                <div id="objective">
+
+                    <div class="objective-label">
+                        CURRENT OBJECTIVE
+                    </div>
+
+                    <div
+                        id="objective-text"
+                        class="objective-text"
+                    >
+                        ELIMINATE ALL ENEMIES
+                    </div>
+
+                </div>
+
+
+                <!-- =================================
+                     MOBILE CONTROLS
+                ================================== -->
+                <div
+                    id="mobile-controls"
+                    class="mobile-only"
+                >
+
+                    <div
+                        id="joystick"
+                        class="joystick"
+                    >
+
+                        <div
+                            id="joystick-knob"
+                            class="joystick-knob"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="mobile-actions">
+
+                        <button
+                            id="mobile-fire"
+                            class="mobile-button fire"
+                        >
+                            FIRE
+                        </button>
+
+                        <button
+                            id="mobile-reload"
+                            class="mobile-button"
+                        >
+                            ↻
+                        </button>
+
+                        <button
+                            id="mobile-jump"
+                            class="mobile-button"
+                        >
+                            ↑
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+        <!-- =====================================
+             PAUSE MENU
+        ====================================== -->
+        <section
+            id="pause-menu"
+            class="overlay-screen hidden"
+        >
+
+            <div class="pause-panel">
+
+                <div class="pause-label">
+                    SYSTEM PAUSED
+                </div>
+
+                <h2>
+                    PAUSED
+                </h2>
+
+                <div class="pause-buttons">
+
+                    <button
+                        id="resume-game"
+                        class="menu-button primary"
+                    >
+                        RESUME
+                    </button>
+
+                    <button
+                        id="restart-game"
+                        class="menu-button"
+                    >
+                        RESTART
+                    </button>
+
+                    <button
+                        id="exit-game"
+                        class="menu-button"
+                    >
+                        EXIT TO MENU
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             GAME OVER
+        ====================================== -->
+        <section
+            id="game-over-screen"
+            class="overlay-screen hidden"
+        >
+
+            <div class="result-panel">
+
+                <div
+                    id="result-status"
+                    class="result-status"
+                >
+                    MISSION COMPLETE
+                </div>
+
+                <h2
+                    id="result-title"
+                >
+                    VICTORY
+                </h2>
+
+                <div class="result-score">
+
+                    <div>
+
+                        <span>
+                            SCORE
+                        </span>
+
+                        <strong id="final-score">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            KILLS
+                        </span>
+
+                        <strong id="final-kills">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            ACCURACY
+                        </span>
+
+                        <strong id="final-accuracy">
+                            0%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="play-again"
+                    class="menu-button primary"
+                >
+                    PLAY AGAIN
+                </button>
+
+                <button
+                    id="back-to-menu"
+                    class="menu-button"
+                >
+                    MAIN MENU
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             LOADING SCREEN
+        ====================================== -->
+        <section
+            id="loading-screen"
+            class="loading-screen"
+        >
+
+            <div class="loading-content">
+
+                <div class="loading-logo">
+                    BLACK OPS
+                </div>
+
+                <div class="loading-status">
+                    INITIALIZING COMBAT SYSTEM
+                </div>
+
+                <div class="loading-bar">
+
+                    <div
+                        id="loading-progress"
+                        class="loading-progress"
+                    ></div>
+
+                </div>
+
+                <div
+                    id="loading-percent"
+                    class="loading-percent"
+                >
+                    0%
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
 
+    <!-- =========================================
+         GAME DATA
+    ========================================== -->
+    <script>
 
-</div>
+        /*
+         * Global game configuration.
+         *
+         * engine.js dan script.js
+         * akan menggunakan object ini.
+         */
 
+        window.GAME_CONFIG = {
 
+            name: "BLACK OPS",
 
+            version: "1.0.0",
 
+            player: {
 
+                maxHealth: 100,
 
+                health: 100,
 
+                speed: 5,
 
-<!-- =================================================
-     BACKGROUND SYSTEM
-================================================= -->
+                jumpPower: 8,
 
+                sensitivity: 0.8
 
-<div class="background">
+            },
 
+            weapon: {
 
-    <video autoplay muted loop>
+                name: "PHANTOM-X",
 
+                magazineSize: 30,
 
-        <source 
-        src="assets/videos/background.mp4"
-        type="video/mp4">
+                ammo: 30,
 
+                reserveAmmo: 120,
 
-    </video>
+                damage: 25,
 
+                fireRate: 100,
 
+                reloadTime: 1500
 
-    <div class="background-filter"></div>
+            },
 
+            match: {
 
-</div>
+                duration: 600,
 
+                enemyCount: 5,
 
+                score: 0,
 
+                kills: 0,
 
+                shots: 0,
 
+                hits: 0
 
+            }
 
+        };
 
-<!-- =================================================
-     TOP HUD
-================================================= -->
+    </script>
 
 
-<header class="top-hud">
+    <!-- =========================================
+         GAME JAVASCRIPT
+    ========================================== -->
 
+    <script src="engine.js"></script>
 
+    <script src="script.js"></script>
 
-<div class="brand-mini">
 
+    <!-- =========================================
+         INITIALIZATION
+    ========================================== -->
 
-BLACK SERPENT FPS
+    <script>
 
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
 
-</div>
+                /*
+                 * Pastikan semua sistem
+                 * telah dimuat sebelum game dimulai.
+                 */
 
+                if (
+                    typeof window.GameEngine !==
+                    "undefined"
+                ) {
 
+                    window.GameEngine.init();
 
+                }
 
-<div class="server-status">
+                if (
+                    typeof window.GameUI !==
+                    "undefined"
+                ) {
 
+                    window.GameUI.init();
 
-<span></span>
+                }
 
+            }
+        );
 
-SERVER ONLINE
-
-
-</div>
-
-
-
-
-<div class="clock">
-
-
-00:00
-
-
-</div>
-
-
-
-</header>
-
-
-
-
-
-
-
-
-<!-- =================================================
-     MAIN CONTAINER
-================================================= -->
-
-
-<main class="launcher">
-
-
-
-
-
-
-
-<!-- =====================
-     LEFT PROFILE
-====================== -->
-
-
-<section class="profile-card">
-
-
-
-<div class="avatar">
-
-
-<img src="assets/images/avatar.png">
-
-
-</div>
-
-
-
-
-<div class="profile-data">
-
-
-<h2>
-
-PLAYER
-
-</h2>
-
-
-<p>
-
-LEVEL 01
-
-</p>
-
-
-
-
-<div class="rank">
-
-
-RANK:
-
-RECRUIT
-
-
-</div>
-
-
-
-<div class="experience">
-
-
-<div></div>
-
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<!-- =====================
-     CENTER MENU
-====================== -->
-
-
-<section class="center-menu">
-
-
-
-
-
-<div class="logo">
-
-
-<h1>
-
-BLACK
-
-
-<span>
-
-SERPENT
-
-</span>
-
-
-</h1>
-
-
-
-<p>
-
-TACTICAL WARFARE SYSTEM
-
-</p>
-
-
-</div>
-
-
-
-
-
-
-
-<nav>
-
-
-
-<button 
-class="play">
-
-
-START MISSION
-
-
-</button>
-
-
-
-
-<button>
-
-LOADOUT
-
-
-</button>
-
-
-
-
-<button>
-
-OPERATORS
-
-
-</button>
-
-
-
-
-<button>
-
-ARMORY
-
-
-</button>
-
-
-
-
-<button>
-
-SETTINGS
-
-
-</button>
-
-
-
-</nav>
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<!-- =====================
-     RIGHT PANEL
-====================== -->
-
-
-<section class="right-panel">
-
-
-
-
-
-<div class="panel">
-
-
-<h3>
-
-DAILY MISSION
-
-</h3>
-
-
-
-<p>
-
-ELIMINATE 50 ENEMIES
-
-</p>
-
-
-
-<div class="mission-progress">
-
-
-<span></span>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="panel">
-
-
-<h3>
-
-LATEST NEWS
-
-</h3>
-
-
-
-<ul>
-
-
-<li>
-
-NEW MAP RELEASED
-
-</li>
-
-
-
-<li>
-
-WEAPON UPDATE
-
-</li>
-
-
-
-<li>
-
-SERVER MAINTENANCE
-
-</li>
-
-
-
-</ul>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="panel weapon-preview">
-
-
-<h3>
-
-CURRENT WEAPON
-
-</h3>
-
-
-
-<img src="assets/weapons/rifle.png">
-
-
-<p>
-
-SERPENT RIFLE X1
-
-</p>
-
-
-
-</div>
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-</main>
-
-
-
-
-
-
-
-
-
-<!-- =================================================
-     FRIEND SYSTEM
-================================================= -->
-
-
-<section class="friends-panel">
-
-
-<h3>
-
-SQUAD
-
-</h3>
-
-
-
-<div class="friend">
-
-
-ONLINE PLAYER
-
-</div>
-
-
-
-<div class="friend">
-
-
-AVAILABLE
-
-</div>
-
-
-
-<div class="friend">
-
-
-OFFLINE
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<!-- =================================================
-     POPUP WINDOWS
-================================================= -->
-
-
-
-<div class="popup" id="settings">
-
-
-<div class="popup-content">
-
-
-<h2>
-
-GAME SETTINGS
-
-</h2>
-
-
-<button>
-
-GRAPHIC
-
-</button>
-
-
-<button>
-
-AUDIO
-
-</button>
-
-
-<button>
-
-CONTROL
-
-</button>
-
-
-<button>
-
-CLOSE
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- =================================================
-     FOOTER
-================================================= -->
-
-
-<footer>
-
-
-<div>
-
-BLACK SERPENT FPS
-
-</div>
-
-
-<div>
-
-VERSION 1.0.0
-
-</div>
-
-
-</footer>
-
-
-
-
-
-
-
-
-
-<!-- =================================================
-     JAVASCRIPT CORE
-================================================= -->
-
-
-<script src="js/loading.js"></script>
-
-<script src="js/audio.js"></script>
-
-<script src="js/ui.js"></script>
-
-<script src="js/engine.js"></script>
-
-
+    </script>
 
 </body>
-
 </html>
