@@ -161,7 +161,19 @@ const GameEngine = {
 
     kills: 0,
 
-    score: 0,
+score: 0,
+
+wave: 1,
+
+waveEnemies: 5,
+
+waveActive: false,
+
+waveCompleted: false,
+
+waveDelay: 3,
+
+waveTimer: 0,
 
 
     /* -----------------------------------------------------
@@ -800,24 +812,59 @@ const GameEngine = {
 
     createEnemies() {
 
-        this.enemies = [];
+    spawnWave() {
 
+    this.waveActive = true;
+    this.waveCompleted = false;
 
-        const positions = [
+    const count =
+        this.waveEnemies +
+        (this.wave - 1) * 2;
 
-            [-12, 0, -12],
+    const positions = [
 
-            [10, 0, -12],
+        [-12, 0, -12],
+        [10, 0, -12],
+        [13, 0, 4],
+        [-12, 0, 10],
+        [8, 0, 12],
+        [-5, 0, -13],
+        [15, 0, -8],
+        [-15, 0, 5],
+        [4, 0, -15],
+        [-3, 0, 14]
 
-            [13, 0, 4],
+    ];
 
-            [-12, 0, 10],
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
 
-            [8, 0, 12],
+        const position =
+            positions[
+                i % positions.length
+            ];
 
-            [-5, 0, -13]
+        this.createEnemy(
+            position[0],
+            position[1],
+            position[2],
+            i
+        );
 
-        ];
+    }
+
+    this.updateWaveHUD();
+
+},
+
+    this.enemies = [];
+
+    this.spawnWave();
+
+},
 
 
         positions.forEach(
