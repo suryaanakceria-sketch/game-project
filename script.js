@@ -1,2771 +1,1321 @@
+```javascript
 /* =========================================================
    BLACK OPS // FPS ARENA
    SCRIPT.JS
-   GAME UI + GAME STATE + PLAYER SYSTEM
+   UI + GAME CONTROLLER
    ========================================================= */
 
+document.addEventListener("DOMContentLoaded", () => {
 
-/* =========================================================
-   01. GLOBAL GAME OBJECT
-   ========================================================= */
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
 
-window.GameUI = {
+    const $ = (selector) =>
+        document.querySelector(selector);
 
-    initialized: false,
+    const $$ = (selector) =>
+        document.querySelectorAll(selector);
 
-    state: "menu",
 
-    paused: false,
+    const screens = {
 
-    gameRunning: false,
+        loading:
+            $("#loading-screen"),
 
-    reloading: false,
+        menu:
+            $("#main-menu"),
 
-    matchTime: 600,
+        game:
+            $("#game"),
 
-    health: 100,
+        pause:
+            $("#pause-screen"),
 
-    ammo: 30,
+        result:
+            $("#game-over-screen")
 
-    reserveAmmo: 120,
+    };
 
-    kills: 0,
 
-    score: 0,
+    const buttons = {
 
-    shots: 0,
+        deploy:
+            $("#deploy-btn"),
 
-    hits: 0,
+        resume:
+            $("#resume-btn"),
 
-    enemies: 5,
+        restart:
+            $("#restart-btn"),
 
-    currentWeapon: "PHANTOM-X",
+        menu:
+            $("#menu-btn")
 
-    reloadTimer: null,
-
-    matchTimer: null,
-
-    loadingTimer: null,
-
-    fireTimer: null,
-
-    elements: {},
+    };
 
 
     /* =====================================================
-       02. INITIALIZATION
+       GAME STATE
        ===================================================== */
 
-    init() {
+    const GameState = {
 
-        if (this.initialized) {
-            return;
-        }
+        current: "LOADING",
 
-        this.initialized = true;
+        missionTime: 0,
 
-        console.log(
-            "[GAME UI] Initializing..."
-        );
+        maxMissionTime: 300,
 
-        this.cacheElements();
+        timerRunning: false,
 
-        this.bindEvents();
+        initialized: false,
 
-        this.loadSettings();
+        mobile: false
 
-        this.startLoading();
-
-    },
+    };
 
 
     /* =====================================================
-       03. CACHE DOM ELEMENTS
+       UTILITY
        ===================================================== */
 
-    cacheElements() {
+    function showScreen(screen) {
 
-        this.elements = {
+        Object.values(screens).forEach(
+            element => {
 
-            /* Main screens */
+                if (element) {
 
-            mainMenu:
-                document.getElementById(
-                    "main-menu"
-                ),
-
-            instructions:
-                document.getElementById(
-                    "instructions-screen"
-                ),
-
-            settings:
-                document.getElementById(
-                    "settings-screen"
-                ),
-
-            gameWorld:
-                document.getElementById(
-                    "game-world"
-                ),
-
-            pauseMenu:
-                document.getElementById(
-                    "pause-menu"
-                ),
-
-            gameOver:
-                document.getElementById(
-                    "game-over-screen"
-                ),
-
-            loadingScreen:
-                document.getElementById(
-                    "loading-screen"
-                ),
-
-
-            /* Loading */
-
-            loadingProgress:
-                document.getElementById(
-                    "loading-progress"
-                ),
-
-            loadingPercent:
-                document.getElementById(
-                    "loading-percent"
-                ),
-
-
-            /* Buttons */
-
-            startGame:
-                document.getElementById(
-                    "start-game"
-                ),
-
-            howToPlay:
-                document.getElementById(
-                    "how-to-play"
-                ),
-
-            settingsButton:
-                document.getElementById(
-                    "settings-button"
-                ),
-
-            closeInstructions:
-                document.getElementById(
-                    "close-instructions"
-                ),
-
-            closeSettings:
-                document.getElementById(
-                    "close-settings"
-                ),
-
-            resumeGame:
-                document.getElementById(
-                    "resume-game"
-                ),
-
-            restartGame:
-                document.getElementById(
-                    "restart-game"
-                ),
-
-            exitGame:
-                document.getElementById(
-                    "exit-game"
-                ),
-
-            playAgain:
-                document.getElementById(
-                    "play-again"
-                ),
-
-            backToMenu:
-                document.getElementById(
-                    "back-to-menu"
-                ),
-
-
-            /* Player */
-
-            healthFill:
-                document.getElementById(
-                    "health-fill"
-                ),
-
-            healthValue:
-                document.getElementById(
-                    "health-value"
-                ),
-
-
-            /* Match */
-
-            matchTimer:
-                document.getElementById(
-                    "match-timer"
-                ),
-
-            playerScore:
-                document.getElementById(
-                    "player-score"
-                ),
-
-            enemyScore:
-                document.getElementById(
-                    "enemy-score"
-                ),
-
-
-            /* Weapon */
-
-            weaponName:
-                document.getElementById(
-                    "weapon-name"
-                ),
-
-            ammoCurrent:
-                document.getElementById(
-                    "ammo-current"
-                ),
-
-            ammoReserve:
-                document.getElementById(
-                    "ammo-reserve"
-                ),
-
-
-            /* Effects */
-
-            crosshair:
-                document.getElementById(
-                    "crosshair"
-                ),
-
-            hitMarker:
-                document.getElementById(
-                    "hit-marker"
-                ),
-
-            damageIndicator:
-                document.getElementById(
-                    "damage-indicator"
-                ),
-
-            killFeed:
-                document.getElementById(
-                    "kill-feed"
-                ),
-
-
-            /* Objective */
-
-            objectiveText:
-                document.getElementById(
-                    "objective-text"
-                ),
-
-
-            /* Reload */
-
-            reloadIndicator:
-                document.getElementById(
-                    "reload-indicator"
-                ),
-
-            reloadProgress:
-                document.getElementById(
-                    "reload-progress"
-                ),
-
-
-            /* Results */
-
-            resultStatus:
-                document.getElementById(
-                    "result-status"
-                ),
-
-            resultTitle:
-                document.getElementById(
-                    "result-title"
-                ),
-
-            finalScore:
-                document.getElementById(
-                    "final-score"
-                ),
-
-            finalKills:
-                document.getElementById(
-                    "final-kills"
-                ),
-
-            finalAccuracy:
-                document.getElementById(
-                    "final-accuracy"
-                ),
-
-
-            /* Settings */
-
-            graphicsQuality:
-                document.getElementById(
-                    "graphics-quality"
-                ),
-
-            mouseSensitivity:
-                document.getElementById(
-                    "mouse-sensitivity"
-                ),
-
-            masterVolume:
-                document.getElementById(
-                    "master-volume"
-                ),
-
-
-            /* Mobile */
-
-            mobileFire:
-                document.getElementById(
-                    "mobile-fire"
-                ),
-
-            mobileReload:
-                document.getElementById(
-                    "mobile-reload"
-                ),
-
-            mobileJump:
-                document.getElementById(
-                    "mobile-jump"
-                ),
-
-            joystick:
-                document.getElementById(
-                    "joystick"
-                ),
-
-            joystickKnob:
-                document.getElementById(
-                    "joystick-knob"
-                )
-
-        };
-
-    },
-
-
-    /* =====================================================
-       04. EVENT LISTENERS
-       ===================================================== */
-
-    bindEvents() {
-
-        const e = this.elements;
-
-
-        /* ================================================
-           MAIN MENU
-        ================================================= */
-
-        e.startGame?.addEventListener(
-            "click",
-            () => {
-
-                this.startGame();
-
-            }
-        );
-
-
-        e.howToPlay?.addEventListener(
-            "click",
-            () => {
-
-                this.showInstructions();
-
-            }
-        );
-
-
-        e.settingsButton?.addEventListener(
-            "click",
-            () => {
-
-                this.showSettings();
-
-            }
-        );
-
-
-        /* ================================================
-           INSTRUCTIONS
-        ================================================= */
-
-        e.closeInstructions?.addEventListener(
-            "click",
-            () => {
-
-                this.showMainMenu();
-
-            }
-        );
-
-
-        /* ================================================
-           SETTINGS
-        ================================================= */
-
-        e.closeSettings?.addEventListener(
-            "click",
-            () => {
-
-                this.saveSettings();
-
-                this.showMainMenu();
-
-            }
-        );
-
-
-        e.mouseSensitivity?.addEventListener(
-            "input",
-            () => {
-
-                const value =
-                    Number(
-                        e.mouseSensitivity.value
-                    );
-
-                if (
-                    window.GAME_CONFIG &&
-                    window.GAME_CONFIG.player
-                ) {
-
-                    window.GAME_CONFIG.player.sensitivity =
-                        value;
-
-                }
-
-            }
-        );
-
-
-        /* ================================================
-           PAUSE
-        ================================================= */
-
-        e.resumeGame?.addEventListener(
-            "click",
-            () => {
-
-                this.resumeGame();
-
-            }
-        );
-
-
-        e.restartGame?.addEventListener(
-            "click",
-            () => {
-
-                this.restartGame();
-
-            }
-        );
-
-
-        e.exitGame?.addEventListener(
-            "click",
-            () => {
-
-                this.exitToMenu();
-
-            }
-        );
-
-
-        /* ================================================
-           GAME OVER
-        ================================================= */
-
-        e.playAgain?.addEventListener(
-            "click",
-            () => {
-
-                this.startGame();
-
-            }
-        );
-
-
-        e.backToMenu?.addEventListener(
-            "click",
-            () => {
-
-                this.exitToMenu();
-
-            }
-        );
-
-
-        /* ================================================
-           KEYBOARD
-        ================================================= */
-
-        document.addEventListener(
-            "keydown",
-            (event) => {
-
-                this.handleKeyboard(
-                    event
-                );
-
-            }
-        );
-
-
-        /* ================================================
-           MOUSE
-        ================================================= */
-
-        document.addEventListener(
-            "mousedown",
-            (event) => {
-
-                if (
-                    event.button === 0
-                ) {
-
-                    this.handleFire();
-
-                }
-
-            }
-        );
-
-
-        /* ================================================
-           MOBILE FIRE
-        ================================================= */
-
-        e.mobileFire?.addEventListener(
-            "touchstart",
-            (event) => {
-
-                event.preventDefault();
-
-                this.handleFire();
-
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /* ================================================
-           MOBILE RELOAD
-        ================================================= */
-
-        e.mobileReload?.addEventListener(
-            "touchstart",
-            (event) => {
-
-                event.preventDefault();
-
-                this.reload();
-
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /* ================================================
-           MOBILE JUMP
-        ================================================= */
-
-        e.mobileJump?.addEventListener(
-            "touchstart",
-            (event) => {
-
-                event.preventDefault();
-
-                this.jump();
-
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /* ================================================
-           JOYSTICK
-        ================================================= */
-
-        this.setupJoystick();
-
-    },
-
-
-    /* =====================================================
-       05. LOADING SYSTEM
-       ===================================================== */
-
-    startLoading() {
-
-        let progress = 0;
-
-        const updateLoading =
-            () => {
-
-                progress +=
-                    Math.random() * 8 + 3;
-
-                if (progress >= 100) {
-
-                    progress = 100;
-
-                }
-
-                if (
-                    this.elements.loadingProgress
-                ) {
-
-                    this.elements.loadingProgress.style.width =
-                        `${progress}%`;
-
-                }
-
-                if (
-                    this.elements.loadingPercent
-                ) {
-
-                    this.elements.loadingPercent.textContent =
-                        `${Math.floor(progress)}%`;
-
-                }
-
-                if (progress >= 100) {
-
-                    clearInterval(
-                        this.loadingTimer
-                    );
-
-                    setTimeout(
-                        () => {
-
-                            this.finishLoading();
-
-                        },
-                        500
+                    element.classList.add(
+                        "hidden"
                     );
 
                 }
 
-            };
-
-
-        this.loadingTimer =
-            setInterval(
-                updateLoading,
-                120
-            );
-
-    },
-
-
-    finishLoading() {
-
-        if (
-            this.elements.loadingScreen
-        ) {
-
-            this.elements.loadingScreen.classList.add(
-                "loaded"
-            );
-
-        }
-
-        this.showMainMenu();
-
-    },
-
-
-    /* =====================================================
-       06. SCREEN MANAGEMENT
-       ===================================================== */
-
-    hideAllScreens() {
-
-        const screens = [
-
-            this.elements.mainMenu,
-
-            this.elements.instructions,
-
-            this.elements.settings
-
-        ];
-
-
-        screens.forEach(
-            screen => {
-
-                if (!screen) {
-                    return;
-                }
-
-                screen.classList.add(
-                    "hidden"
-                );
-
             }
         );
 
-    },
 
+        if (screen) {
 
-    showMainMenu() {
-
-        this.hideAllScreens();
-
-        this.elements.mainMenu?.classList.remove(
-            "hidden"
-        );
-
-        this.state = "menu";
-
-        this.paused = false;
-
-        this.stopMatchTimer();
-
-        this.elements.pauseMenu?.classList.add(
-            "hidden"
-        );
-
-        this.elements.gameOver?.classList.add(
-            "hidden"
-        );
-
-        if (
-            this.elements.gameWorld
-        ) {
-
-            this.elements.gameWorld.classList.add(
+            screen.classList.remove(
                 "hidden"
             );
 
         }
 
-    },
+    }
 
 
-    showInstructions() {
+    function delay(ms) {
 
-        this.hideAllScreens();
-
-        this.elements.instructions?.classList.remove(
-            "hidden"
+        return new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    ms
+                )
         );
 
-        this.state = "instructions";
-
-    },
-
-
-    showSettings() {
-
-        this.hideAllScreens();
-
-        this.elements.settings?.classList.remove(
-            "hidden"
-        );
-
-        this.state = "settings";
-
-    },
+    }
 
 
     /* =====================================================
-       07. START GAME
+       LOADING SYSTEM
        ===================================================== */
 
-    startGame() {
+    async function startLoading() {
 
-        console.log(
-            "[GAME] Starting match..."
+        showScreen(
+            screens.loading
         );
 
 
-        this.resetGame();
+        const progress =
+            $("#loading-progress");
 
 
-        this.hideAllScreens();
+        const percentage =
+            $("#loading-percentage");
 
 
-        this.elements.gameWorld?.classList.remove(
-            "hidden"
-        );
+        const status =
+            $("#loading-status");
 
 
-        this.state = "playing";
+        const messages = [
 
-        this.gameRunning = true;
+            "INITIALIZING COMBAT SYSTEM",
 
-        this.paused = false;
+            "LOADING ARENA",
 
+            "INITIALIZING WEAPON SYSTEM",
 
-        this.elements.pauseMenu?.classList.add(
-            "hidden"
-        );
+            "SYNCING TARGET DATABASE",
 
+            "CALIBRATING HUD",
 
-        this.elements.gameOver?.classList.add(
-            "hidden"
-        );
+            "ESTABLISHING SECURE LINK",
 
+            "SYSTEM READY"
 
-        this.updateAllHUD();
-
-
-        this.startMatchTimer();
+        ];
 
 
-        /*
-         * Beritahu engine bahwa
-         * permainan dimulai.
-         */
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.start ===
-            "function"
+        for (
+            let i = 0;
+            i <= 100;
+            i++
         ) {
 
-            window.GameEngine.start();
+            if (progress) {
 
-        }
-
-
-        /*
-         * Minta pointer lock.
-         */
-
-        this.requestPointerLock();
-
-    },
-
-
-    /* =====================================================
-       08. RESET GAME
-       ===================================================== */
-
-    resetGame() {
-
-        this.matchTime = 600;
-
-        this.health = 100;
-
-        this.ammo = 30;
-
-        this.reserveAmmo = 120;
-
-        this.kills = 0;
-
-        this.score = 0;
-
-        this.shots = 0;
-
-        this.hits = 0;
-
-        this.enemies = 5;
-
-        this.reloading = false;
-
-
-        if (
-            window.GAME_CONFIG
-        ) {
-
-            const config =
-                window.GAME_CONFIG;
-
-            if (config.player) {
-
-                config.player.health =
-                    100;
+                progress.style.width =
+                    `${i}%`;
 
             }
 
-            if (config.weapon) {
 
-                config.weapon.ammo =
-                    30;
+            if (percentage) {
 
-                config.weapon.reserveAmmo =
-                    120;
+                percentage.textContent =
+                    `${i}%`;
 
             }
 
-            if (config.match) {
 
-                config.match.score =
-                    0;
+            if (status) {
 
-                config.match.kills =
-                    0;
+                const index =
+                    Math.min(
+                        messages.length - 1,
+                        Math.floor(
+                            i /
+                            (100 /
+                            messages.length)
+                        )
+                    );
 
-                config.match.shots =
-                    0;
 
-                config.match.hits =
-                    0;
+                status.textContent =
+                    messages[index];
 
             }
 
-        }
 
-
-        this.updateAllHUD();
-
-    },
-
-
-    /* =====================================================
-       09. MATCH TIMER
-       ===================================================== */
-
-    startMatchTimer() {
-
-        this.stopMatchTimer();
-
-
-        this.matchTimer =
-            setInterval(
-                () => {
-
-                    if (
-                        !this.gameRunning ||
-                        this.paused
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    this.matchTime--;
-
-
-                    this.updateTimer();
-
-
-                    if (
-                        this.matchTime <= 0
-                    ) {
-
-                        this.endGame(
-                            false
-                        );
-
-                    }
-
-                },
-                1000
+            await delay(
+                15 + Math.random() * 25
             );
 
-    },
-
-
-    stopMatchTimer() {
-
-        if (
-            this.matchTimer
-        ) {
-
-            clearInterval(
-                this.matchTimer
-            );
-
-            this.matchTimer = null;
-
         }
 
-    },
+
+        await delay(500);
 
 
-    updateTimer() {
+        GameState.current =
+            "MENU";
+
+
+        showScreen(
+            screens.menu
+        );
+
+    }
+
+
+    /* =====================================================
+       DEPLOY
+       ===================================================== */
+
+    async function deploy() {
 
         if (
-            !this.elements.matchTimer
+            GameState.current ===
+            "PLAYING"
         ) {
 
             return;
 
         }
 
+
+        GameState.current =
+            "PLAYING";
+
+
+        GameState.missionTime =
+            0;
+
+
+        GameState.timerRunning =
+            true;
+
+
+        if (
+            screens.menu
+        ) {
+
+            screens.menu.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.result
+        ) {
+
+            screens.result.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.pause
+        ) {
+
+            screens.pause.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.game
+        ) {
+
+            screens.game.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           Start engine
+           --------------------------------------------- */
+
+        if (
+            window.GameEngine
+        ) {
+
+            if (
+                !GameEngine.initialized
+            ) {
+
+                GameEngine.init();
+
+            }
+
+
+            GameEngine.start();
+
+        }
+
+
+        updateGameUI();
+
+    }
+
+
+    /* =====================================================
+       RESUME
+       ===================================================== */
+
+    function resumeGame() {
+
+        if (
+            GameState.current !==
+            "PAUSED"
+        ) {
+
+            return;
+
+        }
+
+
+        GameState.current =
+            "PLAYING";
+
+
+        GameState.timerRunning =
+            true;
+
+
+        if (
+            screens.pause
+        ) {
+
+            screens.pause.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            window.GameEngine
+        ) {
+
+            GameEngine.resume();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       PAUSE
+       ===================================================== */
+
+    function pauseGame() {
+
+        if (
+            GameState.current !==
+            "PLAYING"
+        ) {
+
+            return;
+
+        }
+
+
+        GameState.current =
+            "PAUSED";
+
+
+        GameState.timerRunning =
+            false;
+
+
+        if (
+            screens.pause
+        ) {
+
+            screens.pause.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            window.GameEngine
+        ) {
+
+            GameEngine.pause();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RESTART
+       ===================================================== */
+
+    function restartGame() {
+
+        if (
+            screens.result
+        ) {
+
+            screens.result.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.pause
+        ) {
+
+            screens.pause.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        GameState.missionTime =
+            0;
+
+
+        GameState.timerRunning =
+            true;
+
+
+        GameState.current =
+            "PLAYING";
+
+
+        if (
+            screens.game
+        ) {
+
+            screens.game.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            window.GameEngine
+        ) {
+
+            GameEngine.start();
+
+        }
+
+
+        updateGameUI();
+
+    }
+
+
+    /* =====================================================
+       BACK TO MENU
+       ===================================================== */
+
+    function backToMenu() {
+
+        GameState.current =
+            "MENU";
+
+
+        GameState.timerRunning =
+            false;
+
+
+        if (
+            screens.game
+        ) {
+
+            screens.game.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.pause
+        ) {
+
+            screens.pause.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.result
+        ) {
+
+            screens.result.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (
+            screens.menu
+        ) {
+
+            screens.menu.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        document.exitPointerLock?.();
+
+    }
+
+
+    /* =====================================================
+       GAME TIMER
+       ===================================================== */
+
+    function updateTimer() {
+
+        if (
+            !GameState.timerRunning
+        ) {
+
+            return;
+
+        }
+
+
+        GameState.missionTime +=
+            1;
+
+
+        if (
+            GameState.missionTime >=
+            GameState.maxMissionTime
+        ) {
+
+            GameState.timerRunning =
+                false;
+
+            return;
+
+        }
+
+
+        updateGameUI();
+
+    }
+
+
+    /* =====================================================
+       FORMAT TIME
+       ===================================================== */
+
+    function formatTime(seconds) {
 
         const minutes =
             Math.floor(
-                this.matchTime / 60
+                seconds / 60
             );
 
 
-        const seconds =
-            this.matchTime % 60;
+        const remaining =
+            seconds % 60;
 
 
-        this.elements.matchTimer.textContent =
-
-            `${String(minutes).padStart(2, "0")}:` +
-
-            `${String(seconds).padStart(2, "0")}`;
-
-    },
-
-
-    /* =====================================================
-       10. PAUSE
-       ===================================================== */
-
-    pauseGame() {
-
-        if (
-            !this.gameRunning ||
-            this.state !== "playing"
-        ) {
-
-            return;
-
-        }
-
-
-        this.paused = true;
-
-        this.state = "paused";
-
-
-        this.elements.pauseMenu?.classList.remove(
-            "hidden"
+        return (
+            String(minutes)
+                .padStart(2, "0") +
+            ":" +
+            String(remaining)
+                .padStart(2, "0")
         );
 
-
-        if (
-            document.pointerLockElement
-        ) {
-
-            document.exitPointerLock();
-
-        }
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.pause ===
-            "function"
-        ) {
-
-            window.GameEngine.pause();
-
-        }
-
-    },
+    }
 
 
     /* =====================================================
-       11. RESUME
+       GAME UI
        ===================================================== */
 
-    resumeGame() {
+    function updateGameUI() {
 
-        if (
-            !this.gameRunning
-        ) {
+        const timer =
+            $("#mission-timer");
 
-            return;
+
+        const kills =
+            $("#kills-value");
+
+
+        const score =
+            $("#score-value");
+
+
+        const ammo =
+            $("#ammo-current");
+
+
+        const reserve =
+            $("#ammo-reserve");
+
+
+        const health =
+            $("#health-value");
+
+
+        const armor =
+            $("#armor-value");
+
+
+        if (timer) {
+
+            timer.textContent =
+                formatTime(
+                    GameState.missionTime
+                );
 
         }
 
 
-        this.paused = false;
+        if (
+            window.GameEngine
+        ) {
 
-        this.state = "playing";
+            if (kills) {
+
+                kills.textContent =
+                    GameEngine.kills;
+
+            }
 
 
-        this.elements.pauseMenu?.classList.add(
-            "hidden"
+            if (score) {
+
+                score.textContent =
+                    String(
+                        GameEngine.score
+                    ).padStart(
+                        6,
+                        "0"
+                    );
+
+            }
+
+
+            if (ammo) {
+
+                ammo.textContent =
+                    GameEngine.weapon.ammo;
+
+            }
+
+
+            if (reserve) {
+
+                reserve.textContent =
+                    GameEngine.weapon.reserve;
+
+            }
+
+
+            if (health) {
+
+                health.textContent =
+                    Math.ceil(
+                        GameEngine.player.health
+                    );
+
+            }
+
+
+            if (armor) {
+
+                armor.textContent =
+                    Math.ceil(
+                        GameEngine.player.armor
+                    );
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ENGINE → UI MONITOR
+       ===================================================== */
+
+    function monitorEngine() {
+
+        if (
+            window.GameEngine &&
+            GameState.current ===
+            "PLAYING"
+        ) {
+
+            updateGameUI();
+
+        }
+
+
+        requestAnimationFrame(
+            monitorEngine
         );
 
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.resume ===
-            "function"
-        ) {
-
-            window.GameEngine.resume();
-
-        }
-
-
-        this.requestPointerLock();
-
-    },
+    }
 
 
     /* =====================================================
-       12. RESTART
+       PAUSE KEY
        ===================================================== */
 
-    restartGame() {
-
-        this.stopMatchTimer();
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.reset ===
-            "function"
-        ) {
-
-            window.GameEngine.reset();
-
-        }
-
-
-        this.startGame();
-
-    },
-
-
-    /* =====================================================
-       13. EXIT TO MENU
-       ===================================================== */
-
-    exitToMenu() {
-
-        this.stopMatchTimer();
-
-
-        this.gameRunning = false;
-
-        this.paused = false;
-
-
-        if (
-            document.pointerLockElement
-        ) {
-
-            document.exitPointerLock();
-
-        }
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.stop ===
-            "function"
-        ) {
-
-            window.GameEngine.stop();
-
-        }
-
-
-        this.showMainMenu();
-
-    },
-
-
-    /* =====================================================
-       14. KEYBOARD
-       ===================================================== */
-
-    handleKeyboard(event) {
-
-        const key =
-            event.key.toLowerCase();
-
-
-        /* ================================================
-           ESC
-        ================================================= */
-
-        if (
-            key === "escape"
-        ) {
+    document.addEventListener(
+        "keydown",
+        event => {
 
             if (
-                this.state === "playing"
+                event.code ===
+                "Escape"
             ) {
 
-                this.pauseGame();
+                if (
+                    GameState.current ===
+                    "PLAYING"
+                ) {
+
+                    pauseGame();
+
+                }
+
+                else if (
+                    GameState.current ===
+                    "PAUSED"
+                ) {
+
+                    resumeGame();
+
+                }
 
             }
 
-            else if (
-                this.state === "paused"
-            ) {
+        }
+    );
 
-                this.resumeGame();
+
+    /* =====================================================
+       BUTTON EVENTS
+       ===================================================== */
+
+    if (
+        buttons.deploy
+    ) {
+
+        buttons.deploy.addEventListener(
+            "click",
+            deploy
+        );
+
+    }
+
+
+    if (
+        buttons.resume
+    ) {
+
+        buttons.resume.addEventListener(
+            "click",
+            resumeGame
+        );
+
+    }
+
+
+    if (
+        buttons.restart
+    ) {
+
+        buttons.restart.addEventListener(
+            "click",
+            restartGame
+        );
+
+    }
+
+
+    if (
+        buttons.menu
+    ) {
+
+        buttons.menu.addEventListener(
+            "click",
+            backToMenu
+        );
+
+    }
+
+
+    /* =====================================================
+       CLICK GAME → POINTER LOCK
+       ===================================================== */
+
+    if (
+        screens.game
+    ) {
+
+        screens.game.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    GameState.current !==
+                    "PLAYING"
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    event.target.closest(
+                        "button"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    window.GameEngine &&
+                    GameEngine.renderer
+                ) {
+
+                    GameEngine
+                        .renderer
+                        .domElement
+                        .requestPointerLock?.();
+
+                }
 
             }
+        );
+
+    }
+
+
+    /* =====================================================
+       MOBILE DETECTION
+       ===================================================== */
+
+    function detectMobile() {
+
+        GameState.mobile =
+            /Android|iPhone|iPad|iPod/i
+                .test(
+                    navigator.userAgent
+                );
+
+
+        if (
+            GameState.mobile
+        ) {
+
+            document.body.classList.add(
+                "mobile-device"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       MOBILE CONTROLS
+       ===================================================== */
+
+    function setupMobileControls() {
+
+        const mobileButtons =
+            $$(".mobile-control");
+
+
+        mobileButtons.forEach(
+            button => {
+
+                const key =
+                    button.dataset.key;
+
+
+                button.addEventListener(
+                    "touchstart",
+                    event => {
+
+                        event.preventDefault();
+
+
+                        simulateKey(
+                            key,
+                            true
+                        );
+
+                    },
+                    {
+                        passive: false
+                    }
+                );
+
+
+                button.addEventListener(
+                    "touchend",
+                    event => {
+
+                        event.preventDefault();
+
+
+                        simulateKey(
+                            key,
+                            false
+                        );
+
+                    },
+                    {
+                        passive: false
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    function simulateKey(
+        key,
+        pressed
+    ) {
+
+        if (
+            !window.GameEngine
+        ) {
 
             return;
 
         }
 
 
-        /* ================================================
-           RELOAD
-        ================================================= */
-
-        if (
-            key === "r"
+        switch (
+            key
         ) {
 
-            if (
-                this.state === "playing"
-            ) {
+            case "forward":
 
-                this.reload();
+                GameEngine.keys.forward =
+                    pressed;
 
-            }
+                break;
+
+
+            case "backward":
+
+                GameEngine.keys.backward =
+                    pressed;
+
+                break;
+
+
+            case "left":
+
+                GameEngine.keys.left =
+                    pressed;
+
+                break;
+
+
+            case "right":
+
+                GameEngine.keys.right =
+                    pressed;
+
+                break;
+
+
+            case "sprint":
+
+                GameEngine.keys.sprint =
+                    pressed;
+
+                break;
+
+
+            case "jump":
+
+                if (
+                    pressed
+                ) {
+
+                    GameEngine.jump();
+
+                }
+
+                break;
+
+
+            case "shoot":
+
+                if (
+                    pressed
+                ) {
+
+                    GameEngine.shoot();
+
+                }
+
+                break;
+
+
+            case "reload":
+
+                if (
+                    pressed
+                ) {
+
+                    GameEngine.reload();
+
+                }
+
+                break;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RESULT SCREEN OBSERVER
+       ===================================================== */
+
+    function monitorResultScreen() {
+
+        if (
+            !window.GameEngine
+        ) {
 
             return;
 
         }
 
 
-        /* ================================================
-           JUMP
-        ================================================= */
-
         if (
-            event.code === "Space"
+            !GameEngine.running &&
+            GameState.current ===
+            "PLAYING"
         ) {
 
+            GameState.current =
+                "RESULT";
+
+
+            GameState.timerRunning =
+                false;
+
+
             if (
-                this.state === "playing"
+                screens.result
+            ) {
+
+                screens.result.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+        }
+
+
+        requestAnimationFrame(
+            monitorResultScreen
+        );
+
+    }
+
+
+    /* =====================================================
+       GAME ENGINE EVENT PATCH
+       ===================================================== */
+
+    const originalGameOver =
+        window.GameEngine?.gameOver;
+
+
+    if (
+        window.GameEngine &&
+        originalGameOver
+    ) {
+
+        GameEngine.gameOver =
+            function () {
+
+                originalGameOver.call(
+                    this
+                );
+
+
+                GameState.current =
+                    "RESULT";
+
+
+                GameState.timerRunning =
+                    false;
+
+            };
+
+    }
+
+
+    const originalVictory =
+        window.GameEngine?.victory;
+
+
+    if (
+        window.GameEngine &&
+        originalVictory
+    ) {
+
+        GameEngine.victory =
+            function () {
+
+                originalVictory.call(
+                    this
+                );
+
+
+                GameState.current =
+                    "RESULT";
+
+
+                GameState.timerRunning =
+                    false;
+
+            };
+
+    }
+
+
+    /* =====================================================
+       TAB VISIBILITY
+       ===================================================== */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.hidden &&
+                GameState.current ===
+                "PLAYING"
+            ) {
+
+                pauseGame();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PREVENT CONTEXT MENU
+       ===================================================== */
+
+    document.addEventListener(
+        "contextmenu",
+        event => {
+
+            if (
+                GameState.current ===
+                "PLAYING"
             ) {
 
                 event.preventDefault();
 
-                this.jump();
-
             }
 
         }
-
-    },
-
-
-    /* =====================================================
-       15. FIRE SYSTEM
-       ===================================================== */
-
-    handleFire() {
-
-        if (
-            !this.gameRunning ||
-            this.paused ||
-            this.state !== "playing"
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            this.reloading
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            this.ammo <= 0
-        ) {
-
-            this.playEmptySound();
-
-            return;
-
-        }
-
-
-        this.fireWeapon();
-
-    },
-
-
-    fireWeapon() {
-
-        if (
-            this.ammo <= 0
-        ) {
-
-            return;
-
-        }
-
-
-        this.ammo--;
-
-        this.shots++;
-
-
-        this.updateAmmo();
-
-
-        /*
-         * Kirim event tembakan
-         * ke engine.js.
-         */
-
-        let hit = false;
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.shoot ===
-            "function"
-        ) {
-
-            hit =
-                window.GameEngine.shoot();
-
-        }
-
-
-        /*
-         * Engine dapat mengembalikan
-         * true jika mengenai enemy.
-         */
-
-        if (hit === true) {
-
-            this.registerHit();
-
-        }
-
-
-        /*
-         * Auto reload
-         */
-
-        if (
-            this.ammo <= 0 &&
-            this.reserveAmmo > 0
-        ) {
-
-            setTimeout(
-                () => {
-
-                    this.reload();
-
-                },
-                150
-            );
-
-        }
-
-    },
+    );
 
 
     /* =====================================================
-       16. REGISTER HIT
+       PREVENT SPACE SCROLL
        ===================================================== */
 
-    registerHit() {
-
-        this.hits++;
-
-        this.showHitMarker();
-
-
-        /*
-         * Hit score
-         */
-
-        this.score += 10;
-
-
-        this.updateScore();
-
-    },
-
-
-    /* =====================================================
-       17. KILL SYSTEM
-       ===================================================== */
-
-    registerKill(
-        enemyName = "ENEMY"
-    ) {
-
-        this.kills++;
-
-        this.score += 100;
-
-        this.enemies--;
-
-
-        this.updateScore();
-
-
-        this.showKillFeed(
-            `YOU  ›  ${enemyName}`
-        );
-
-
-        /*
-         * Jika semua enemy mati
-         */
-
-        if (
-            this.enemies <= 0
-        ) {
-
-            this.endGame(
-                true
-            );
-
-        }
-
-    },
-
-
-    /* =====================================================
-       18. RELOAD
-       ===================================================== */
-
-    reload() {
-
-        if (
-            !this.gameRunning ||
-            this.paused ||
-            this.state !== "playing"
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            this.reloading
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            this.ammo >= 30
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            this.reserveAmmo <= 0
-        ) {
-
-            return;
-
-        }
-
-
-        this.reloading = true;
-
-
-        const reloadTime = 1500;
-
-
-        this.elements.reloadIndicator?.classList.remove(
-            "hidden"
-        );
-
-
-        this.elements.reloadProgress.style.width =
-            "0%";
-
-
-        const startTime =
-            performance.now();
-
-
-        const animateReload =
-            (currentTime) => {
-
-                if (
-                    !this.reloading
-                ) {
-
-                    return;
-
-                }
-
-
-                const elapsed =
-                    currentTime -
-                    startTime;
-
-
-                const progress =
-                    Math.min(
-                        elapsed /
-                        reloadTime,
-                        1
-                    );
-
-
-                if (
-                    this.elements.reloadProgress
-                ) {
-
-                    this.elements.reloadProgress.style.width =
-                        `${progress * 100}%`;
-
-                }
-
-
-                if (
-                    progress < 1
-                ) {
-
-                    requestAnimationFrame(
-                        animateReload
-                    );
-
-                }
-
-                else {
-
-                    this.finishReload();
-
-                }
-
-            };
-
-
-        requestAnimationFrame(
-            animateReload
-        );
-
-    },
-
-
-    /* =====================================================
-       19. FINISH RELOAD
-       ===================================================== */
-
-    finishReload() {
-
-        const magazineSize = 30;
-
-
-        const missing =
-            magazineSize -
-            this.ammo;
-
-
-        const amount =
-            Math.min(
-                missing,
-                this.reserveAmmo
-            );
-
-
-        this.ammo += amount;
-
-        this.reserveAmmo -= amount;
-
-
-        this.reloading = false;
-
-
-        this.elements.reloadIndicator?.classList.add(
-            "hidden"
-        );
-
-
-        this.updateAmmo();
-
-    },
-
-
-    /* =====================================================
-       20. PLAYER DAMAGE
-       ===================================================== */
-
-    damagePlayer(
-        amount = 10
-    ) {
-
-        if (
-            !this.gameRunning ||
-            this.paused
-        ) {
-
-            return;
-
-        }
-
-
-        this.health -= amount;
-
-
-        this.health =
-            Math.max(
-                0,
-                this.health
-            );
-
-
-        this.updateHealth();
-
-        this.showDamageEffect();
-
-
-        if (
-            this.health <= 0
-        ) {
-
-            this.playerDeath();
-
-        }
-
-    },
-
-
-    /* =====================================================
-       21. PLAYER DEATH
-       ===================================================== */
-
-    playerDeath() {
-
-        this.gameRunning = false;
-
-
-        this.stopMatchTimer();
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.playerDeath ===
-            "function"
-        ) {
-
-            window.GameEngine.playerDeath();
-
-        }
-
-
-        setTimeout(
-            () => {
-
-                this.endGame(
-                    false
-                );
-
-            },
-            500
-        );
-
-    },
-
-
-    /* =====================================================
-       22. JUMP
-       ===================================================== */
-
-    jump() {
-
-        if (
-            !this.gameRunning ||
-            this.paused
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.jump ===
-            "function"
-        ) {
-
-            window.GameEngine.jump();
-
-        }
-
-    },
-
-
-    /* =====================================================
-       23. GAME OVER
-       ===================================================== */
-
-    endGame(
-        victory = false
-    ) {
-
-        if (
-            this.state === "gameover"
-        ) {
-
-            return;
-
-        }
-
-
-        this.gameRunning = false;
-
-        this.paused = false;
-
-        this.state = "gameover";
-
-
-        this.stopMatchTimer();
-
-
-        if (
-            document.pointerLockElement
-        ) {
-
-            document.exitPointerLock();
-
-        }
-
-
-        if (
-            window.GameEngine &&
-            typeof window.GameEngine.stop ===
-            "function"
-        ) {
-
-            window.GameEngine.stop();
-
-        }
-
-
-        const accuracy =
-            this.shots > 0
-                ? Math.round(
-                    (this.hits /
-                    this.shots) *
-                    100
+    window.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                [
+                    "Space",
+                    "ArrowUp",
+                    "ArrowDown",
+                    "ArrowLeft",
+                    "ArrowRight"
+                ].includes(
+                    event.code
                 )
-                : 0;
-
-
-        if (
-            victory
-        ) {
-
-            this.elements.resultStatus.textContent =
-                "MISSION COMPLETE";
-
-            this.elements.resultTitle.textContent =
-                "VICTORY";
-
-        }
-
-        else {
-
-            this.elements.resultStatus.textContent =
-                "MISSION FAILED";
-
-            this.elements.resultTitle.textContent =
-                "DEFEAT";
-
-        }
-
-
-        this.elements.finalScore.textContent =
-            this.score;
-
-
-        this.elements.finalKills.textContent =
-            this.kills;
-
-
-        this.elements.finalAccuracy.textContent =
-            `${accuracy}%`;
-
-
-        this.elements.gameOver?.classList.remove(
-            "hidden"
-        );
-
-    },
-
-
-    /* =====================================================
-       24. UPDATE HEALTH
-       ===================================================== */
-
-    updateHealth() {
-
-        const percentage =
-            Math.max(
-                0,
-                Math.min(
-                    this.health,
-                    100
-                )
-            );
-
-
-        if (
-            this.elements.healthFill
-        ) {
-
-            this.elements.healthFill.style.width =
-                `${percentage}%`;
-
-        }
-
-
-        if (
-            this.elements.healthValue
-        ) {
-
-            this.elements.healthValue.textContent =
-                Math.ceil(
-                    percentage
-                );
-
-        }
-
-
-        /*
-         * Change health bar appearance
-         */
-
-        if (
-            this.elements.healthFill
-        ) {
-
-            if (
-                percentage <= 25
             ) {
 
-                this.elements.healthFill.style.background =
-                    "#ff2020";
+                event.preventDefault();
 
             }
 
-            else if (
-                percentage <= 50
-            ) {
-
-                this.elements.healthFill.style.background =
-                    "#ff7b00";
-
-            }
-
-            else {
-
-                this.elements.healthFill.style.background =
-                    "#ff2a2a";
-
-            }
-
+        },
+        {
+            passive: false
         }
-
-    },
+    );
 
 
     /* =====================================================
-       25. UPDATE AMMO
+       STARTUP
        ===================================================== */
 
-    updateAmmo() {
+    function initialize() {
 
-        if (
-            this.elements.ammoCurrent
-        ) {
+        detectMobile();
 
-            this.elements.ammoCurrent.textContent =
-                this.ammo;
+        setupMobileControls();
 
-        }
+        startLoading();
 
+        monitorEngine();
 
-        if (
-            this.elements.ammoReserve
-        ) {
+        monitorResultScreen();
 
-            this.elements.ammoReserve.textContent =
-                this.reserveAmmo;
-
-        }
-
-
-        /*
-         * Low ammo warning
-         */
-
-        if (
-            this.elements.ammoCurrent
-        ) {
-
-            if (
-                this.ammo <= 5
-            ) {
-
-                this.elements.ammoCurrent.style.color =
-                    "#ff2a2a";
-
-            }
-
-            else {
-
-                this.elements.ammoCurrent.style.color =
-                    "";
-
-            }
-
-        }
-
-    },
-
-
-    /* =====================================================
-       26. UPDATE SCORE
-       ===================================================== */
-
-    updateScore() {
-
-        if (
-            this.elements.playerScore
-        ) {
-
-            this.elements.playerScore.textContent =
-                this.score;
-
-        }
-
-
-        if (
-            this.elements.enemyScore
-        ) {
-
-            this.elements.enemyScore.textContent =
-                this.enemies;
-
-        }
-
-    },
-
-
-    /* =====================================================
-       27. UPDATE ALL HUD
-       ===================================================== */
-
-    updateAllHUD() {
-
-        this.updateHealth();
-
-        this.updateAmmo();
-
-        this.updateScore();
-
-        this.updateTimer();
-
-
-        if (
-            this.elements.weaponName
-        ) {
-
-            this.elements.weaponName.textContent =
-                this.currentWeapon;
-
-        }
-
-
-        if (
-            this.elements.objectiveText
-        ) {
-
-            this.elements.objectiveText.textContent =
-
-                this.enemies > 0
-
-                    ? "ELIMINATE ALL ENEMIES"
-
-                    : "MISSION COMPLETE";
-
-        }
-
-    },
-
-
-    /* =====================================================
-       28. HIT MARKER
-       ===================================================== */
-
-    showHitMarker() {
-
-        if (
-            !this.elements.hitMarker
-        ) {
-
-            return;
-
-        }
-
-
-        this.elements.hitMarker.classList.remove(
-            "hidden"
-        );
-
-
-        /*
-         * Restart animation
-         */
-
-        this.elements.hitMarker.style.animation =
-            "none";
-
-
-        void this.elements.hitMarker.offsetWidth;
-
-
-        this.elements.hitMarker.style.animation =
-            "hitMarker 0.2s ease";
-
-
-        clearTimeout(
-            this.hitMarkerTimer
-        );
-
-
-        this.hitMarkerTimer =
-            setTimeout(
-                () => {
-
-                    this.elements.hitMarker.classList.add(
-                        "hidden"
-                    );
-
-                },
-                180
-            );
-
-    },
-
-
-    /* =====================================================
-       29. DAMAGE EFFECT
-       ===================================================== */
-
-    showDamageEffect() {
-
-        if (
-            !this.elements.damageIndicator
-        ) {
-
-            return;
-
-        }
-
-
-        this.elements.damageIndicator.classList.remove(
-            "active"
-        );
-
-
-        void this.elements.damageIndicator.offsetWidth;
-
-
-        this.elements.damageIndicator.classList.add(
-            "active"
-        );
-
-    },
-
-
-    /* =====================================================
-       30. KILL FEED
-       ===================================================== */
-
-    showKillFeed(
-        message
-    ) {
-
-        if (
-            !this.elements.killFeed
-        ) {
-
-            return;
-
-        }
-
-
-        const element =
-            document.createElement(
-                "div"
-            );
-
-
-        element.className =
-            "kill-message";
-
-
-        element.textContent =
-            message;
-
-
-        this.elements.killFeed.appendChild(
-            element
-        );
-
-
-        /*
-         * Maksimum 5 pesan
-         */
-
-        while (
-            this.elements.killFeed.children.length >
-            5
-        ) {
-
-            this.elements.killFeed.firstChild.remove();
-
-        }
-
-
-        setTimeout(
-            () => {
-
-                element.remove();
-
-            },
-            4000
-        );
-
-    },
-
-
-    /* =====================================================
-       31. POINTER LOCK
-       ===================================================== */
-
-    requestPointerLock() {
-
-        const canvas =
-            document.getElementById(
-                "game-canvas"
-            );
-
-
-        if (
-            !canvas
-        ) {
-
-            return;
-
-        }
-
-
-        /*
-         * Pointer lock hanya dilakukan
-         * setelah interaksi user.
-         */
-
-        try {
-
-            if (
-                document.pointerLockElement !==
-                canvas
-            ) {
-
-                canvas.requestPointerLock?.();
-
-            }
-
-        }
-
-        catch (
-            error
-        ) {
-
-            console.warn(
-                "[POINTER LOCK]",
-                error
-            );
-
-        }
-
-    },
-
-
-    /* =====================================================
-       32. SETTINGS
-       ===================================================== */
-
-    saveSettings() {
-
-        const settings = {
-
-            graphics:
-                this.elements.graphicsQuality?.value
-                || "medium",
-
-            sensitivity:
-                this.elements.mouseSensitivity?.value
-                || "0.8",
-
-            volume:
-                this.elements.masterVolume?.value
-                || "70"
-
-        };
-
-
-        try {
-
-            localStorage.setItem(
-                "black_ops_settings",
-                JSON.stringify(
-                    settings
-                )
-            );
-
-        }
-
-        catch (
-            error
-        ) {
-
-            console.warn(
-                "[SETTINGS] Cannot save",
-                error
-            );
-
-        }
-
-    },
-
-
-    loadSettings() {
-
-        try {
-
-            const saved =
-                localStorage.getItem(
-                    "black_ops_settings"
-                );
-
-
-            if (
-                !saved
-            ) {
-
-                return;
-
-            }
-
-
-            const settings =
-                JSON.parse(
-                    saved
-                );
-
-
-            if (
-                settings.graphics &&
-                this.elements.graphicsQuality
-            ) {
-
-                this.elements.graphicsQuality.value =
-                    settings.graphics;
-
-            }
-
-
-            if (
-                settings.sensitivity &&
-                this.elements.mouseSensitivity
-            ) {
-
-                this.elements.mouseSensitivity.value =
-                    settings.sensitivity;
-
-            }
-
-
-            if (
-                settings.volume &&
-                this.elements.masterVolume
-            ) {
-
-                this.elements.masterVolume.value =
-                    settings.volume;
-
-            }
-
-        }
-
-        catch (
-            error
-        ) {
-
-            console.warn(
-                "[SETTINGS] Cannot load",
-                error
-            );
-
-        }
-
-    },
-
-
-    /* =====================================================
-       33. MOBILE JOYSTICK
-       ===================================================== */
-
-    setupJoystick() {
-
-        const joystick =
-            this.elements.joystick;
-
-
-        const knob =
-            this.elements.joystickKnob;
-
-
-        if (
-            !joystick ||
-            !knob
-        ) {
-
-            return;
-
-        }
-
-
-        let active = false;
-
-
-        const moveJoystick =
-            (clientX, clientY) => {
-
-                const rect =
-                    joystick.getBoundingClientRect();
-
-
-                const centerX =
-                    rect.left +
-                    rect.width / 2;
-
-
-                const centerY =
-                    rect.top +
-                    rect.height / 2;
-
-
-                let x =
-                    clientX -
-                    centerX;
-
-
-                let y =
-                    clientY -
-                    centerY;
-
-
-                const maxDistance =
-                    rect.width / 2 -
-                    knob.offsetWidth / 2;
-
-
-                const distance =
-                    Math.sqrt(
-                        x * x +
-                        y * y
-                    );
-
-
-                if (
-                    distance >
-                    maxDistance
-                ) {
-
-                    const angle =
-                        Math.atan2(
-                            y,
-                            x
-                        );
-
-
-                    x =
-                        Math.cos(angle) *
-                        maxDistance;
-
-
-                    y =
-                        Math.sin(angle) *
-                        maxDistance;
-
-                }
-
-
-                knob.style.transform =
-                    `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)`;
-
-
-                /*
-                 * Kirim input movement
-                 * ke engine.js.
-                 */
-
-                if (
-                    window.GameEngine &&
-                    typeof window.GameEngine.setMobileMovement ===
-                    "function"
-                ) {
-
-                    window.GameEngine.setMobileMovement(
-                        x / maxDistance,
-                        y / maxDistance
-                    );
-
-                }
-
-            };
-
-
-        joystick.addEventListener(
-            "touchstart",
-            event => {
-
-                active = true;
-
-                const touch =
-                    event.touches[0];
-
-                moveJoystick(
-                    touch.clientX,
-                    touch.clientY
-                );
-
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        joystick.addEventListener(
-            "touchmove",
-            event => {
-
-                if (!active) {
-                    return;
-                }
-
-                const touch =
-                    event.touches[0];
-
-                moveJoystick(
-                    touch.clientX,
-                    touch.clientY
-                );
-
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        joystick.addEventListener(
-            "touchend",
-            () => {
-
-                active = false;
-
-
-                knob.style.transform =
-                    "translate(-50%, -50%)";
-
-
-                if (
-                    window.GameEngine &&
-                    typeof window.GameEngine.setMobileMovement ===
-                    "function"
-                ) {
-
-                    window.GameEngine.setMobileMovement(
-                        0,
-                        0
-                    );
-
-                }
-
-            }
-        );
-
-    },
-
-
-    /* =====================================================
-       34. EMPTY WEAPON
-       ===================================================== */
-
-    playEmptySound() {
-
-        /*
-         * Sound system akan ditambahkan
-         * pada tahap audio.
-         */
+        GameState.initialized =
+            true;
 
         console.log(
-            "[WEAPON] EMPTY"
+            "%c BLACK OPS SCRIPT READY ",
+            "background:#ff3030;color:white;font-weight:bold;padding:6px;"
         );
-
-
-        if (
-            this.elements.ammoCurrent
-        ) {
-
-            this.elements.ammoCurrent.style.transform =
-                "scale(1.15)";
-
-
-            setTimeout(
-                () => {
-
-                    this.elements.ammoCurrent.style.transform =
-                        "";
-
-                },
-                100
-            );
-
-        }
-
-    },
-
-
-    /* =====================================================
-       35. DEBUG FUNCTIONS
-       ===================================================== */
-
-    debugDamage() {
-
-        this.damagePlayer(
-            10
-        );
-
-    },
-
-
-    debugKill() {
-
-        this.registerKill(
-            "TARGET"
-        );
-
-    },
-
-
-    debugAmmo() {
-
-        this.ammo = 0;
-
-        this.updateAmmo();
-
-    },
-
-
-    /* =====================================================
-       36. DESTROY
-       ===================================================== */
-
-    destroy() {
-
-        this.stopMatchTimer();
-
-
-        if (
-            this.loadingTimer
-        ) {
-
-            clearInterval(
-                this.loadingTimer
-            );
-
-        }
-
-
-        this.gameRunning = false;
-
-        this.initialized = false;
 
     }
 
-};
+
+    /* =====================================================
+       TIMER LOOP
+       ===================================================== */
+
+    setInterval(
+        updateTimer,
+        1000
+    );
 
 
-/* =========================================================
-   GLOBAL KEYBOARD DEBUG
-   ========================================================= */
+    /* =====================================================
+       INITIALIZE
+       ===================================================== */
 
-window.addEventListener(
-    "keydown",
-    event => {
-
-        /*
-         * F6 = debug damage
-         */
-
-        if (
-            event.key === "F6"
-        ) {
-
-            window.GameUI.debugDamage();
-
-        }
+    initialize();
 
 
-        /*
-         * F7 = debug kill
-         */
+    /* =====================================================
+       GLOBAL CONTROLLER
+       ===================================================== */
 
-        if (
-            event.key === "F7"
-        ) {
+    window.BlackOpsGame = {
 
-            window.GameUI.debugKill();
+        deploy,
 
-        }
+        pause: pauseGame,
 
+        resume: resumeGame,
 
-        /*
-         * F8 = empty magazine
-         */
+        restart: restartGame,
 
-        if (
-            event.key === "F8"
-        ) {
+        menu: backToMenu,
 
-            window.GameUI.debugAmmo();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   ENGINE BRIDGE
-   ========================================================= */
-
-/*
- * Fungsi ini digunakan engine.js
- * untuk memberikan damage kepada player.
- */
-
-window.damagePlayer =
-    function(
-        amount
-    ) {
-
-        if (
-            window.GameUI
-        ) {
-
-            window.GameUI.damagePlayer(
-                amount
-            );
-
-        }
+        state: GameState
 
     };
 
-
-/*
- * Fungsi ini digunakan engine.js
- * ketika enemy terbunuh.
- */
-
-window.enemyKilled =
-    function(
-        enemyName
-    ) {
-
-        if (
-            window.GameUI
-        ) {
-
-            window.GameUI.registerKill(
-                enemyName
-            );
-
-        }
-
-    };
-
-
-/*
- * Fungsi ini digunakan engine.js
- * ketika player mengenai target.
- */
-
-window.playerHit =
-    function() {
-
-        if (
-            window.GameUI
-        ) {
-
-            window.GameUI.registerHit();
-
-        }
-
-    };
-
-
-/* =========================================================
-   CONSOLE
-   ========================================================= */
-
-console.log(
-    "%c BLACK OPS // FPS ARENA ",
-    "background:#050607;color:#ff2a2a;font-size:16px;font-weight:bold;padding:8px;"
-);
-
-console.log(
-    "%c GameUI loaded successfully.",
-    "color:#8a9297;"
-);
-
-console.log(
-    "%c F6 = Damage | F7 = Kill | F8 = Empty Ammo",
-    "color:#697176;"
-);
+});
+```
